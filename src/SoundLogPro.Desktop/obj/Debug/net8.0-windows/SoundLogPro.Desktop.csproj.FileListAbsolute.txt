@@ -32,3 +32,4 @@ D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\App.bam
 D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\Views\OffloadView.g.cs
 D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
 D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\Views\OffloadView.baml
+D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\bin\Debug\net8.0-windows\System.IO.Hashing.dll

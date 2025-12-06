@@ -96,7 +96,7 @@
                     Background="{DynamicResource SecondaryHueMidBrush}"
                     BorderBrush="{DynamicResource SecondaryHueMidBrush}"/>
             
-            <ProgressBar Value="0" Maximum="100" Height="20" IsIndeterminate="False"/>
+            <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="20" IsIndeterminate="False"/>
             
             <TextBlock Text="{Binding LogText}" Margin="0,10,0,0" Opacity="0.6" HorizontalAlignment="Center"/>
         </StackPanel>
