@@ -29,3 +29,6 @@ D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\SoundLo
 D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\SoundLogPro.Desktop.genruntimeconfig.cache
 D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\ref\SoundLogPro.Desktop.dll
 D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\App.baml
+D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\Views\OffloadView.g.cs
+D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\ELEMENT\SOUNDLOG PRO\src\SoundLogPro.Desktop\obj\Debug\net8.0-windows\Views\OffloadView.baml

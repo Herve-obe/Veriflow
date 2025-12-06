@@ -12,10 +12,10 @@ namespace SoundLogPro.Desktop.ViewModels
         [ObservableProperty]
         private object? _currentView;
 
-        // Placeholder for views (Simulating ViewModels or UserControls for now)
-        private readonly object _playerView = new { Content = "Player / Metadata View Placeholder" };
-        private readonly object _offloadView = new { Content = "Offload Dashboard View Placeholder" };
-        private readonly object _reportsView = new { Content = "Reports View Placeholder" };
+        // ViewModels
+        private readonly OffloadViewModel _offloadViewModel = new();
+        private readonly string _playerView = "Player / Metadata View (Coming Soon)"; 
+        private readonly string _reportsView = "Reports View (Coming Soon)";
 
         public ICommand NavigatePlayerCommand { get; }
         public ICommand NavigateOffloadCommand { get; }
@@ -24,7 +24,7 @@ namespace SoundLogPro.Desktop.ViewModels
         public MainViewModel()
         {
             NavigatePlayerCommand = new RelayCommand(() => CurrentView = _playerView);
-            NavigateOffloadCommand = new RelayCommand(() => CurrentView = _offloadView);
+            NavigateOffloadCommand = new RelayCommand(() => CurrentView = _offloadViewModel);
             NavigateReportsCommand = new RelayCommand(() => CurrentView = _reportsView);
 
             // Default to Player view
