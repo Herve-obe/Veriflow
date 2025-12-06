@@ -4,8 +4,10 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Linq;
 
 namespace SoundLogPro.Desktop.ViewModels
 {
@@ -32,6 +34,12 @@ namespace SoundLogPro.Desktop.ViewModels
 
         [ObservableProperty]
         private string? _logText;
+        
+        [ObservableProperty]
+        private int _filesCopiedCount;
+        
+        [ObservableProperty]
+        private int _errorsCount;
 
         public OffloadViewModel()
         {
@@ -80,6 +88,19 @@ namespace SoundLogPro.Desktop.ViewModels
             IsBusy = true;
             ProgressValue = 0;
             LogText = "Initialisation...";
+            FilesCopiedCount = 0;
+            ErrorsCount = 0;
+            var reportBuilder = new StringBuilder();
+            var processingDate = DateTime.Now;
+
+            reportBuilder.AppendLine("==========================================");
+            reportBuilder.AppendLine($"RAPPORT DE COPIE SOUNDLOG PRO - {processingDate}");
+            reportBuilder.AppendLine("==========================================");
+            reportBuilder.AppendLine($"Source      : {SourcePath}");
+            reportBuilder.AppendLine($"Destination 1: {Destination1Path ?? "N/A"}");
+            reportBuilder.AppendLine($"Destination 2: {Destination2Path ?? "N/A"}");
+            reportBuilder.AppendLine("------------------------------------------");
+            reportBuilder.AppendLine("DÉTAIL DES FICHIERS :");
 
             try
             {
@@ -99,34 +120,82 @@ namespace SoundLogPro.Desktop.ViewModels
                 {
                     processedFiles++;
                     LogText = $"Copie de {file.Name}...";
+                    string status = "[OK]";
+                    string errorDetail = "";
 
                     // Calculate relative path to keep structure
                     string relativePath = Path.GetRelativePath(sourceDir.FullName, file.FullName);
 
-                    // Copy to Dest 1
-                    if (!string.IsNullOrEmpty(Destination1Path))
+                    try 
                     {
-                        var destFile = Path.Combine(Destination1Path, relativePath);
-                        await CopyFileAsync(file.FullName, destFile);
+                        // Copy to Dest 1
+                        if (!string.IsNullOrEmpty(Destination1Path))
+                        {
+                            var destFile = Path.Combine(Destination1Path, relativePath);
+                            await CopyFileAsync(file.FullName, destFile);
+                        }
+
+                        // Copy to Dest 2
+                        if (!string.IsNullOrEmpty(Destination2Path))
+                        {
+                            var destFile = Path.Combine(Destination2Path, relativePath);
+                            await CopyFileAsync(file.FullName, destFile);
+                        }
+                        
+                        FilesCopiedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        status = "[ERREUR]";
+                        errorDetail = ex.Message;
+                        ErrorsCount++;
                     }
 
-                    // Copy to Dest 2
-                    if (!string.IsNullOrEmpty(Destination2Path))
-                    {
-                        var destFile = Path.Combine(Destination2Path, relativePath);
-                        await CopyFileAsync(file.FullName, destFile);
-                    }
-
+                    reportBuilder.AppendLine($"{processingDate.ToShortTimeString()} - {relativePath} : {status} {errorDetail}");
                     ProgressValue = (double)processedFiles / totalFiles * 100;
                 }
 
-                LogText = "Copie terminée avec succès !";
-                MessageBox.Show("Sauvegarde terminée avec succès.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Finalize Report
+                reportBuilder.AppendLine("------------------------------------------");
+                reportBuilder.AppendLine($"RÉSUMÉ FINAL :");
+                reportBuilder.AppendLine($"Fichiers traités : {totalFiles}");
+                reportBuilder.AppendLine($"Succès           : {FilesCopiedCount}");
+                reportBuilder.AppendLine($"Erreurs          : {ErrorsCount}");
+                reportBuilder.AppendLine("==========================================");
+
+                string reportContent = reportBuilder.ToString();
+                string reportFileName = $"SoundLog_Report_{processingDate:yyyyMMdd_HHmmss}.txt";
+
+                // Save Report to Destinations
+                if (!string.IsNullOrEmpty(Destination1Path))
+                    await File.WriteAllTextAsync(Path.Combine(Destination1Path, reportFileName), reportContent);
+                
+                if (!string.IsNullOrEmpty(Destination2Path))
+                    await File.WriteAllTextAsync(Path.Combine(Destination2Path, reportFileName), reportContent);
+
+                LogText = "Terminé.";
+
+                if (ErrorsCount == 0)
+                {
+                    MessageBox.Show(
+                        $"Succès ! {FilesCopiedCount} fichiers sécurisés.\nUn rapport a été généré dans le dossier de destination.", 
+                        "Copie Terminée", 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Attention ! {FilesCopiedCount} fichiers copiés, mais {ErrorsCount} erreurs détectées.\nVeuillez consulter le rapport pour plus de détails.", 
+                        "Copie avec Erreurs", 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Warning);
+                }
             }
             catch (Exception ex)
             {
-                LogText = $"Erreur : {ex.Message}";
-                MessageBox.Show($"Une erreur est survenue : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                LogText = $"Erreur Critique : {ex.Message}";
+                MessageBox.Show($"Une erreur critique est survenue : {ex.Message}", "Erreur Critique", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

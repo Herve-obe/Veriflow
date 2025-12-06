@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SoundLogPro.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d419b5e2ae2898e3dea8ef76c0bb71d8312ffda6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+28ecc781224f022d368039a7298030ecd5105e10")]
 [assembly: System.Reflection.AssemblyProductAttribute("SoundLogPro.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SoundLogPro.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
