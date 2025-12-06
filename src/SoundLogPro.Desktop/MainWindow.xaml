@@ -6,39 +6,28 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:SoundLogPro.Desktop"
         mc:Ignorable="d"
-        Title="SoundLog Pro" Height="768" Width="1280"
-        WindowStartupLocation="CenterScreen"
+        Title="SoundLog Pro" Height="768" Width="1024"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}">
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Sidebar -->
-        <Border Grid.Column="0" Background="{DynamicResource MaterialDesignCardBackground}" BorderThickness="0,0,1,0" BorderBrush="{DynamicResource MaterialDesignDivider}">
+        <materialDesign:Card Grid.Column="0" Margin="0" Padding="0" UniformCornerRadius="0" Background="{DynamicResource MaterialDesignPaper}">
             <StackPanel Margin="10">
-                <TextBlock Text="SOUNDLOG PRO" FontSize="20" FontWeight="Bold" Margin="20" HorizontalAlignment="Center"/>
+                <TextBlock Text="SOUNDLOG PRO" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,20" HorizontalAlignment="Center"/>
                 
-                <Button Command="{Binding NavigatePlayerCommand}" Content="PLAYER" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" Height="50" Margin="0,5"/>
-                <Button Command="{Binding NavigateOffloadCommand}" Content="OFFLOAD" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" Height="50" Margin="0,5"/>
-                <Button Command="{Binding NavigateReportsCommand}" Content="RAPPORTS" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left" Height="50" Margin="0,5"/>
+                <Button Content="PLAYER / META" Margin="0,5" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left"/>
+                <Button Content="OFFLOAD" Margin="0,5" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left"/>
+                <Button Content="RAPPORTS" Margin="0,5" Style="{StaticResource MaterialDesignFlatButton}" HorizontalContentAlignment="Left"/>
             </StackPanel>
-        </Border>
+        </materialDesign:Card>
 
-        <!-- Main Content Area -->
-        <Border Grid.Column="1" Padding="20">
-            <ContentControl Content="{Binding CurrentView}">
-                <ContentControl.ContentTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <TextBlock Text="{Binding Content}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
-                        </Grid>
-                    </DataTemplate>
-                </ContentControl.ContentTemplate>
-            </ContentControl>
+        <Border Grid.Column="1" Background="{DynamicResource MaterialDesignBackground}" Padding="20">
+            <TextBlock Text="Bienvenue sur SoundLog Pro" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
         </Border>
     </Grid>
 </Window>
