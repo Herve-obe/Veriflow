@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Veriflow.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+32a59eb6d26cff9211591bcf7e45c14b53a93972")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f3cfcd12f36bee5e3ae197c2c89cb0a081159696")]
 [assembly: System.Reflection.AssemblyProductAttribute("Veriflow.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Veriflow.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Veriflow.Desktop.Services;
+using Veriflow.Desktop.Models;
 
 namespace Veriflow.Desktop.ViewModels
 {
@@ -49,6 +50,9 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty]
         private double _playbackMaximum = 1;
 
+        [ObservableProperty]
+        private AudioMetadata _currentMetadata = new();
+
         public ObservableCollection<TrackViewModel> Tracks { get; } = new();
 
         public PlayerViewModel()
@@ -83,11 +87,28 @@ namespace Veriflow.Desktop.ViewModels
 
                 _audioFile = new AudioFileReader(path);
                 
-                // Wrap with our mixer
+                // 1. Downmix to Stereo (keeps source SampleRate)
                 _mixer = new MultiChannelAudioMixer(_audioFile);
 
+                ISampleProvider finalProvider = _mixer;
+
+                // 2. Resample to 48kHz if needed (Universal Compatibility)
+                if (finalProvider.WaveFormat.SampleRate != 48000)
+                {
+                    try
+                    {
+                         finalProvider = new WdlResamplingSampleProvider(finalProvider, 48000);
+                    }
+                    catch
+                    {
+                        // Fallback or ignore if WDL not available (should be in NAudio)
+                        // If WDL fails, we might try MediaFoundationResampler but that requires WaveProvider conversion.
+                        // For this iteration, we assume WdlResamplingSampleProvider is available as part of NAudio.
+                    }
+                }
+
                 _outputDevice = new WaveOutEvent();
-                _outputDevice.Init(_mixer);
+                _outputDevice.Init(finalProvider);
                 _outputDevice.PlaybackStopped += OnPlaybackStopped;
 
                 FilePath = path;
@@ -97,7 +118,11 @@ namespace Veriflow.Desktop.ViewModels
                 TotalTimeDisplay = _audioFile.TotalTime.ToString(@"hh\:mm\:ss");
                 PlaybackMaximum = _audioFile.TotalTime.TotalSeconds;
 
-                InitializeTracks(_audioFile.WaveFormat.Channels);
+                // Metadata Extraction
+                var metaReader = new BwfMetadataReader();
+                CurrentMetadata = metaReader.ReadMetadataFromStream(path);
+
+                InitializeTracks(CurrentMetadata.ChannelCount > 0 ? CurrentMetadata.ChannelCount : _audioFile.WaveFormat.Channels);
                 GenerateWaveforms(path);
             }
             catch (Exception ex)
@@ -109,12 +134,22 @@ namespace Veriflow.Desktop.ViewModels
         private void InitializeTracks(int channelCount)
         {
             Tracks.Clear();
+            var iXmlNames = CurrentMetadata?.TrackNames ?? new List<string>();
+
             for (int i = 0; i < channelCount; i++)
             {
                 string name = $"TRK {i + 1}";
-                // Future: Parse iXML to get real names like "Boom", "Lav 1" etc.
                 
-                var track = new TrackViewModel(i, name, OnTrackSoloChanged, OnTrackVolumeChanged, OnTrackMuteChanged);
+                // Use iXML name if available
+                if (i < iXmlNames.Count && !string.IsNullOrWhiteSpace(iXmlNames[i]))
+                {
+                    name = iXmlNames[i];
+                }
+                
+                // Note: iXML track count might not match file channel count (e.g. poly file has blank channels)
+                // We rely on channelCount from the WaveFormat or BWF header.
+                
+                var track = new TrackViewModel(i, name, OnTrackSoloChanged, OnTrackVolumeChanged, OnTrackMuteChanged, OnTrackPanChanged);
                 Tracks.Add(track);
             }
         }
@@ -122,6 +157,11 @@ namespace Veriflow.Desktop.ViewModels
         private void OnTrackVolumeChanged(int channel, float volume)
         {
             _mixer?.SetChannelVolume(channel, volume);
+        }
+
+        private void OnTrackPanChanged(int channel, float pan)
+        {
+            _mixer?.SetChannelPan(channel, pan);
         }
 
         private void OnTrackMuteChanged(int channel, bool isMuted)
@@ -142,33 +182,11 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (_mixer == null) return;
 
-            bool anySolo = Tracks.Any(t => t.IsSoloed);
-
             foreach (var track in Tracks)
             {
-                bool shouldBeMuted = false;
-
-                if (anySolo)
-                {
-                    // If any track is soloed, mute everything that ISN'T soloed.
-                    if (!track.IsSoloed)
-                        shouldBeMuted = true;
-                }
-                
-                // User mute overrides everything? Or Solo overrides user mute?
-                // Standard DAW: Solo overrides Mute. 
-                // Sample Logic: If Soloed, it plays. If not Soloed (and others are), it mutes.
-                // If No Solo, User Mute applies.
-                
-                if (!anySolo && track.IsMuted)
-                {
-                    shouldBeMuted = true;
-                }
-
-                _mixer.SetChannelMute(track.ChannelIndex, shouldBeMuted);
-                
-                // NOTE: We do not update track.IsMuted visual state here to avoid circular loops
-                // But we could add an "IsDimmed" or "IsEffectivelyMuted" property to TrackVM for UI feedback.
+                // Push states to mixer property
+                _mixer.SetChannelMute(track.ChannelIndex, track.IsMuted);
+                _mixer.SetChannelSolo(track.ChannelIndex, track.IsSoloed);
             }
         }
 
@@ -227,7 +245,7 @@ namespace Veriflow.Desktop.ViewModels
                         {
                             var trackPoints = new PointCollection();
                             float[] peaks = maxBuffers[c];
-                            double height = 40; // Height of the visual area per track
+                            // Height of the visual area per track is 40, Center is 20
                             // Center is 20
                             
                             for (int x = 0; x < width; x++)
@@ -299,7 +317,7 @@ namespace Veriflow.Desktop.ViewModels
         }
 
         private bool CanPlay() => IsAudioLoaded && !IsPlaying;
-        private bool CanStop() => IsAudioLoaded && IsPlaying;
+        private bool CanStop() => IsAudioLoaded; // Allow stop even if not playing (to reset pos)
 
         private void CleanUpAudio()
         {

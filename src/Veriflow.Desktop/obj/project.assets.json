@@ -201,7 +201,7 @@
           }
         }
       },
-      "Microsoft.Xaml.Behaviors.Wpf/1.1.77": {
+      "Microsoft.Xaml.Behaviors.Wpf/1.1.135": {
         "type": "package",
         "compile": {
           "lib/net6.0-windows7.0/Microsoft.Xaml.Behaviors.dll": {
@@ -636,10 +636,10 @@
         "version.txt"
       ]
     },
-    "Microsoft.Xaml.Behaviors.Wpf/1.1.77": {
-      "sha512": "MCu674ZETgU18EbxfwIlRpUPJ02YbZenLsMCXTkpeA7KUBpXfFaOUDlEO+7UWu5AFnUoydg+aQENJkuaZPheMQ==",
+    "Microsoft.Xaml.Behaviors.Wpf/1.1.135": {
+      "sha512": "r8qBEXmQfORso2+MVHnt8PSH4761zJ0SIxgQTSEDVLU97EN2FZdG6/ZCYUPhQy+OrPKgnpYBCAs3PS6Bs7wRsg==",
       "type": "package",
-      "path": "microsoft.xaml.behaviors.wpf/1.1.77",
+      "path": "microsoft.xaml.behaviors.wpf/1.1.135",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -653,7 +653,7 @@
         "lib/net6.0-windows7.0/Microsoft.Xaml.Behaviors.dll",
         "lib/net6.0-windows7.0/Microsoft.Xaml.Behaviors.pdb",
         "lib/net6.0-windows7.0/Microsoft.Xaml.Behaviors.xml",
-        "microsoft.xaml.behaviors.wpf.1.1.77.nupkg.sha512",
+        "microsoft.xaml.behaviors.wpf.1.1.135.nupkg.sha512",
         "microsoft.xaml.behaviors.wpf.nuspec",
         "tools/Install.ps1"
       ]
@@ -907,6 +907,7 @@
     "net8.0-windows7.0": [
       "CommunityToolkit.Mvvm >= 8.4.0",
       "MaterialDesignThemes >= 5.3.0",
+      "Microsoft.Xaml.Behaviors.Wpf >= 1.1.135",
       "NAudio >= 2.2.1",
       "System.IO.Hashing >= 10.0.0",
       "Veriflow.Core >= 1.0.0"
@@ -965,6 +966,10 @@
           "MaterialDesignThemes": {
             "target": "Package",
             "version": "[5.3.0, )"
+          },
+          "Microsoft.Xaml.Behaviors.Wpf": {
+            "target": "Package",
+            "version": "[1.1.135, )"
           },
           "NAudio": {
             "target": "Package",

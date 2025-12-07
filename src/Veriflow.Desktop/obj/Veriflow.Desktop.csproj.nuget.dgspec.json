@@ -113,6 +113,10 @@
               "target": "Package",
               "version": "[5.3.0, )"
             },
+            "Microsoft.Xaml.Behaviors.Wpf": {
+              "target": "Package",
+              "version": "[1.1.135, )"
+            },
             "NAudio": {
               "target": "Package",
               "version": "[2.2.1, )"

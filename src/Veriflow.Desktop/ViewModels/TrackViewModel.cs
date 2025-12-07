@@ -11,6 +11,7 @@ namespace Veriflow.Desktop.ViewModels
         private readonly Action<TrackViewModel> _onSoloRequested;
         private readonly Action<int, float> _onVolumeChanged;
         private readonly Action<int, bool> _onMuteChanged;
+        private readonly Action<int, float> _onPanChanged;
 
         [ObservableProperty]
         private string _trackName;
@@ -24,6 +25,9 @@ namespace Veriflow.Desktop.ViewModels
 
         [ObservableProperty]
         private bool _isSoloed;
+
+        [ObservableProperty]
+        private float _pan = 0.0f; // -1.0 to 1.0
         
         // Visuals
         [ObservableProperty]
@@ -31,13 +35,18 @@ namespace Veriflow.Desktop.ViewModels
 
         public bool IsActive => !IsMuted;
 
-        public TrackViewModel(int channelIndex, string defaultName, Action<TrackViewModel> onSoloRequested, Action<int, float> onVolumeChanged, Action<int, bool> onMuteChanged)
+        public TrackViewModel(int channelIndex, string defaultName, 
+                              Action<TrackViewModel> onSoloRequested, 
+                              Action<int, float> onVolumeChanged, 
+                              Action<int, bool> onMuteChanged,
+                              Action<int, float> onPanChanged)
         {
             ChannelIndex = channelIndex;
             TrackName = defaultName;
             _onSoloRequested = onSoloRequested;
             _onVolumeChanged = onVolumeChanged;
             _onMuteChanged = onMuteChanged;
+            _onPanChanged = onPanChanged;
         }
 
         partial void OnVolumeChanged(float value)
@@ -47,30 +56,29 @@ namespace Veriflow.Desktop.ViewModels
 
         partial void OnIsMutedChanged(bool value)
         {
-            // If we are muted manually, we just notify mixer.
-            // Solo logic might force-mute us, but that's handled by parent setting this Generic 'IsMuted' or a separate 'IsSoloMuted' flag?
-            // To keep it simple: IsMuted reflects the User's Mute button. 
-            // The Mixer might need a separate 'SoloMute' state, or we update IsMuted.
-            // Requirement: "Solo on one track must mute all others".
-            // Implementation: The Parent (PlayerVM) will update the Mixer directly for Solo logic.
-            // BUT: The UI mute button should probably reflect state? Or stay independent?
-            // Standard console: Mute and Solo are separate states. If not Soloed and another track IS Soloed, this track is effectively muted but the Mute button doesn't toggle.
-            // We need a way to tell the View "You are effectively muted".
-            // Let's rely on the Mixer doing the work. This IsMuted is USER mute.
             _onMuteChanged?.Invoke(ChannelIndex, value);
         }
 
-        [RelayCommand]
-        private void ToggleSolo()
+        partial void OnIsSoloedChanged(bool value)
         {
-            IsSoloed = !IsSoloed;
             _onSoloRequested?.Invoke(this);
         }
 
-        [RelayCommand]
-        private void ToggleMute()
+        partial void OnPanChanged(float value)
         {
-            IsMuted = !IsMuted;
+            _onPanChanged?.Invoke(ChannelIndex, value);
+        }
+
+        [RelayCommand]
+        private void ResetVolume()
+        {
+            Volume = 1.0f;
+        }
+
+        [RelayCommand]
+        private void ResetPan()
+        {
+            Pan = 0.0f;
         }
     }
 }
