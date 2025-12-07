@@ -11,10 +11,12 @@
         mc:Ignorable="d"
         Title="Veriflow" Height="768" Width="1024"
         Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        KeyDown="Window_KeyDown">
 
     <Window.InputBindings>
-        <KeyBinding Key="Space" Command="{Binding CurrentViewModel.TogglePlayPauseCommand}" />
+        <!-- Removing static binding in favor of code-behind for robust focus handling -->
+        <!-- <KeyBinding Key="Space" Command="{Binding CurrentViewModel.TogglePlayPauseCommand}" /> -->
     </Window.InputBindings>
     
     <Grid>

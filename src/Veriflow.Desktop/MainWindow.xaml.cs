@@ -21,4 +21,20 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new Veriflow.Desktop.ViewModels.MainViewModel();
     }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Space)
+        {
+            var mainVm = this.DataContext as Veriflow.Desktop.ViewModels.MainViewModel;
+            if (mainVm?.CurrentView is Veriflow.Desktop.ViewModels.PlayerViewModel playerVm)
+            {
+                if (playerVm.TogglePlayPauseCommand.CanExecute(null))
+                {
+                    playerVm.TogglePlayPauseCommand.Execute(null);
+                }
+                e.Handled = true;
+            }
+        }
+    }
 }
