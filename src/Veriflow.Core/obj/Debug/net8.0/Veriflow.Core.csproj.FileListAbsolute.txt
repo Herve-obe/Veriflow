@@ -1,0 +1,12 @@
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\bin\Debug\net8.0\Veriflow.Core.deps.json
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\bin\Debug\net8.0\Veriflow.Core.dll
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\bin\Debug\net8.0\Veriflow.Core.pdb
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\Veriflow.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\Veriflow.Core.AssemblyInfoInputs.cache
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\Veriflow.Core.AssemblyInfo.cs
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\Veriflow.Core.csproj.CoreCompileInputs.cache
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\Veriflow.Core.sourcelink.json
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\Veriflow.Core.dll
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\refint\Veriflow.Core.dll
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\Veriflow.Core.pdb
+D:\ELEMENT\VERIFLOW\src\Veriflow.Core\obj\Debug\net8.0\ref\Veriflow.Core.dll
