@@ -81,12 +81,18 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0">
                     <RadioButton Content="AUDIO" GroupName="AV" IsChecked="True" Style="{StaticResource SegmentedToggleStyle}">
                         <RadioButton.Tag>
-                            <TextBlock Text="♪" FontSize="{StaticResource Font.Size.SubHeader}"/>
+                            <!-- Waveform Icon -->
+                            <Path Data="M5,9V15H7V9H5M9,17H11V7H9V17M13,22H15V2H13V22M17,17H19V7H17V17M21,14H23V10H21V14Z" 
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                  Height="14" Width="14" Stretch="Uniform"/>
                         </RadioButton.Tag>
                     </RadioButton>
                     <RadioButton Content="VIDEO" GroupName="AV" Style="{StaticResource SegmentedToggleStyle}" Margin="1,0,0,0">
                          <RadioButton.Tag>
-                            <TextBlock Text="▶" FontSize="{StaticResource Font.Size.Mini}"/>
+                            <!-- Clapboard Icon -->
+                            <Path Data="M18,4L20,8H17L15,4H13L15,8H12L10,4H8L10,8H5L3,4H1V18A2,2 0 0,0 3,20H21A2,2 0 0,0 23,18V4H18Z" 
+                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                  Height="14" Width="14" Stretch="Uniform"/>
                         </RadioButton.Tag>
                     </RadioButton>
                 </StackPanel>
@@ -98,8 +104,10 @@
                                  GroupName="Nav" 
                                  IsChecked="True"
                                  Style="{StaticResource NavButtonStyle}">
-                        <RadioButton.Tag>
-                             <TextBlock Text="[MEDIA]" Opacity="0.8"/>
+                         <RadioButton.Tag>
+                             <Path Data="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,3V13H11V3" 
+                                   Fill="White"
+                                   Height="18" Width="18" Stretch="Uniform"/>
                         </RadioButton.Tag>
                     </RadioButton>
 
@@ -108,7 +116,9 @@
                                  GroupName="Nav"
                                  Style="{StaticResource NavButtonStyle}">
                          <RadioButton.Tag>
-                             <TextBlock Text="[COPY]" Opacity="0.8"/>
+                             <Path Data="M12,1L3,5V11C3,16.55 6.9,21.74 12,23C17.1,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" 
+                                   Fill="White"
+                                   Height="18" Width="18" Stretch="Uniform"/>
                         </RadioButton.Tag>
                     </RadioButton>
 
@@ -117,7 +127,9 @@
                                  GroupName="Nav"
                                  Style="{StaticResource NavButtonStyle}">
                          <RadioButton.Tag>
-                             <TextBlock Text="[DOC]" Opacity="0.8"/>
+                             <Path Data="M13,9V3.5L18.5,9M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6Z" 
+                                   Fill="White"
+                                   Height="18" Width="18" Stretch="Uniform"/>
                         </RadioButton.Tag>
                     </RadioButton>
                 </StackPanel>

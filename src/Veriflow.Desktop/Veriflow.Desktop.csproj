@@ -11,8 +11,13 @@
     <PackageReference Include="System.IO.Hashing" Version="10.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\**" />
+    <Resource Include="Assets\**" />
+  </ItemGroup>
+
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -4,367 +4,424 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Linq;
 using Veriflow.Desktop.Services;
 
 namespace Veriflow.Desktop.ViewModels
 {
     public partial class OffloadViewModel : ObservableObject
     {
+        // --- SERVICES & TOKENS ---
+        private readonly SecureCopyService _secureCopyService;
+        private CancellationTokenSource? _cts;
+
+        // Transaction Tracking
+        private List<string> _copiedFiles = new();
+        private List<string> _createdDirectories = new();
+
+        // --- PROPERTIES ---
+
+        // FIX 1: REMOVE ATTRIBUTES & IMPLEMENT MANUAL NOTIFICATION
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(PickSourceCommand))]
-        [NotifyCanExecuteChangedFor(nameof(PickDest1Command))]
-        [NotifyCanExecuteChangedFor(nameof(PickDest2Command))]
-        [NotifyCanExecuteChangedFor(nameof(StartCopyCommand))]
-        [NotifyCanExecuteChangedFor(nameof(DropSourceCommand))]
-        [NotifyCanExecuteChangedFor(nameof(DropDest1Command))]
-        [NotifyCanExecuteChangedFor(nameof(DropDest2Command))]
-        [NotifyCanExecuteChangedFor(nameof(StartCopyCommand))] // Triggers button state update
         private bool _isBusy;
 
-        [ObservableProperty]
-        private double _progressValue;
-        
-        [ObservableProperty]
-        private string _timeRemainingDisplay = "--:--";
+        partial void OnIsBusyChanged(bool value)
+        {
+            // Explicitly force updates on the UI thread
+            UpdateUI(() =>
+            {
+                CancelCommand.NotifyCanExecuteChanged();
+                ToggleCopyCommand.NotifyCanExecuteChanged();
+                StartOffloadCommand.NotifyCanExecuteChanged();
+
+                // Refresh interactions
+                PickSourceCommand.NotifyCanExecuteChanged();
+                PickDest1Command.NotifyCanExecuteChanged();
+                PickDest2Command.NotifyCanExecuteChanged();
+                DropSourceCommand.NotifyCanExecuteChanged();
+                DropDest1Command.NotifyCanExecuteChanged();
+                DropDest1Command.NotifyCanExecuteChanged();
+                DropDest2Command.NotifyCanExecuteChanged();
+                
+                // Clear/Reset Commands
+                ClearSourceCommand.NotifyCanExecuteChanged();
+                ClearDest1Command.NotifyCanExecuteChanged();
+                ClearDest2Command.NotifyCanExecuteChanged();
+                ResetAllCommand.NotifyCanExecuteChanged();
+            });
+        }
 
         [ObservableProperty]
-        private string _currentSpeedDisplay = "0 MB/s";
+        [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ToggleCopyCommand))]
+        private bool _isCancelling;
+
+        [ObservableProperty] private double _progressValue;
+        [ObservableProperty] private string _timeRemainingDisplay = "--:--";
+        [ObservableProperty] private string _currentSpeedDisplay = "0 MB/s";
+        [ObservableProperty] private string _currentHashDisplay = "xxHash64: -";
+        [ObservableProperty] private string? _logText;
+        [ObservableProperty] private int _filesCopiedCount;
+        [ObservableProperty] private int _errorsCount;
 
         [ObservableProperty]
-        private string _currentHashDisplay = "xxHash64: -";
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(StartCopyCommand))]
+        [NotifyCanExecuteChangedFor(nameof(StartOffloadCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ToggleCopyCommand))]
         private string? _sourcePath;
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(StartCopyCommand))]
+        [NotifyCanExecuteChangedFor(nameof(StartOffloadCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ToggleCopyCommand))]
         private string? _destination1Path;
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(StartCopyCommand))]
+        [NotifyCanExecuteChangedFor(nameof(StartOffloadCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ToggleCopyCommand))]
         private string? _destination2Path;
 
-        [ObservableProperty]
-        private string? _logText;
-        
-        [ObservableProperty]
-        private int _filesCopiedCount;
-        
-        [ObservableProperty]
-        private int _errorsCount;
-        
-        private readonly SecureCopyService _secureCopyService;
-
+        // --- CONSTRUCTOR ---
         public OffloadViewModel()
         {
             _secureCopyService = new SecureCopyService();
         }
 
-        #region Drag & Drop Commands
+        // --- COMMANDS ---
 
-        [RelayCommand]
-        private void DragOver(DragEventArgs e)
+        private bool CanStart()
         {
-            e.Effects = DragDropEffects.Copy;
-            e.Handled = true;
+            return !IsBusy && 
+                   !string.IsNullOrEmpty(SourcePath) && 
+                   (!string.IsNullOrEmpty(Destination1Path) || !string.IsNullOrEmpty(Destination2Path));
         }
 
-        [RelayCommand(CanExecute = nameof(CanInteract))]
-        private void DropSource(DragEventArgs e)
+        private bool CanCancel()
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                if (e.Data.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
-                {
-                    string path = files[0];
-                    if (Directory.Exists(path))
-                    {
-                        SourcePath = path;
-                    }
-                    else if (File.Exists(path))
-                    {
-                        SourcePath = Path.GetDirectoryName(path);
-                    }
-                }
-            }
+            return IsBusy && !IsCancelling;
         }
 
-        [RelayCommand(CanExecute = nameof(CanInteract))]
-        private void DropDest1(DragEventArgs e)
+        [RelayCommand(CanExecute = nameof(CanStart))]
+        private async Task StartOffload()
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            UpdateUI(() =>
             {
-                if (e.Data.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
-                {
-                    string path = files[0];
-                    if (Directory.Exists(path))
-                    {
-                        Destination1Path = path;
-                    }
-                    else if (File.Exists(path))
-                    {
-                        Destination1Path = Path.GetDirectoryName(path);
-                    }
-                }
-            }
-        }
+                IsBusy = true; // Triggers OnIsBusyChanged
+                IsCancelling = false;
 
-        [RelayCommand(CanExecute = nameof(CanInteract))]
-        private void DropDest2(DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                if (e.Data.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
-                {
-                    string path = files[0];
-                    if (Directory.Exists(path))
-                    {
-                        Destination2Path = path;
-                    }
-                    else if (File.Exists(path))
-                    {
-                        Destination2Path = Path.GetDirectoryName(path);
-                    }
-                }
-            }
-        }
+                _copiedFiles.Clear();
+                _createdDirectories.Clear();
 
-        #endregion
+                ProgressValue = 0;
+                LogText = "Initialisation...";
+                FilesCopiedCount = 0;
+                ErrorsCount = 0;
+                CurrentSpeedDisplay = "0 MB/s";
+                CurrentHashDisplay = "xxHash64: -";
+                TimeRemainingDisplay = "--:--";
 
-        [RelayCommand(CanExecute = nameof(CanInteract))]
-        private void PickSource()
-        {
-            var path = PickFolder();
-            if (!string.IsNullOrEmpty(path))
-            {
-                SourcePath = path;
-            }
-        }
+                _cts = new CancellationTokenSource();
 
-        [RelayCommand(CanExecute = nameof(CanInteract))]
-        private void PickDest1()
-        {
-            var path = PickFolder();
-            if (!string.IsNullOrEmpty(path))
-            {
-                Destination1Path = path;
-            }
-        }
-
-        [RelayCommand(CanExecute = nameof(CanInteract))]
-        private void PickDest2()
-        {
-            var path = PickFolder();
-            if (!string.IsNullOrEmpty(path))
-            {
-                Destination2Path = path;
-            }
-        }
-
-        private CancellationTokenSource? _cts;
-
-        private bool CanInteract() => true; // Always true to allow cancelling
-
-        private bool CanCopy() => IsBusy || (!string.IsNullOrEmpty(SourcePath) && (!string.IsNullOrEmpty(Destination1Path) || !string.IsNullOrEmpty(Destination2Path)));
-
-        public IRelayCommand ToggleCopyCommand => StartCopyCommand;
-
-        [RelayCommand]
-        private async Task StartCopy()
-        {
-            if (IsBusy)
-            {
-                if (_cts != null)
-                {
-                    _cts.Cancel();
-                    LogText = "Annulation demandée...";
-                }
-                return;
-            }
-
-            if (string.IsNullOrEmpty(SourcePath) || (string.IsNullOrEmpty(Destination1Path) && string.IsNullOrEmpty(Destination2Path)))
-            {
-                 MessageBox.Show("Veuillez sélectionner une source et au moins une destination.", "Configuration manquante", MessageBoxButton.OK, MessageBoxImage.Warning);
-                 return;
-            }
-
-            IsBusy = true;
-            _cts = new CancellationTokenSource();
-            var token = _cts.Token;
-
-            ProgressValue = 0;
-            LogText = "Initialisation...";
-            FilesCopiedCount = 0;
-            ErrorsCount = 0;
-            CurrentSpeedDisplay = "0 MB/s";
-            CurrentHashDisplay = "xxHash64: -";
-            TimeRemainingDisplay = "--:--";
-            
-            var reportBuilder = new StringBuilder();
-            var processingDate = DateTime.Now;
-
-            reportBuilder.AppendLine("==========================================");
-            reportBuilder.AppendLine($"RAPPORT DE COPIE SECURISEE VERIFLOW - {processingDate}");
-            reportBuilder.AppendLine("==========================================");
-            reportBuilder.AppendLine($"Source      : {SourcePath}");
-            reportBuilder.AppendLine($"Destination 1: {Destination1Path ?? "N/A"}");
-            reportBuilder.AppendLine($"Destination 2: {Destination2Path ?? "N/A"}");
-            reportBuilder.AppendLine("------------------------------------------");
-            reportBuilder.AppendLine("DÉTAIL DES FICHIERS (Mode Secure/xxHash64) :");
+                Console.WriteLine("--- 1. START: IsBusy set, trying to enable Cancel button ---");
+            });
 
             try
             {
-                var sourceDir = new DirectoryInfo(SourcePath!);
-                var files = sourceDir.GetFiles("*", SearchOption.AllDirectories);
-                int totalFiles = files.Length;
-                
-                // Calculate total size for global ETA
-                long totalBytesToCopy = files.Sum(f => f.Length);
-                long totalBytesTransferred = 0;
-                
-                if (totalFiles == 0)
+                await Task.Run(async () => await ProcessCopySequence(_cts!.Token));
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("--- 4. CANCELLATION CAUGHT: Starting Rollback ---");
+                await PerformRollback();
+            }
+            catch (Exception ex)
+            {
+                UpdateUI(() =>
                 {
-                    LogText = "Aucun fichier à copier.";
-                    MessageBox.Show("Le dossier source est vide.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return;
-                }
-
-                foreach (var file in files)
+                    LogText = $"Erreur : {ex.Message}";
+                    IsBusy = false;
+                    MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+            }
+            finally
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    token.ThrowIfCancellationRequested();
+                    _cts?.Dispose();
+                    _cts = null;
 
-                    LogText = $"Securing {file.Name}...";
-                    string status = "[OK]";
-                    string fileHash = "N/A";
-                    string errorDetail = "";
-                    long initialBytesTransferred = totalBytesTransferred;
-                    
-                    var progress = new Progress<CopyProgress>(p =>
+                    StartOffloadCommand.NotifyCanExecuteChanged();
+                    CancelCommand.NotifyCanExecuteChanged();
+                    ToggleCopyCommand.NotifyCanExecuteChanged();
+                });
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanCancel))]
+        private void Cancel()
+        {
+            if (_cts != null && !IsCancelling)
+            {
+                UpdateUI(() => 
+                {
+                    LogText = "🛑 Arrêt demandé... Nettoyage imminent.";
+                    IsCancelling = true; 
+                    CancelCommand.NotifyCanExecuteChanged(); 
+                });
+                
+                try 
+                { 
+                    Console.WriteLine("--- 3. CANCEL REQUESTED: Sending token signal ---");
+                    _cts.Cancel(); 
+                } catch { }
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanToggleCopy))]
+        private void ToggleCopy()
+        {
+            if (IsBusy)
+            {
+                if (CancelCommand.CanExecute(null)) Cancel();
+            }
+            else
+            {
+                // Fire and forget, StartOffload handles its own exceptions
+                if (StartOffloadCommand.CanExecute(null)) _ = StartOffload();
+            }
+        }
+
+        private bool CanToggleCopy()
+        {
+            if (IsBusy) return CanCancel();
+            return CanStart();
+        }
+
+        // --- CORE LOGIC ---
+
+        private async Task ProcessCopySequence(CancellationToken ct)
+        {
+            UpdateUI(() => LogText = "Analyse des fichiers en cours...");
+
+            var scannedFiles = new List<FileInfo>();
+            if (Directory.Exists(SourcePath))
+            {
+                ScanDirectoryRecursive(new DirectoryInfo(SourcePath!), scannedFiles, 0, 3, ct);
+            }
+
+            if (scannedFiles.Count == 0)
+            {
+                UpdateUI(() => {
+                    LogText = "Aucun fichier trouvé (limite profondeur: 3).";
+                    IsBusy = false;
+                });
+                return;
+            }
+
+            long totalBytesToCopy = scannedFiles.Sum(f => f.Length);
+            long totalBytesTransferred = 0;
+            var sourceDir = new DirectoryInfo(SourcePath!);
+
+            UpdateUI(() => LogText = $"{scannedFiles.Count} fichiers à copier ({totalBytesToCopy / 1024 / 1024} MB)");
+
+            Console.WriteLine($"--- 2. COPY THREAD STARTED: Found {scannedFiles.Count} files ---");
+
+            foreach (var file in scannedFiles)
+            {
+                ct.ThrowIfCancellationRequested(); 
+
+                UpdateUI(() => LogText = $"Securing {file.Name}...");
+                
+                long initialBytesTransferred = totalBytesTransferred;
+                string relativePath = Path.GetRelativePath(sourceDir.FullName, file.FullName);
+
+                // Throttle UI updates to prevent flooding (max 20 per second)
+                var lastUpdate = DateTime.MinValue;
+
+                var progress = new Progress<CopyProgress>(p =>
+                {
+                    // FIX 2: Crash on Progress Update (Null Check)
+                    if (Application.Current == null) return;
+
+                    var now = DateTime.UtcNow;
+                    // Always update if complete (100%), otherwise throttle to 50ms
+                    if ((now - lastUpdate).TotalMilliseconds < 50 && p.Percentage < 100) return;
+                    lastUpdate = now;
+
+                    // FIX 3: Use InvokeAsync to prevent background thread from locking if UI is busy
+                    Application.Current.Dispatcher.InvokeAsync(() => 
                     {
-                        // Update UI Speed
                         CurrentSpeedDisplay = $"{p.TransferSpeedMbPerSec:F1} MB/s";
-                        
-                        // Update Overall Progress based on bytes
                         long currentFileBytes = p.BytesTransferred;
                         long globalBytes = initialBytesTransferred + currentFileBytes;
                         
-                        // Avoid division by zero
                         if (totalBytesToCopy > 0)
                         {
                             ProgressValue = (double)globalBytes / totalBytesToCopy * 100;
-
-                            // Calculate ETA
+                            
                             double speedBytesPerSec = p.TransferSpeedMbPerSec * 1024 * 1024;
                             if (speedBytesPerSec > 0)
                             {
-                                long remainingBytes = totalBytesToCopy - globalBytes;
-                                double secondsRemaining = remainingBytes / speedBytesPerSec;
+                                double secondsRemaining = (totalBytesToCopy - globalBytes) / speedBytesPerSec;
                                 TimeSpan timeSpan = TimeSpan.FromSeconds(secondsRemaining);
                                 TimeRemainingDisplay = timeSpan.ToString(timeSpan.TotalHours >= 1 ? @"hh\:mm\:ss" : @"mm\:ss");
                             }
                         }
                     });
-                    
-                    CurrentHashDisplay = "Calcul en cours...";
+                });
 
-                    // Calculate relative path to keep structure
-                    string relativePath = Path.GetRelativePath(sourceDir.FullName, file.FullName);
+                var destPaths = new List<string>();
+                if (!string.IsNullOrEmpty(Destination1Path)) destPaths.Add(Path.Combine(Destination1Path, relativePath));
+                if (!string.IsNullOrEmpty(Destination2Path)) destPaths.Add(Path.Combine(Destination2Path, relativePath));
 
-                    try 
-                    {
-                        CopyResult? result = null;
-
-                        // Copy to Dest 1
-                        if (!string.IsNullOrEmpty(Destination1Path))
-                        {
-                            var destFile = Path.Combine(Destination1Path, relativePath);
-                            result = await _secureCopyService.CopyFileSecureAsync(file.FullName, destFile, progress, token);
-                        }
-
-                        // Copy to Dest 2
-                        if (!string.IsNullOrEmpty(Destination2Path))
-                        {
-                            var destFile2 = Path.Combine(Destination2Path, relativePath);
-                            var result2 = await _secureCopyService.CopyFileSecureAsync(file.FullName, destFile2, progress, token);
-                            
-                            if (result != null && result2 != null && result.SourceHash != result2.SourceHash)
-                            {
-                                throw new Exception("Hash mismatch between destinations!"); 
-                            }
-                            result = result2 ?? result;
-                        }
-                        
-                        if (result != null && result.Success)
-                        {
-                            FilesCopiedCount++;
-                            fileHash = result.SourceHash;
-                            CurrentHashDisplay = $"xxHash64: {fileHash}";
-                        }
-                        else
-                        {
-                            ErrorsCount++;
-                            status = "[ERREUR]";
-                            errorDetail = "Copie échouée ou incomplète";
-                        }
-                        
-                        // Update global bytes manually if success
-                         totalBytesTransferred += file.Length; 
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        throw;
-                    }
-                    catch (Exception ex)
-                    {
-                        ErrorsCount++;
-                        status = "[ERREUR]";
-                        errorDetail = ex.Message;
-                    }
-
-                    // Append to report
-                    reportBuilder.AppendLine($"{processingDate.ToShortTimeString()} - {relativePath} | {status} | {fileHash} | {errorDetail}");
+                // Pre-Create Directories
+                foreach (var destFile in destPaths)
+                {
+                     var parentDir = Path.GetDirectoryName(destFile);
+                     if (!string.IsNullOrEmpty(parentDir) && !Directory.Exists(parentDir))
+                     {
+                         Directory.CreateDirectory(parentDir);
+                         if (!_createdDirectories.Contains(parentDir)) _createdDirectories.Add(parentDir);
+                     }
                 }
-                
-                MessageBox.Show(
-                    $"Succès ! {FilesCopiedCount} fichiers sécurisés.\nRapport(s) généré(s) dans le(s) dossier(s) de destination.",
-                    "Secure Offload Terminé",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+
+                CopyResult? result = null;
+
+                foreach (var destFile in destPaths)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    var copyRes = await _secureCopyService.CopyFileSecureAsync(file.FullName, destFile, progress, ct);
+                    if (copyRes.Success) 
+                    {
+                        _copiedFiles.Add(destFile);
+                        if (result == null) result = copyRes;
+                    }
+                }
+
+                UpdateUI(() =>
+                {
+                    if (result != null && result.Success) FilesCopiedCount++;
+                    else ErrorsCount++;
+                });
+
+                totalBytesTransferred += file.Length;
             }
-            catch (OperationCanceledException)
-            {
-                LogText = "Copie annulée par l'utilisateur.";
-                TimeRemainingDisplay = "ANNULÉ";
-                reportBuilder.AppendLine("ANNULATION PAR UTILISATEUR");
-                MessageBox.Show("L'opération a été arrêtée par l'utilisateur.", "Arrêt", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                 MessageBox.Show($"Erreur critique : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
-                 reportBuilder.AppendLine($"ERREUR CRITIQUE: {ex.Message}");
-            }
-            finally
+            
+            UpdateUI(() => 
             {
                 IsBusy = false;
-                _cts?.Dispose();
-                _cts = null;
-                
-                // Save Report
-                try 
+                MessageBox.Show($"Terminé ! {FilesCopiedCount} fichiers copiés.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+            });
+        }
+
+        private async Task PerformRollback()
+        {
+            Console.WriteLine("--- 5. ROLLBACK INITIATED: Deleting files... ---");
+
+            UpdateUI(() =>
+            {
+                LogText = "❌ Annulation... Nettoyage des fichiers...";
+                TimeRemainingDisplay = "ROLLBACK";
+                CurrentSpeedDisplay = "";
+                CurrentHashDisplay = "Cleaning Up...";
+            });
+            
+            await Task.Run(() =>
+            {
+                foreach (var file in _copiedFiles)
                 {
-                    string reportFilename = $"Veriflow_Report_{processingDate:yyyyMMdd_HHmmss}.txt";
-                    if (!string.IsNullOrEmpty(Destination1Path))
-                         File.WriteAllText(Path.Combine(Destination1Path, reportFilename), reportBuilder.ToString());
-                    if (!string.IsNullOrEmpty(Destination2Path))
-                         File.WriteAllText(Path.Combine(Destination2Path, reportFilename), reportBuilder.ToString());
+                    try { if (File.Exists(file)) File.Delete(file); } catch { }
                 }
-                catch { /* Ignore report write errors */ }
+
+                for (int i = _createdDirectories.Count - 1; i >= 0; i--)
+                {
+                    var dir = _createdDirectories[i];
+                    try
+                    {
+                        if (Directory.Exists(dir) && !Directory.EnumerateFileSystemEntries(dir).Any()) Directory.Delete(dir);
+                    }
+                    catch { }
+                }
+            });
+
+            UpdateUI(() =>
+            {
+                IsCancelling = false;
+                IsBusy = false;
+                
+                ProgressValue = 0;
+                LogText = "Prêt.";
+                TimeRemainingDisplay = "--:--";
+                CurrentHashDisplay = "xxHash64: -";
+                CurrentSpeedDisplay = "0 MB/s";
+                
+                MessageBox.Show("La copie a été annulée. Tous les fichiers copiés ont été nettoyés.", "Annulation Confirmée", MessageBoxButton.OK, MessageBoxImage.Information);
+            });
+        }
+
+        private void ScanDirectoryRecursive(DirectoryInfo dir, List<FileInfo> fileList, int currentDepth, int maxDepth, CancellationToken ct)
+        {
+            if (currentDepth > maxDepth) return;
+            if (ct.IsCancellationRequested) return;
+
+            var excludedFolders = new[] { ".git", "$RECYCLE.BIN", "System Volume Information", "AppData", "node_modules" };
+            if (excludedFolders.Contains(dir.Name, StringComparer.OrdinalIgnoreCase)) return;
+
+            try
+            {
+                fileList.AddRange(dir.GetFiles());
+                foreach (var subDir in dir.GetDirectories()) ScanDirectoryRecursive(subDir, fileList, currentDepth + 1, maxDepth, ct);
+            }
+            catch (Exception) { }
+        }
+
+        private void UpdateUI(Action action)
+        {
+            if (Application.Current == null) return;
+            Application.Current.Dispatcher.Invoke(action);
+        }
+
+        // --- DRAG & DROP & PICKERS ---
+        private bool CanInteract() => !IsBusy;
+
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void PickSource() { var p = PickFolder(); if (p != null) SourcePath = p; }
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void PickDest1() { var p = PickFolder(); if (p != null) Destination1Path = p; }
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void PickDest2() { var p = PickFolder(); if (p != null) Destination2Path = p; }
+
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void DropSource(DragEventArgs e) => HandleDrop(e, p => SourcePath = p);
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void DropDest1(DragEventArgs e) => HandleDrop(e, p => Destination1Path = p);
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void DropDest2(DragEventArgs e) => HandleDrop(e, p => Destination2Path = p);
+        [RelayCommand] private void DragOver(DragEventArgs e) { e.Effects = DragDropEffects.Copy; e.Handled = true; }
+
+        // --- CLEAR & RESET COMMANDS ---
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void ClearSource() => SourcePath = null;
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void ClearDest1() => Destination1Path = null;
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void ClearDest2() => Destination2Path = null;
+
+        [RelayCommand(CanExecute = nameof(CanInteract))]
+        private void ResetAll()
+        {
+            SourcePath = null;
+            Destination1Path = null;
+            Destination2Path = null;
+            LogText = "Prêt.";
+            ProgressValue = 0;
+            TimeRemainingDisplay = "--:--";
+            CurrentSpeedDisplay = "0 MB/s";
+            CurrentHashDisplay = "xxHash64: -";
+        }
+
+        private void HandleDrop(DragEventArgs e, Action<string> setPath)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                if (e.Data.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
+                {
+                    string path = files[0];
+                    if (Directory.Exists(path)) setPath(path);
+                    else if (File.Exists(path)) setPath(Path.GetDirectoryName(path)!);
+                }
             }
         }
 
@@ -375,13 +432,7 @@ namespace Veriflow.Desktop.ViewModels
                 Title = "Sélectionner un dossier",
                 Multiselect = false
             };
-
-            if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.FolderName))
-            {
-                return dialog.FolderName;
-            }
-
-            return null;
+            return (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.FolderName)) ? dialog.FolderName : null;
         }
     }
 }
