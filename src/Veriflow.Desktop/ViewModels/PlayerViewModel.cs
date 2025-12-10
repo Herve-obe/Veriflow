@@ -36,6 +36,8 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
         [NotifyCanExecuteChangedFor(nameof(StopCommand))]
+        [NotifyCanExecuteChangedFor(nameof(SendFileToTranscodeCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UnloadMediaCommand))]
         private bool _isAudioLoaded;
 
         [ObservableProperty]
@@ -145,7 +147,9 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        [RelayCommand]
+        private bool CanUnloadMedia() => IsAudioLoaded;
+
+        [RelayCommand(CanExecute = nameof(CanUnloadMedia))]
         private async Task UnloadMedia()
         {
             await Stop();
@@ -541,6 +545,18 @@ namespace Veriflow.Desktop.ViewModels
         public void Dispose()
         {
             CleanUpAudio();
+        }
+        public event Action<IEnumerable<string>>? RequestTranscode;
+        
+        private bool CanSendFileToTranscode() => IsAudioLoaded && !string.IsNullOrEmpty(FilePath);
+
+        [RelayCommand(CanExecute = nameof(CanSendFileToTranscode))]
+        private void SendFileToTranscode()
+        {
+            if (CanSendFileToTranscode())
+            {
+                RequestTranscode?.Invoke(new[] { FilePath });
+            }
         }
     }
 }

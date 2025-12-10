@@ -20,6 +20,8 @@ namespace Veriflow.Desktop.ViewModels
         private ObservableCollection<DriveViewModel> _drives = new();
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(OpenInPlayerCommand))]
+        [NotifyCanExecuteChangedFor(nameof(SendFileToTranscodeCommand))]
         private MediaItemViewModel? _selectedMedia;
 
         partial void OnSelectedMediaChanged(MediaItemViewModel? value)
@@ -31,7 +33,38 @@ namespace Veriflow.Desktop.ViewModels
         private bool _isPreviewing;
         
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SendToSecureCopyCommand))]
+        [NotifyCanExecuteChangedFor(nameof(SendToTranscodeCommand))]
         private string _currentPath = @"C:\";
+
+        public event Action<string>? RequestOffloadSource;
+        public event Action<IEnumerable<string>>? RequestTranscode;
+
+        private bool CanSendToSecureCopy() => !string.IsNullOrWhiteSpace(CurrentPath) && Directory.Exists(CurrentPath);
+        private bool CanSendToTranscode() => !string.IsNullOrWhiteSpace(CurrentPath) && Directory.Exists(CurrentPath) && FileList.Any();
+
+        [RelayCommand(CanExecute = nameof(CanSendToSecureCopy))]
+        private void SendToSecureCopy()
+        {
+             RequestOffloadSource?.Invoke(CurrentPath);
+        }
+
+        private bool CanSendFileToTranscode() => SelectedMedia != null;
+
+        [RelayCommand(CanExecute = nameof(CanSendFileToTranscode))]
+        private void SendFileToTranscode()
+        {
+            if (SelectedMedia != null)
+                RequestTranscode?.Invoke(new List<string> { SelectedMedia.FullName });
+        }
+
+        [RelayCommand(CanExecute = nameof(CanSendToTranscode))]
+        private void SendToTranscode()
+        {
+            var files = FileList.Select(x => x.FullName).ToList();
+            if (files.Any())
+                RequestTranscode?.Invoke(files);
+        }
 
         [ObservableProperty]
         private ObservableCollection<MediaItemViewModel> _fileList = new();
@@ -71,6 +104,8 @@ namespace Veriflow.Desktop.ViewModels
                 catch {}
             };
             _driveWatcher.Start();
+
+            FileList.CollectionChanged += (s, e) => SendToTranscodeCommand.NotifyCanExecuteChanged();
         }
 
         private void RefreshDrives()
@@ -173,7 +208,9 @@ namespace Veriflow.Desktop.ViewModels
 
         public event Action<string>? RequestOpenInPlayer;
 
-        [RelayCommand]
+        private bool CanOpenInPlayer() => SelectedMedia != null;
+
+        [RelayCommand(CanExecute = nameof(CanOpenInPlayer))]
         private void OpenInPlayer()
         {
             if (SelectedMedia != null)

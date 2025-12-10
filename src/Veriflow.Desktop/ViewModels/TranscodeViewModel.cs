@@ -157,6 +157,14 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
+        public void AddFiles(IEnumerable<string> paths)
+        {
+            foreach (var path in paths)
+            {
+                AddFile(path);
+            }
+        }
+
         private void AddFile(string path)
         {
             // Avoid duplicates?

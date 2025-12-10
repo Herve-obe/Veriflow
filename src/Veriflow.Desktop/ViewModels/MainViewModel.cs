@@ -17,11 +17,13 @@ namespace Veriflow.Desktop.ViewModels
         private readonly PlayerViewModel _playerViewModel = new(); 
         private readonly TranscodeViewModel _transcodeViewModel = new();
         private readonly MediaViewModel _mediaViewModel = new();
+        private readonly SyncViewModel _syncViewModel = new();
         private readonly string _reportsView = "Reports View (Coming Soon)";
 
         public ICommand ShowPlayerCommand { get; }
         public ICommand ShowMediaCommand { get; }
         public ICommand ShowTranscodeCommand { get; }
+        public ICommand ShowSyncCommand { get; }
         public ICommand ShowOffloadCommand { get; }
         public ICommand ShowReportsCommand { get; }
 
@@ -34,6 +36,7 @@ namespace Veriflow.Desktop.ViewModels
                 CurrentView = _mediaViewModel;
             });
             ShowTranscodeCommand = new RelayCommand(() => CurrentView = _transcodeViewModel);
+            ShowSyncCommand = new RelayCommand(() => CurrentView = _syncViewModel);
             ShowOffloadCommand = new RelayCommand(() => CurrentView = _offloadViewModel);
             ShowReportsCommand = new RelayCommand(() => CurrentView = _reportsView);
 
@@ -57,6 +60,24 @@ namespace Veriflow.Desktop.ViewModels
                     System.Windows.MessageBox.Show($"Error opening player: {ex.Message}");
                 }
             };
+
+            _mediaViewModel.RequestOffloadSource += (path) =>
+            {
+                _offloadViewModel.SourcePath = path;
+                CurrentView = _offloadViewModel;
+            };
+
+            _mediaViewModel.RequestTranscode += (files) =>
+            {
+                _transcodeViewModel.AddFiles(files);
+                CurrentView = _transcodeViewModel;
+            };
+
+            _playerViewModel.RequestTranscode += (files) =>
+            {
+                _transcodeViewModel.AddFiles(files);
+                CurrentView = _transcodeViewModel;
+            };
         }
 
         partial void OnCurrentViewChanged(object? value)
@@ -64,6 +85,7 @@ namespace Veriflow.Desktop.ViewModels
             OnPropertyChanged(nameof(IsMediaActive));
             OnPropertyChanged(nameof(IsPlayerActive));
             OnPropertyChanged(nameof(IsTranscodeActive));
+            OnPropertyChanged(nameof(IsSyncActive));
             OnPropertyChanged(nameof(IsOffloadActive));
             OnPropertyChanged(nameof(IsReportsActive));
         }
@@ -90,6 +112,12 @@ namespace Veriflow.Desktop.ViewModels
         {
             get => CurrentView == _offloadViewModel;
             set { if (value) CurrentView = _offloadViewModel; }
+        }
+
+        public bool IsSyncActive
+        {
+            get => CurrentView == _syncViewModel;
+            set { if (value) CurrentView = _syncViewModel; }
         }
 
         public bool IsReportsActive

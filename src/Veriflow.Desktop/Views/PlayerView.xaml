@@ -124,7 +124,7 @@
 
     </UserControl.Resources>
 
-    <Grid Margin="15" AllowDrop="True" Background="Transparent">
+    <Grid AllowDrop="True" Background="Transparent">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="Drop">
                 <i:InvokeCommandAction Command="{Binding DropFileCommand}" PassEventArgsToCommand="True" />
@@ -133,11 +133,11 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>   <!-- Console (Left) -->
-            <ColumnDefinition Width="350"/>  <!-- Metadata (Right) -->
+            <ColumnDefinition Width="300"/>  <!-- Metadata (Right) -->
         </Grid.ColumnDefinitions>
 
         <!-- LEFT COLUMN: CONSOLE -->
-        <Grid Grid.Column="0" Margin="0,0,15,0">
+        <Grid Grid.Column="0" Margin="15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/> <!-- Header -->
                 <RowDefinition Height="Auto"/> <!-- Transport -->
@@ -159,19 +159,9 @@
                         <TextBlock Text="DERUSH CONSOLE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
 
                         
-                        <Button Command="{Binding LoadFileCommand}" Content="IMPORT MEDIA" 
-                                Margin="20,0,0,0" VerticalAlignment="Center" 
-                                Focusable="False" Height="26" 
-                                Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
-                                Style="{StaticResource {x:Type Button}}"/>
 
-                        <Button Command="{Binding UnloadMediaCommand}" Content="CLOSE MEDIA" 
-                                Margin="10,0,0,0" VerticalAlignment="Center" 
-                                Focusable="False" Height="26" 
-                                Background="#D32F2F" Foreground="White" FontWeight="Bold"
-                                ToolTip="Close Media"
-                                Visibility="{Binding IsAudioLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Style="{StaticResource {x:Type Button}}"/>
+
+
                     </StackPanel>
 
                     <TextBlock Text="{Binding FileName, TargetNullValue='No file loaded'}" FontSize="{StaticResource Font.Size.Header}" FontWeight="Bold" Foreground="#DDDDDD" Margin="0,2"/>
@@ -398,9 +388,62 @@
         </Grid>
 
         <!-- RIGHT COLUMN: METADATA -->
-        <Border Grid.Column="1" Padding="15" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="0">
-            <ScrollViewer Focusable="False">
+        <!-- RIGHT COLUMN: METADATA -->
+        <Border Grid.Column="1" Padding="15" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" CornerRadius="0">
+            <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
+                    
+                    <Button Command="{Binding LoadFileCommand}"
+                            Content="OPEN FILE"
+                            Height="30" Margin="0,0,0,10"
+                            Foreground="White" FontWeight="Bold">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Command="{Binding UnloadMediaCommand}"
+                            Content="CLOSE FILE"
+                            Height="30" Margin="0,0,0,10"
+                            Foreground="White" FontWeight="Bold">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Command="{Binding SendFileToTranscodeCommand}"
+                            Content="SEND FILE TO TRANSCODE"
+                            Height="30" Margin="0,0,0,20"
+                            Foreground="White" FontWeight="Bold">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!-- SPACER (Compensate for missing 4th button to align with Media Page) -->
+                    <Grid Height="70" />
+
                     <TextBlock Text="METADATA" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
 
                     <Grid Margin="0,5">

@@ -164,47 +164,72 @@
                 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Focusable="False">
                     <StackPanel>
-                        <TextBlock Text="METADATA" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
+
 
                         <!-- LINK TO PLAYER BUTTON -->
                         <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Content="OPEN IN PLAYER"
-                                Height="30" Margin="0,0,0,20"
-                                Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"> 
-                        <!-- Note: Binding to self (non-null) via converter? 
-                             The DataContext here is 'SelectedMedia'. If it is null, this whole Border might need to be hidden or handled.
-                             However, Button visibility: The BooleanToVisibilityConverter usually takes a bool. 
-                             If we want to show/hide based on null, we need a NullToVisibilityConverter. 
-                             OR: The border DataContext is SelectedMedia. If SelectedMedia is null, this binding fails? 
-                             Actually, if SelectedMedia is null, the binding to DataContext might be null.
-                             
-                             Better approach: The Border itself should probably be hidden if nothing is selected.
-                             Let's check the Border definition.
-                             Border Grid.Column="2" ... DataContext="{Binding SelectedMedia}"
-                             
-                             If I just put the button there, it will try to resolve.
-                             Let's make it simpler: The user wants the button to APPEAR.
-                             If SelectedMedia is null, this Border is still visible (just with empty bindings).
-                             
-                             I will use a Style trigger on the Button to hide it if DataContext is null? 
-                             Or simpler: Bind Visibility to a property 'IsSelected' on MediaItemViewModel? No.
-                             
-                             Let's use the fact that if we are here, we might have a selection.
-                             But to be safe and robust:
-                             I'll add a Style DataTrigger to the Button. 
-                             Binding "{Binding}" (the MediaItemViewModel). If null, Hide.
-                        -->
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                <Setter Property="Visibility" Value="Visible"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Null}">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
+                                Content="OPEN FILE IN PLAYER"
+                                Height="30" Margin="0,0,0,10"
+                                Foreground="White" FontWeight="Bold">
+                             <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
                         </Button>
+
+                        <!-- SEND TO SECURE COPY -->
+                        <Button Command="{Binding DataContext.SendToSecureCopyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Content="SEND TO SECURE COPY"
+                                Height="30" Margin="0,0,0,10"
+                                Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
+                                ToolTip="Send current folder to Secure Copy"/>
+
+                        <!-- SEND FILE TO TRANSCODE -->
+                        <Button Command="{Binding DataContext.SendFileToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Content="SEND FILE TO TRANSCODE"
+                                Height="30" Margin="0,0,0,10"
+                                Foreground="White" FontWeight="Bold"
+                                ToolTip="Send selected file to Transcode">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <!-- SEND TO TRANSCODE -->
+                        <Button Command="{Binding DataContext.SendToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Content="SEND FOLDER TO TRANSCODE"
+                                Height="30" Margin="0,0,0,20"
+                                Foreground="White" FontWeight="Bold"
+                                ToolTip="Send all files in folder to Transcode">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <!-- SPACER -->
+                        <Grid Height="30"/>
+
+                        <TextBlock Text="METADATA" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
     
                         <Grid Margin="0,5">
                              <Grid.ColumnDefinitions>
