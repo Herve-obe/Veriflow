@@ -17,6 +17,7 @@
     </UserControl.InputBindings>
 
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:PercentToPositionConverter x:Key="PercentToPositionConverter"/>
 
         <!-- Mute Button Style -->
@@ -158,14 +159,22 @@
                         <TextBlock Text="DERUSH CONSOLE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
 
                         
-                        <Button Command="{Binding LoadFileCommand}" Content="IMPORT MÉDIA" 
+                        <Button Command="{Binding LoadFileCommand}" Content="IMPORT MEDIA" 
                                 Margin="20,0,0,0" VerticalAlignment="Center" 
                                 Focusable="False" Height="26" 
                                 Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
                                 Style="{StaticResource {x:Type Button}}"/>
+
+                        <Button Command="{Binding UnloadMediaCommand}" Content="CLOSE MEDIA" 
+                                Margin="10,0,0,0" VerticalAlignment="Center" 
+                                Focusable="False" Height="26" 
+                                Background="#D32F2F" Foreground="White" FontWeight="Bold"
+                                ToolTip="Close Media"
+                                Visibility="{Binding IsAudioLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{StaticResource {x:Type Button}}"/>
                     </StackPanel>
 
-                    <TextBlock Text="{Binding FileName, TargetNullValue='Aucun fichier chargé'}" FontSize="{StaticResource Font.Size.Header}" FontWeight="Bold" Foreground="#DDDDDD" Margin="0,2"/>
+                    <TextBlock Text="{Binding FileName, TargetNullValue='No file loaded'}" FontSize="{StaticResource Font.Size.Header}" FontWeight="Bold" Foreground="#DDDDDD" Margin="0,2"/>
                     
                     <!-- Timecode Display -->
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
@@ -392,14 +401,14 @@
         <Border Grid.Column="1" Padding="15" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="0">
             <ScrollViewer Focusable="False">
                 <StackPanel>
-                    <TextBlock Text="MÉTADONNÉES" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
+                    <TextBlock Text="METADATA" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
 
                     <Grid Margin="0,5">
                          <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="SCÈNE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Text="SCENE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}" Foreground="White"/>
                     </Grid>
                     <Separator Margin="0,5"/>
@@ -409,7 +418,7 @@
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="PRISE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Text="TAKE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Take}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
                     </Grid>
                      <Separator Margin="0,5"/>
@@ -419,7 +428,7 @@
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="TC DÉPART" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Text="START TC" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
                     </Grid>
                      <Separator Margin="0,5"/>
@@ -429,7 +438,7 @@
                             <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="DURÉE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Text="DURATION" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
                     </Grid>
                     <Separator Margin="0,5"/>
@@ -449,7 +458,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="ORIGINE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Text="ORIGINATOR" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Originator}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
                     </Grid>
                     <Separator Margin="0,5"/>
@@ -469,7 +478,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="RUBAN" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Text="TAPE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                         <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
                     </Grid>
 

@@ -38,7 +38,7 @@
                                Height="24" Stretch="Uniform"
                                VerticalAlignment="Center" Margin="0,0,8,0"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
-                        <TextBlock Text="SOURCE MÉDIA" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                        <TextBlock Text="MEDIA SOURCE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
                     </StackPanel>
                     
                     <!-- Global Reset Button -->
@@ -101,7 +101,7 @@
                         </Button>
                     </Grid>
                     
-                    <Button Grid.Column="1" Command="{Binding PickSourceCommand}" Content="OUVRIR" 
+                    <Button Grid.Column="1" Command="{Binding PickSourceCommand}" Content="OPEN" 
                             Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
                             Style="{StaticResource ActionButtonStyle}"/>
                 </Grid>
@@ -125,7 +125,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
-                    <TextBlock Text="DESTINATION PRINCIPALE (A)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
+                    <TextBlock Text="MAIN DESTINATION (A)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
                     
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -173,7 +173,7 @@
                             </Button>
                         </Grid>
 
-                        <Button Grid.Column="1" Command="{Binding PickDest1Command}" Content="OUVRIR" 
+                        <Button Grid.Column="1" Command="{Binding PickDest1Command}" Content="OPEN" 
                                 Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
                                 Style="{StaticResource ActionButtonStyle}"/>
                     </Grid>
@@ -186,7 +186,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     
-                    <TextBlock Text="DESTINATION SECONDAIRE (B)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
+                    <TextBlock Text="SECONDARY DESTINATION (B)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
                     
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -234,7 +234,7 @@
                             </Button>
                         </Grid>
 
-                        <Button Grid.Column="1" Command="{Binding PickDest2Command}" Content="OUVRIR" 
+                        <Button Grid.Column="1" Command="{Binding PickDest2Command}" Content="OPEN" 
                                 Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
                                 Style="{StaticResource ActionButtonStyle}"/>
                     </Grid>
@@ -249,7 +249,7 @@
                     HorizontalAlignment="Center" Width="400">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                        <Setter Property="Content" Value="DÉMARRER LA COPIE"/>
+                        <Setter Property="Content" Value="START COPY"/>
                         <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
                         <Setter Property="Foreground" Value="White"/>
                         <Setter Property="FontWeight" Value="Bold"/>
@@ -259,7 +259,7 @@
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                <Setter Property="Content" Value="ARRÊTER LA COPIE"/>
+                                <Setter Property="Content" Value="STOP COPY"/>
                                 <Setter Property="Background" Value="#8B0000"/>
                                 <Setter Property="BorderBrush" Value="#8B0000"/>
                             </DataTrigger>

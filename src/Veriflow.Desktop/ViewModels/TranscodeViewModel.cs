@@ -2,31 +2,52 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Windows;
+using Veriflow.Desktop.Services;
 
 namespace Veriflow.Desktop.ViewModels
 {
     public partial class TranscodeViewModel : ObservableObject
     {
-        private readonly Services.ITranscodingService _transcodingService;
+        private readonly ITranscodingService _transcodingService;
+
+        public ObservableCollection<TranscodeItemViewModel> Files { get; } = new();
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(StartTranscodeCommand))]
-        private string? _sourceFile;
+        [NotifyCanExecuteChangedFor(nameof(ClearListCommand))]
+        private bool _isBusy;
 
         [ObservableProperty]
-        private string? _destinationFolder;
+        private double _totalProgressValue;
 
+        [ObservableProperty]
+        private string _statusMessage = "Ready";
+
+        // Bitrates Support
+        public ObservableCollection<string> AvailableBitrates { get; } = new();
+
+        [ObservableProperty]
+        private string _selectedBitrate = "";
+
+        // Settings
         public ObservableCollection<string> AvailableFormats { get; } = new()
         {
-            "WAV", "FLAC", "MP3", "AAC", "OGG"
+            "WAV", "FLAC", "MP3", "AAC", "OGG", "AIFF"
         };
 
         [ObservableProperty]
         private string _selectedFormat = "WAV";
 
+        partial void OnSelectedFormatChanged(string value)
+        {
+            UpdateBitrates(value);
+        }
+
         public ObservableCollection<string> AvailableSampleRates { get; } = new()
         {
-            "Same as Source", "44100", "48000", "88200", "96000"
+            "Same as Source", "44100", "48000", "88200", "96000", "192000"
         };
 
         [ObservableProperty]
@@ -41,46 +62,143 @@ namespace Veriflow.Desktop.ViewModels
         private string _selectedBitDepth = "Same as Source";
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(StartTranscodeCommand))]
-        private bool _isBusy;
-
-        [ObservableProperty]
-        private double _progressValue;
-
-        [ObservableProperty]
-        private string _statusMessage = "Ready";
+        private string _destinationFolder = "";
 
         public TranscodeViewModel()
         {
-            // Ideally injected, but for now instantiation is fine or we can add to MainViewModel DI
-            _transcodingService = new Services.TranscodingService(); 
+            _transcodingService = new Services.TranscodingService();
+            Files.CollectionChanged += (s, e) => 
+            {
+                StartTranscodeCommand.NotifyCanExecuteChanged();
+                ClearListCommand.NotifyCanExecuteChanged();
+            };
+            Files.CollectionChanged += (s, e) => 
+            {
+                StartTranscodeCommand.NotifyCanExecuteChanged();
+                ClearListCommand.NotifyCanExecuteChanged();
+            };
+            
+            // Initialize bitrates for default format
+            UpdateBitrates(SelectedFormat);
+        }
+
+        private void UpdateBitrates(string format)
+        {
+            AvailableBitrates.Clear();
+            SelectedBitrate = "";
+
+            if (format == "MP3")
+            {
+                AvailableBitrates.Add("320k");
+                AvailableBitrates.Add("256k");
+                AvailableBitrates.Add("192k");
+                AvailableBitrates.Add("128k");
+                AvailableBitrates.Add("96k");
+                AvailableBitrates.Add("64k");
+                SelectedBitrate = "320k";
+            }
+            else if (format == "AAC")
+            {
+                AvailableBitrates.Add("320k");
+                AvailableBitrates.Add("256k");
+                AvailableBitrates.Add("192k");
+                AvailableBitrates.Add("128k");
+                AvailableBitrates.Add("64k");
+                SelectedBitrate = "256k";
+            }
+            else if (format == "OGG")
+            {
+                 AvailableBitrates.Add("320k");
+                 AvailableBitrates.Add("192k");
+                 AvailableBitrates.Add("128k");
+                 AvailableBitrates.Add("96k");
+                 SelectedBitrate = "192k";
+            }
+            else
+            {
+                // WAV, FLAC, AIFF - No bitrate selection (PCM or Lossless)
+            }
         }
 
         [RelayCommand]
-        private void PickSource()
+        private void DropFiles(DragEventArgs e)
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.Filter = "Media Files|*.wav;*.mp3;*.flac;*.mp4;*.mov;*.mkv|All Files|*.*";
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files != null)
+                {
+                    foreach (var file in files)
+                    {
+                        // Filter explicit audio extensions if needed, or allow all and let ffmpeg handle
+                        AddFile(file);
+                    }
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void AddFiles()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "Media Files|*.*"
+            };
+
             if (dialog.ShowDialog() == true)
             {
-                SourceFile = dialog.FileName;
-                // Auto-set destination to same folder? Or leave empty? 
-                if (string.IsNullOrEmpty(DestinationFolder))
-                    DestinationFolder = System.IO.Path.GetDirectoryName(SourceFile);
+                foreach(var file in dialog.FileNames)
+                {
+                    AddFile(file);
+                }
             }
+        }
+
+        private void AddFile(string path)
+        {
+            // Avoid duplicates?
+            if (!Files.Any(f => f.FilePath == path))
+            {
+                var item = new TranscodeItemViewModel(path);
+                
+                // Try to read metadata
+                try
+                {
+                    using (var reader = new NAudio.Wave.AudioFileReader(path))
+                    {
+                        var time = reader.TotalTime;
+                        item.DurationString = time.ToString(@"mm\:ss");
+                        item.AudioInfo = $"{reader.WaveFormat.SampleRate}Hz | {reader.WaveFormat.BitsPerSample}-bit";
+                    }
+                }
+                catch
+                {
+                    item.AudioInfo = "Unknown Format";
+                }
+
+                Files.Add(item);
+            }
+        }
+
+        [RelayCommand]
+        private void RemoveFile(TranscodeItemViewModel item)
+        {
+            if (Files.Contains(item))
+            {
+                Files.Remove(item);
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanClearList))]
+        private void ClearList()
+        {
+            Files.Clear();
         }
 
         [RelayCommand]
         private void PickDestination()
         {
-            // FolderPicker (using a hack or library, WPF default doesn't have a good one easily available without heavy config)
-            // We'll use OpenFolderDialog if on newer .NET/Windows, else generic approach.
-            // Simplified: Use OpenFileDialog to pick a "dummy" file or just assume user types it? 
-            // Better: Use WindowsAPICodePack logic if available, but I don't have it.
-            // Robust Fallback: OpenFileDialog with "CheckFileExists = false" and "FileName = Select Folder"
-            
-            // Actually, for this environment, let's assume we can paste it or use a simple folder logic.
-            // Or try the OpenFolderDialog (available in .NET 8 / modern WPF).
              var dialog = new Microsoft.Win32.OpenFolderDialog(); 
              if (dialog.ShowDialog() == true)
              {
@@ -92,35 +210,75 @@ namespace Veriflow.Desktop.ViewModels
         private async Task StartTranscode()
         {
             if (IsBusy) return;
-            if (string.IsNullOrEmpty(SourceFile)) return;
-            if (string.IsNullOrEmpty(DestinationFolder)) return;
+            if (Files.Count == 0) return;
 
             IsBusy = true;
-            StatusMessage = "Transcoding...";
-            ProgressValue = 0; // Indeterminate for now
+            StatusMessage = "Processing...";
+            TotalProgressValue = 0;
+
+            int processedCount = 0;
+            int totalCount = Files.Count;
 
             try
             {
-                var fileName = System.IO.Path.GetFileNameWithoutExtension(SourceFile);
-                var extension = SelectedFormat.ToLower();
-                var outputFile = System.IO.Path.Combine(DestinationFolder, $"{fileName}_transcoded.{extension}");
 
-                var options = new Services.TranscodeOptions
+                var options = new TranscodeOptions
                 {
                     Format = SelectedFormat,
                     SampleRate = SelectedSampleRate,
-                    BitDepth = SelectedBitDepth
+                    BitDepth = SelectedBitDepth,
+                    Bitrate = SelectedBitrate
                 };
 
-                await _transcodingService.TranscodeAsync(SourceFile, outputFile, options, null);
+                foreach (var item in Files)
+                {
+                    item.Status = "Processing";
+                    
+                    // Determine output path
+                    string? rawDir = string.IsNullOrEmpty(DestinationFolder) ? System.IO.Path.GetDirectoryName(item.FilePath) : DestinationFolder;
+                    string outDir = rawDir ?? ""; 
+                    string fileName = System.IO.Path.GetFileNameWithoutExtension(item.FilePath);
+                    string extension = SelectedFormat.ToLower();
+                    // Handle AIFF extension
+                    if (extension == "aiff") extension = "aif";
+                    
+                    string outputFile = System.IO.Path.Combine(outDir, $"{fileName}_{extension.ToUpper()}.{extension}");
+
+                    // Make sure we don't overwrite source if same name (rare due to extension change, but possible)
+                    if (outputFile == item.FilePath)
+                    {
+                        outputFile = System.IO.Path.Combine(outDir, $"{fileName}_Transcoded.{extension}");
+                    }
+
+
+                    try
+                    {
+                        await _transcodingService.TranscodeAsync(item.FilePath, outputFile, options, null);
+                        item.Status = "Done";
+                        item.ProgressValue = 100;
+                    }
+                    catch (System.Exception itemEx)
+                    {
+                        item.Status = "Error";
+                        // If it's a missing executable, we should probably stop and warn
+                        if (itemEx.Message.Contains("Find the file") || itemEx is System.ComponentModel.Win32Exception)
+                        {
+                            MessageBox.Show($"FFmpeg not found. Please ensure FFmpeg is installed and in your PATH.\nError: {itemEx.Message}", "Dependency Missing", MessageBoxButton.OK, MessageBoxImage.Error);
+                            IsBusy = false;
+                            return;
+                        }
+                    }
+
+                    processedCount++;
+                    TotalProgressValue = (double)processedCount / totalCount * 100;
+                }
                 
-                StatusMessage = "Completed Successfully!";
-                DisplayAlert("Success", $"Transcoding finished:\n{outputFile}");
+                StatusMessage = "Batch Completed!";
             }
             catch (System.Exception ex)
             {
-                StatusMessage = "Error Occurred";
-                DisplayAlert("Error", ex.Message);
+                StatusMessage = "Global Error";
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -130,12 +288,13 @@ namespace Veriflow.Desktop.ViewModels
 
         private bool CanStartTranscode()
         {
-            return !string.IsNullOrEmpty(SourceFile) && !IsBusy;
+            return Files.Count > 0 && !IsBusy;
         }
 
-        private void DisplayAlert(string title, string message)
+        private bool CanClearList()
         {
-            System.Windows.MessageBox.Show(message, title, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+             return Files.Count > 0 && !IsBusy;
         }
     }
 }
+

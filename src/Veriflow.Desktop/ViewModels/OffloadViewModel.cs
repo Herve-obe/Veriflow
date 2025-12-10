@@ -114,7 +114,7 @@ namespace Veriflow.Desktop.ViewModels
                 _createdDirectories.Clear();
 
                 ProgressValue = 0;
-                LogText = "Initialisation...";
+                LogText = "Initializing...";
                 FilesCopiedCount = 0;
                 ErrorsCount = 0;
                 CurrentSpeedDisplay = "0 MB/s";
@@ -139,9 +139,9 @@ namespace Veriflow.Desktop.ViewModels
             {
                 UpdateUI(() =>
                 {
-                    LogText = $"Erreur : {ex.Message}";
+                    LogText = $"Error: {ex.Message}";
                     IsBusy = false;
-                    MessageBox.Show($"Erreur : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 });
             }
             finally
@@ -165,7 +165,7 @@ namespace Veriflow.Desktop.ViewModels
             {
                 UpdateUI(() => 
                 {
-                    LogText = "🛑 Arrêt demandé... Nettoyage imminent.";
+                    LogText = "🛑 Stop requested... Cleanup imminent.";
                     IsCancelling = true; 
                     CancelCommand.NotifyCanExecuteChanged(); 
                 });
@@ -202,7 +202,7 @@ namespace Veriflow.Desktop.ViewModels
 
         private async Task ProcessCopySequence(CancellationToken ct)
         {
-            UpdateUI(() => LogText = "Analyse des fichiers en cours...");
+            UpdateUI(() => LogText = "Analyzing files...");
 
             var scannedFiles = new List<FileInfo>();
             if (Directory.Exists(SourcePath))
@@ -213,7 +213,7 @@ namespace Veriflow.Desktop.ViewModels
             if (scannedFiles.Count == 0)
             {
                 UpdateUI(() => {
-                    LogText = "Aucun fichier trouvé (limite profondeur: 5).";
+                    LogText = "No files found (depth limit: 5).";
                     IsBusy = false;
                 });
                 return;
@@ -227,7 +227,7 @@ namespace Veriflow.Desktop.ViewModels
             if (!string.IsNullOrEmpty(Destination1Path)) destCount++;
             if (!string.IsNullOrEmpty(Destination2Path)) destCount++;
 
-            UpdateUI(() => LogText = $"{scannedFiles.Count} fichiers à copier vers {destCount} destination(s) ({totalBytesToCopy / 1024 / 1024:F1} MB)");
+            UpdateUI(() => LogText = $"{scannedFiles.Count} files to copy to {destCount} destination(s) ({totalBytesToCopy / 1024 / 1024:F1} MB)");
 
             var sessionResults1 = new List<CopyResult>();
             var sessionResults2 = new List<CopyResult>();
@@ -259,7 +259,7 @@ namespace Veriflow.Desktop.ViewModels
                 UpdateUI(() => 
                 {
                     LogText = $"Securing: {file.Name}";
-                    CurrentHashDisplay = "Calcul Hash & Copie...";
+                    CurrentHashDisplay = "Hash Calc & Copy...";
                 });
 
                 var progress = new Progress<CopyProgress>(p =>
@@ -317,7 +317,7 @@ namespace Veriflow.Desktop.ViewModels
                         else
                         {
                             ErrorsCount++;
-                            CurrentHashDisplay = "ERREUR COPIE/VERIF";
+                            CurrentHashDisplay = "COPY/VERIF ERROR";
                         }
                     });
                 }
@@ -325,7 +325,7 @@ namespace Veriflow.Desktop.ViewModels
                 {
                     UpdateUI(() => 
                     {
-                        LogText = $"Erreur Critique: {ex.Message}";
+                        LogText = $"Critical Error: {ex.Message}";
                         ErrorsCount++;
                     });
                 }
@@ -334,7 +334,7 @@ namespace Veriflow.Desktop.ViewModels
             }
             
             // --- GENERATE REPORTS ---
-            UpdateUI(() => LogText = "Génération des rapports...");
+            UpdateUI(() => LogText = "Generating reports...");
             
             if (!string.IsNullOrEmpty(Destination1Path) && sessionResults1.Any())
             {
@@ -350,8 +350,8 @@ namespace Veriflow.Desktop.ViewModels
                 IsBusy = false;
                 ProgressValue = 100;
                 TimeRemainingDisplay = "00:00";
-                LogText = "Terminé.";
-                MessageBox.Show($"Offload terminé !\n\nFichiers copiés : {FilesCopiedCount}\nErreurs : {ErrorsCount}\n\nRapports générés.", "Succès", MessageBoxButton.OK, MessageBoxImage.Information);
+                LogText = "Done.";
+                MessageBox.Show($"Offload complete!\n\nFiles copied: {FilesCopiedCount}\nErrors: {ErrorsCount}\n\nReports generated.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             });
         }
 
@@ -361,7 +361,7 @@ namespace Veriflow.Desktop.ViewModels
 
             UpdateUI(() =>
             {
-                LogText = "❌ Annulation... Nettoyage des fichiers...";
+                LogText = "❌ Cancelling... Cleaning up files...";
                 TimeRemainingDisplay = "ROLLBACK";
                 CurrentSpeedDisplay = "";
                 CurrentHashDisplay = "Cleaning Up...";
@@ -391,12 +391,12 @@ namespace Veriflow.Desktop.ViewModels
                 IsBusy = false;
                 
                 ProgressValue = 0;
-                LogText = "Prêt.";
+                LogText = "Ready.";
                 TimeRemainingDisplay = "--:--";
                 CurrentHashDisplay = "xxHash64: -";
                 CurrentSpeedDisplay = "0 MB/s";
                 
-                MessageBox.Show("La copie a été annulée. Tous les fichiers copiés ont été nettoyés.", "Annulation Confirmée", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Copy cancelled. All copied files have been cleaned up.", "Cancellation Confirmed", MessageBoxButton.OK, MessageBoxImage.Information);
             });
         }
 
@@ -445,7 +445,7 @@ namespace Veriflow.Desktop.ViewModels
             SourcePath = null;
             Destination1Path = null;
             Destination2Path = null;
-            LogText = "Prêt.";
+            LogText = "Ready.";
             ProgressValue = 0;
             TimeRemainingDisplay = "--:--";
             CurrentSpeedDisplay = "0 MB/s";
@@ -469,7 +469,7 @@ namespace Veriflow.Desktop.ViewModels
         {
             var dialog = new OpenFolderDialog
             {
-                Title = "Sélectionner un dossier",
+                Title = "Select a folder",
                 Multiselect = false
             };
             return (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.FolderName)) ? dialog.FolderName : null;

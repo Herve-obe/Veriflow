@@ -16,6 +16,12 @@
     <Resource Include="Assets\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\ExternalTools\**\*">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>

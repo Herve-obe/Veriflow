@@ -3,116 +3,437 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:Veriflow.Desktop.Views"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1024">
 
-    <Grid Margin="30">
+    <Grid Margin="20">
         <Grid.Resources>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            
+            <!-- Helpers for ComboBox Template (Moved to top for StaticResource resolution) -->
+            <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="20" />
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="Border" 
+                            Grid.ColumnSpan="2"
+                            CornerRadius="2"
+                            Background="#333333"
+                            BorderBrush="#555"
+                            BorderThickness="1" />
+                    <Path x:Name="Arrow"
+                          Grid.Column="1"     
+                          Fill="White"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Data="M 0 0 L 4 4 L 8 0 Z"/>
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="true">
+                        <Setter TargetName="Border" Property="Background" Value="#444" />
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+                <Border x:Name="PART_ContentHost" Focusable="False" Background="{TemplateBinding Background}" />
+            </ControlTemplate>
+
+            <!-- Dark DataGrid Header Style (Replaces GridViewColumnHeader) -->
+            <Style TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="#333333"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Padding" Value="6,8"/>
+                <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                <Setter Property="BorderBrush" Value="#444"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Height" Value="35"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DataGridColumnHeader">
+                            <Grid>
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                        <Path x:Name="SortArrow"
+                                              Grid.Column="1"
+                                              Data="M0,0 L10,0 L5,5 z"
+                                              Fill="#AAA"
+                                              Margin="5,0,0,0"
+                                              VerticalAlignment="Center"
+                                              Visibility="Collapsed"
+                                              Stretch="Fill" 
+                                              Width="8" Height="6"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="SortDirection" Value="Ascending">
+                                    <Setter TargetName="SortArrow" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="SortArrow" Property="LayoutTransform">
+                                        <Setter.Value>
+                                            <RotateTransform Angle="180" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="SortDirection" Value="Descending">
+                                    <Setter TargetName="SortArrow" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- DataGrid Cell Style to avoid default selection colors -->
+            <Style TargetType="DataGridCell">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DataGridCell">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#444"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Dark DataGrid Row Style (Fixes white background) -->
+            <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#2A2A2A"/>
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#444"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Dark ComboBox Style -->
+            <Style TargetType="ComboBox">
+                <Setter Property="Background" Value="#333333"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#555"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="10,6"/>
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                                <ToggleButton Name="ToggleButton" 
+                                              Template="{StaticResource ComboBoxToggleButton}" 
+                                              Grid.Column="2" 
+                                              Focusable="false"
+                                              IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                                              ClickMode="Press">
+                                </ToggleButton>
+                                <ContentPresenter Name="ContentSite" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                  Margin="10,3,23,3"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                <TextBox x:Name="PART_EditableTextBox"
+                                         Style="{x:Null}"
+                                         Template="{StaticResource ComboBoxTextBox}"
+                                         HorizontalAlignment="Left" 
+                                         VerticalAlignment="Center" 
+                                         Margin="3,3,23,3"
+                                         Focusable="True" 
+                                         Background="Transparent"
+                                         Visibility="Hidden"
+                                         IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                                <Popup Name="Popup"
+                                       Placement="Bottom"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       AllowsTransparency="True" 
+                                       Focusable="False"
+                                       PopupAnimation="Slide">
+                                    <Grid Name="DropDown"
+                                          SnapsToDevicePixels="True"
+                                          MinWidth="{TemplateBinding ActualWidth}"
+                                          MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                        <Border x:Name="DropDownBorder"
+                                                Background="#333333"
+                                                BorderThickness="1"
+                                                BorderBrush="#555"/>
+                                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Popup>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </Grid.Resources>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Header -->
             <RowDefinition Height="*"/>    <!-- Content -->
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-            <!-- Icon could be added here similar to other views -->
+        <!-- HEADER -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
              <Path Data="M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z"
                    Fill="{StaticResource Brush.Accent}"
-                   Height="24" Width="24" Stretch="Uniform"
+                   Height="20" Width="20" Stretch="Uniform"
                    VerticalAlignment="Center" Margin="0,0,10,0"/>
-
             <TextBlock Text="TRANSCODE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <!-- Main Content -->
+        <!-- MAIN LAYOUT -->
         <Grid Grid.Row="1">
-            <StackPanel MaxWidth="800" HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>   <!-- File List -->
+                <ColumnDefinition Width="20"/>  <!-- Spacer -->
+                <ColumnDefinition Width="400"/> <!-- Settings Panel -->
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT: FILE LIST -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
                 
-                <!-- Source Selection -->
-                <TextBlock Text="SOURCE FILE" Style="{StaticResource LabelStyle}" Margin="0,0,0,5" Opacity="0.5"/>
-                <Grid Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Text="{Binding SourceFile}" VerticalContentAlignment="Center" Height="30" IsReadOnly="True" Background="#1A1A1A" Foreground="#EEE" BorderThickness="0"/>
-                    <Button Grid.Column="1" Command="{Binding PickSourceCommand}" Content="CHOOSE FILE" 
-                            Margin="10,0,0,0" Height="30" Width="120"
-                            Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
-                            Style="{StaticResource ActionButtonStyle}"/>
+                <Grid Margin="0,0,0,5">
+                    <TextBlock Text="FILE LIST" Style="{StaticResource LabelStyle}" VerticalAlignment="Center" Opacity="0.5"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="+ ADD FILES" Command="{Binding AddFilesCommand}" 
+                                Style="{StaticResource ActionButtonStyle}" 
+                                Width="120" Height="26" FontSize="11" 
+                                Background="#333"/>
+                        <Button Content="CLEAR LIST" Command="{Binding ClearListCommand}" 
+                                Style="{StaticResource ActionButtonStyle}" 
+                                Width="100" Height="26" FontSize="11" 
+                                Background="#333" Margin="10,0,0,0"/>
+                    </StackPanel>
                 </Grid>
+                
+                <!-- Drop Area / List -->
+                <Border Grid.Row="1" Background="{StaticResource Brush.Panel.Deep}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="4">
+                    <Grid>
+                         <!-- Drag Drop Behavior Overlay -->
+                         <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Drop">
+                                <i:InvokeCommandAction Command="{Binding DropFilesCommand}" PassEventArgsToCommand="True"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
 
-                <!-- Destination Selection -->
-                <TextBlock Text="DESTINATION FOLDER" Style="{StaticResource LabelStyle}" Margin="0,0,0,5" Opacity="0.5"/>
-                <Grid Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox Text="{Binding DestinationFolder}" VerticalContentAlignment="Center" Height="30" IsReadOnly="True" Background="#1A1A1A" Foreground="#EEE" BorderThickness="0"/>
-                    <Button Grid.Column="1" Command="{Binding PickDestinationCommand}" Content="CHOOSE FOLDER" 
-                            Margin="10,0,0,0" Height="30" Width="120"
-                            Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
-                            Style="{StaticResource ActionButtonStyle}"/>
-                </Grid>
+                        <!-- DATA GRID REPLACEMENT -->
+                        <DataGrid ItemsSource="{Binding Files}" 
+                                  AutoGenerateColumns="False" 
+                                  CanUserSortColumns="True"
+                                  Background="Transparent" 
+                                  BorderThickness="0" 
+                                  GridLinesVisibility="None"
+                                  HeadersVisibility="Column"
+                                  RowHeaderWidth="0"
+                                  Foreground="White"
+                                  IsReadOnly="True"
+                                  AllowDrop="True"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                  RowStyle="{StaticResource DataGridRowStyle}">
+                             <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="STATUS" Width="120" SortMemberPath="Status">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Status}" Foreground="#AAA" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
 
-                <!-- Settings -->
-                 <TextBlock Text="SETTINGS" Style="{StaticResource LabelStyle}" Margin="0,0,0,5" Opacity="0.5"/>
-                 <Border Background="{StaticResource Brush.Panel}" BorderThickness="1" BorderBrush="#333" Padding="20" Margin="0,0,0,20">
-                     <Grid>
+                                <DataGridTemplateColumn Header="FILENAME" Width="360" SortMemberPath="FileName">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FileName}" FontWeight="Bold" Foreground="White" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="PATH" Width="510" SortMemberPath="FilePath">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FilePath}" Padding="0,0,20,0" Opacity="0.5" TextTrimming="CharacterEllipsis" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="DURATION" Width="120" SortMemberPath="DurationString">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DurationString}" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="FORMAT" Width="300" SortMemberPath="AudioInfo">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding AudioInfo}" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                
+                                <!-- Remove Button Column -->
+                                <DataGridTemplateColumn Width="50">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="X" 
+                                                    Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                                    CommandParameter="{Binding}"
+                                                    Background="Transparent" BorderThickness="0" Foreground="Red" FontWeight="Bold"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        
+                        <!-- Empty State Hint -->
+                        <TextBlock Text="Drop Media Files Here" 
+                                   VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                   Foreground="#555" FontSize="18" FontWeight="Bold"
+                                   IsHitTestVisible="False">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Files.Count}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+
+            </Grid>
+
+            <!-- RIGHT: SETTINGS PANEL -->
+            <Border Grid.Column="2" Background="{StaticResource Brush.Panel}" BorderThickness="0" CornerRadius="4" Padding="20">
+                <StackPanel>
+                    
+                    <TextBlock Text="CHOOSE FUNCTION" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
+                    
+                    <!-- Formats -->
+                    <ComboBox ItemsSource="{Binding AvailableFormats}" SelectedItem="{Binding SelectedFormat}" Margin="0,0,0,20">
+                         <ComboBox.ItemContainerStyle>
+                            <Style TargetType="ComboBoxItem">
+                                <Setter Property="Padding" Value="10"/>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                    </ComboBox>
+
+                    <!-- Divider -->
+                    <Rectangle Height="1" Fill="#333" Margin="0,0,0,20"/>
+
+                    <TextBlock Text="AUDIO SETTINGS" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
+                    
+                    <StackPanel Margin="0,0,0,10">
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Sample Rate" Foreground="#888" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailableSampleRates}" SelectedItem="{Binding SelectedSampleRate}"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,15">
+                             <TextBlock Text="Bit Depth" Foreground="#888" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailableBitDepths}" SelectedItem="{Binding SelectedBitDepth}"/>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="Bitrate" Foreground="#888" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailableBitrates}" SelectedItem="{Binding SelectedBitrate}" IsEnabled="{Binding AvailableBitrates.Count}">
+                                <ComboBox.Style>
+                                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding AvailableBitrates.Count}" Value="0">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Divider -->
+                    <Rectangle Height="1" Fill="#333" Margin="0,10,0,20"/>
+
+                    <TextBlock Text="OUTPUT SETTINGS" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
+
+                     <Grid Margin="0,0,0,20">
                          <Grid.ColumnDefinitions>
                              <ColumnDefinition Width="*"/>
-                             <ColumnDefinition Width="20"/>
-                             <ColumnDefinition Width="*"/>
-                             <ColumnDefinition Width="20"/>
-                             <ColumnDefinition Width="*"/>
+                             <ColumnDefinition Width="Auto"/>
                          </Grid.ColumnDefinitions>
-
-                         <!-- Format -->
-                         <StackPanel Grid.Column="0">
-                             <TextBlock Text="FORMAT" Foreground="#777" FontSize="12" Margin="0,0,0,5"/>
-                             <ComboBox ItemsSource="{Binding AvailableFormats}" SelectedItem="{Binding SelectedFormat}" Height="30"/>
-                         </StackPanel>
-
-                         <!-- Sample Rate -->
-                         <StackPanel Grid.Column="2">
-                             <TextBlock Text="SAMPLE RATE" Foreground="#777" FontSize="12" Margin="0,0,0,5"/>
-                             <ComboBox ItemsSource="{Binding AvailableSampleRates}" SelectedItem="{Binding SelectedSampleRate}" Height="30"/>
-                         </StackPanel>
-
-                         <!-- Bit Depth -->
-                         <StackPanel Grid.Column="4">
-                             <TextBlock Text="BIT DEPTH" Foreground="#777" FontSize="12" Margin="0,0,0,5"/>
-                             <ComboBox ItemsSource="{Binding AvailableBitDepths}" SelectedItem="{Binding SelectedBitDepth}" Height="30"/>
-                         </StackPanel>
+                         <TextBox Text="{Binding DestinationFolder, TargetNullValue='Source Location'}" 
+                                  IsReadOnly="True" Height="30" VerticalContentAlignment="Center" 
+                                  Background="#151515" BorderThickness="0" Foreground="#AAA"/>
+                         <Button Grid.Column="1" Content="..." Width="40" Command="{Binding PickDestinationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="5,0,0,0"/>
                      </Grid>
-                 </Border>
 
-                <!-- Progress & Status -->
-                <StackPanel Orientation="Vertical" Margin="0,0,0,20" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
-                     <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource Brush.Accent}" Margin="0,0,0,5" FontWeight="Bold"/>
-                     <ProgressBar Height="4" IsIndeterminate="True" Foreground="{StaticResource Brush.Accent}" Background="#333" BorderThickness="0"/>
+
+                     <StackPanel Margin="0,20,0,0">
+                         <!-- Progress Bar -->
+                         <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center" Foreground="{StaticResource Brush.Accent}" Margin="0,0,0,10" FontWeight="Bold"/>
+                         <ProgressBar Value="{Binding TotalProgressValue}" Height="10" Background="#222" BorderThickness="0" Foreground="{StaticResource Brush.Accent}" Margin="0,0,0,20">
+                             <ProgressBar.Style>
+                                 <Style TargetType="ProgressBar">
+                                     <Style.Triggers>
+                                         <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                             <Setter Property="Visibility" Value="Visible"/>
+                                         </DataTrigger>
+                                          <DataTrigger Binding="{Binding IsBusy}" Value="False">
+                                             <Setter Property="Visibility" Value="Collapsed"/>
+                                         </DataTrigger>
+                                     </Style.Triggers>
+                                 </Style>
+                             </ProgressBar.Style>
+                         </ProgressBar>
+
+                         <!-- START BUTTON -->
+                         <Button Content="START FUNCTION" 
+                                 Command="{Binding StartTranscodeCommand}"
+                                 Height="50" FontSize="14" FontWeight="Bold"
+                                 Background="{StaticResource Brush.Accent}" Foreground="White"
+                                 Style="{StaticResource ActionButtonStyle}">
+                         </Button>
+                     </StackPanel>
+
                 </StackPanel>
-
-                <!-- Actions -->
-                <Button Command="{Binding StartTranscodeCommand}" Content="START TRANSCODE"
-                        HorizontalAlignment="Left" Width="200" Height="40"
-                        Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold">
-                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                             <Style.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter Property="Opacity" Value="0.5"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-
-            </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>

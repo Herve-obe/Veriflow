@@ -6,6 +6,7 @@ using System.Linq;
 using Veriflow.Desktop.Services;
 using System.Windows.Input;
 using Veriflow.Desktop.Models;
+using System.Windows;
 
 namespace Veriflow.Desktop.ViewModels
 {
@@ -180,6 +181,122 @@ namespace Veriflow.Desktop.ViewModels
                 RequestOpenInPlayer?.Invoke(SelectedMedia.FullName);
             }
         }
+
+        [RelayCommand]
+        private Task DropMedia(DragEventArgs e) => HandleDrop(e);
+
+        [RelayCommand]
+        private Task DropExplorer(DragEventArgs e) => HandleDrop(e);
+
+        private async Task HandleDrop(DragEventArgs e)
+        {
+            try
+            {
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    string[]? files = e.Data.GetData(DataFormats.FileDrop) as string[];
+                    if (files != null && files.Length > 0)
+                    {
+                        string dropPath = files[0];
+                        string directoryToLoad = dropPath;
+                        string? fileToSelect = null;
+
+                        if (File.Exists(dropPath))
+                        {
+                            // It's a file, get directory
+                            directoryToLoad = Path.GetDirectoryName(dropPath) ?? dropPath;
+                            fileToSelect = dropPath;
+                        }
+                        
+                        if (Directory.Exists(directoryToLoad))
+                        {
+                            // Try to navigate via Tree first
+                            bool navigated = await ExpandAndSelectPath(directoryToLoad);
+                            
+                            // If tree didn't work (e.g. drive hidden) OR if it worked but we are not sure if it refreshed 
+                            // (IsSelected might have been true already), check consistency.
+                            // Assuming LoadDirectory sets CurrentPath.
+                            if (!navigated || CurrentPath != directoryToLoad)
+                            {
+                                LoadDirectory(directoryToLoad);
+                            }
+
+                            // If a specific file was dropped, select it to show metadata
+                            if (fileToSelect != null)
+                            {
+                                var mediaItem = FileList.FirstOrDefault(f => f.FullName.Equals(fileToSelect, StringComparison.OrdinalIgnoreCase));
+                                if (mediaItem != null)
+                                {
+                                    SelectedMedia = mediaItem;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Prevent crash from async void/task exceptions
+                System.Diagnostics.Debug.WriteLine($"Drag Drop Error: {ex.Message}");
+            }
+        }
+
+        private async Task<bool> ExpandAndSelectPath(string path)
+        {
+             // 1. Find Drive
+             var drive = Drives.FirstOrDefault(d => path.StartsWith(d.Path, StringComparison.OrdinalIgnoreCase));
+             if (drive == null) return false;
+
+             drive.IsExpanded = true;
+             await Task.Delay(100); // Give UI time to bind/render if needed, though viewmodels are immediate.
+
+             // 2. Traverse
+             string currentPath = drive.Path;
+             // Ensure trailing slash for root match cleanliness
+             if (!currentPath.EndsWith(Path.DirectorySeparatorChar.ToString())) 
+                 currentPath += Path.DirectorySeparatorChar;
+
+             // Split path into segments
+             var targetParts = path.Substring(drive.Path.Length).Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+             
+             ObservableCollection<FolderViewModel> currentCollection = drive.Folders;
+             object currentItem = drive;
+
+             foreach (var part in targetParts)
+             {
+                 var folder = currentCollection.FirstOrDefault(f => f.Name.Equals(part, StringComparison.OrdinalIgnoreCase));
+                 if (folder == null) return false; // Not found
+
+                 folder.IsExpanded = true;
+                 
+                 // Since LoadChildren is synchronous but triggered by setter, it should populate immediately.
+                 // However, since it involves IO, we might ideally want to delay or yield slightly if UI is sluggish,
+                 // but functionally it's fine.
+                 
+                 currentCollection = folder.Children;
+                 currentItem = folder;
+             }
+             
+             // 3. Select final item
+
+
+             if (currentItem is FolderViewModel finalFolder)
+             {
+                 if (!finalFolder.IsSelected)
+                 {
+                      finalFolder.IsSelected = true;
+                 }
+             }
+             else if (currentItem is DriveViewModel finalDrive)
+             {
+                 if (!finalDrive.IsSelected)
+                 {
+                      finalDrive.IsSelected = true;
+                 }
+             }
+             
+             return true; 
+        }
     }
 
     public partial class MediaItemViewModel : ObservableObject
@@ -267,6 +384,26 @@ namespace Veriflow.Desktop.ViewModels
         public string Path { get; }
         public ObservableCollection<FolderViewModel> Folders { get; } = new();
         private readonly Action<string> _onSelect;
+
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set => SetProperty(ref _isExpanded, value);
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (SetProperty(ref _isSelected, value) && value)
+                {
+                    _onSelect?.Invoke(Path);
+                }
+            }
+        }
 
         public DriveViewModel(DriveInfo drive, Action<string> onSelect)
         {

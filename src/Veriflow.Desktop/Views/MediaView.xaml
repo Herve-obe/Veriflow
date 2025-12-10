@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Veriflow.Desktop.Views"
              xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1024">
     
@@ -45,14 +46,19 @@
         </Grid.ColumnDefinitions>
         
         <!-- COL 1: EXPLORER -->
-        <Border Grid.Column="0" BorderBrush="#333333" BorderThickness="0,0,1,0" Background="#1E1E1E">
+        <Border Grid.Column="0" BorderBrush="#333333" BorderThickness="0,0,1,0" Background="#1E1E1E" AllowDrop="True">
+             <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Drop">
+                    <i:InvokeCommandAction Command="{Binding DropExplorerCommand}" PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
-                <TextBlock Text="EXPLORATEUR" Style="{StaticResource HeaderStyle}"/>
+                <TextBlock Text="EXPLORER" Style="{StaticResource HeaderStyle}"/>
                 
                 <TreeView Grid.Row="1" ItemsSource="{Binding Drives}" Background="Transparent" BorderThickness="0" Margin="5"
                           ItemTemplate="{StaticResource DriveTemplate}">
@@ -69,14 +75,19 @@
         </Border>
 
         <!-- COL 2: BROWSER -->
-        <Border Grid.Column="1" Background="#121212">
+        <Border Grid.Column="1" Background="#121212" AllowDrop="True">
+             <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Drop">
+                    <i:InvokeCommandAction Command="{Binding DropMediaCommand}" PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="MÉDIAS" Style="{StaticResource HeaderStyle}"/>
+                <TextBlock Text="MEDIA" Style="{StaticResource HeaderStyle}"/>
 
                 <ListBox Grid.Row="1" ItemsSource="{Binding FileList}" 
                          SelectedItem="{Binding SelectedMedia}"
@@ -153,11 +164,11 @@
                 
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Focusable="False">
                     <StackPanel>
-                        <TextBlock Text="MÉTADONNÉES" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
+                        <TextBlock Text="METADATA" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
 
                         <!-- LINK TO PLAYER BUTTON -->
                         <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Content="OUVRIR DANS LE PLAYER"
+                                Content="OPEN IN PLAYER"
                                 Height="30" Margin="0,0,0,20"
                                 Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"> 
                         <!-- Note: Binding to self (non-null) via converter? 
@@ -200,7 +211,7 @@
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="SCÈNE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                            <TextBlock Text="SCENE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                             <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}" Foreground="White"/>
                         </Grid>
                         <Separator Margin="0,5"/>
@@ -210,7 +221,7 @@
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="PRISE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                            <TextBlock Text="TAKE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                             <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Take}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
                         </Grid>
                          <Separator Margin="0,5"/>
@@ -220,7 +231,7 @@
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="TC DÉPART" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                            <TextBlock Text="START TC" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                             <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
                         </Grid>
                          <Separator Margin="0,5"/>
@@ -230,7 +241,7 @@
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="DURÉE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                            <TextBlock Text="DURATION" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                             <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
                         </Grid>
                         <Separator Margin="0,5"/>
@@ -250,7 +261,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="ORIGINE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                            <TextBlock Text="ORIGINATOR" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                             <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Originator}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
                         </Grid>
                         <Separator Margin="0,5"/>
@@ -270,7 +281,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="RUBAN" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                            <TextBlock Text="TAPE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
                             <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
                         </Grid>
     

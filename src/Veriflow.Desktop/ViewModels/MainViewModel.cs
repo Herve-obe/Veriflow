@@ -45,10 +45,17 @@ namespace Veriflow.Desktop.ViewModels
             CurrentView = _mediaViewModel;
 
             // Navigation Wiring
-            _mediaViewModel.RequestOpenInPlayer += (path) =>
+            _mediaViewModel.RequestOpenInPlayer += async (path) =>
             {
-                _playerViewModel.LoadAudio(path);
-                CurrentView = _playerViewModel;
+                try
+                {
+                    await _playerViewModel.LoadAudio(path);
+                    CurrentView = _playerViewModel;
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error opening player: {ex.Message}");
+                }
             };
         }
 

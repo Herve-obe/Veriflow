@@ -20,6 +20,7 @@
     <!-- PALETTE -->
     <SolidColorBrush x:Key="Brush.Background" Color="#121212"/>
     <SolidColorBrush x:Key="Brush.Panel" Color="#1E1E1E"/>
+    <SolidColorBrush x:Key="Brush.Panel.Deep" Color="#181818"/>
     <SolidColorBrush x:Key="Brush.Border" Color="#333333"/>
     <SolidColorBrush x:Key="Brush.Accent" Color="#007ACC"/>
     <SolidColorBrush x:Key="Brush.Text" Color="#CCCCCC"/>

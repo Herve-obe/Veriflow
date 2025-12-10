@@ -19,16 +19,18 @@ namespace Veriflow.Desktop.ViewModels
     public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         private WaveOutEvent? _outputDevice;
-        private AudioFileReader? _audioFile;
+        // _inputStream is defined below or here
+        // private AudioFileReader? _audioFile; // REMOVED
         private MultiChannelAudioMixer? _mixer;
         private VeriflowMeteringProvider? _meteringProvider;
         private readonly DispatcherTimer _playbackTimer;
 
         [ObservableProperty]
-        private string _filePath = "Aucun fichier chargé";
+        private string _filePath = "No file loaded";
 
         [ObservableProperty]
         private string _fileName = "";
+
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
@@ -79,12 +81,12 @@ namespace Veriflow.Desktop.ViewModels
 
         private void OnTimerTick(object? sender, EventArgs e)
         {
-            if (_audioFile != null)
+            if (_inputStream != null)
             {
-                CurrentTimeDisplay = _audioFile.CurrentTime.ToString(@"hh\:mm\:ss");
+                CurrentTimeDisplay = _inputStream.CurrentTime.ToString(@"hh\:mm\:ss");
                 
                 _isTimerUpdating = true;
-                PlaybackPosition = _audioFile.CurrentTime.TotalSeconds;
+                PlaybackPosition = _inputStream.CurrentTime.TotalSeconds;
                 if (PlaybackMaximum > 0)
                     PlaybackPercent = PlaybackPosition / PlaybackMaximum;
                 
@@ -112,12 +114,12 @@ namespace Veriflow.Desktop.ViewModels
 
         partial void OnPlaybackPositionChanged(double value)
         {
-            if (_audioFile != null && !_isTimerUpdating)
+                if (_inputStream != null && !_isTimerUpdating)
             {
                 // User is scrubbing
                 if (value >= 0 && value <= _playbackMaximum)
                 {
-                    _audioFile.CurrentTime = TimeSpan.FromSeconds(value);
+                    _inputStream.CurrentTime = TimeSpan.FromSeconds(value);
                     if (PlaybackMaximum > 0)
                         PlaybackPercent = value / PlaybackMaximum;
                 }
@@ -125,7 +127,7 @@ namespace Veriflow.Desktop.ViewModels
         }
 
         [RelayCommand]
-        private void DropFile(DragEventArgs e)
+        private async Task DropFile(DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -136,14 +138,33 @@ namespace Veriflow.Desktop.ViewModels
                     string ext = System.IO.Path.GetExtension(file).ToLower();
                     if (ext == ".wav" || ext == ".bwf")
                     {
-                        LoadAudio(file);
+                        await LoadAudio(file);
                     }
                 }
             }
         }
 
         [RelayCommand]
-        private void LoadFile()
+        private async Task UnloadMedia()
+        {
+            await Stop();
+            CleanUpAudio();
+
+            FilePath = "No file loaded";
+            FileName = "";
+            IsAudioLoaded = false;
+            CurrentTimeDisplay = "00:00:00";
+            TotalTimeDisplay = "00:00:00";
+            PlaybackPosition = 0;
+            PlaybackPercent = 0;
+            
+            Tracks.Clear();
+            RulerTicks.Clear();
+            CurrentMetadata = new AudioMetadata();
+        }
+
+        [RelayCommand]
+        private async Task LoadFile()
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -152,35 +173,65 @@ namespace Veriflow.Desktop.ViewModels
 
             if (openFileDialog.ShowDialog() == true)
             {
-                LoadAudio(openFileDialog.FileName);
+                await LoadAudio(openFileDialog.FileName);
             }
         }
 
-        public void LoadAudio(string path)
+        private WaveStream? _inputStream; // Abstraction for AudioFileReader or MediaFoundationReader
+
+        public async Task LoadAudio(string path)
         {
             try
             {
-                Stop();
+                await Stop();
                 CleanUpAudio();
 
-                _audioFile = new AudioFileReader(path);
+                // Try AudioFileReader first (NAudio native)
+                try
+                {
+                    _inputStream = new AudioFileReader(path);
+                }
+                catch (Exception)
+                {
+                    // Fallback to MediaFoundationReader (Windows Codecs) for complex formats (e.g. 24-bit/32-bit float WAVs from ffmpeg)
+                    try
+                    {
+                        _inputStream = new MediaFoundationReader(path);
+                    }
+                    catch
+                    {
+                        // If both fail, rethrow original
+                        throw;
+                    }
+                }
+
+                ISampleProvider finalProvider;
+
+                if (_inputStream is AudioFileReader afr)
+                {
+                    finalProvider = afr;
+                }
+                else
+                {
+                    finalProvider = _inputStream.ToSampleProvider();
+                }
                 
                 // NEW ORDER: File -> METER -> MIXER -> Resampler -> Output
                 
                 // 1. Metering (captures all tracks before mixing)
-                _meteringProvider = new VeriflowMeteringProvider(_audioFile);
+                _meteringProvider = new VeriflowMeteringProvider(finalProvider);
 
                 // 2. Mixer (Downmix/Mute/Solo logic)
                 _mixer = new MultiChannelAudioMixer(_meteringProvider); 
 
-                ISampleProvider finalProvider = _mixer;
+                ISampleProvider outProvider = _mixer;
 
                 // 3. Resample to 48kHz if needed (Universal Compatibility)
-                if (finalProvider.WaveFormat.SampleRate != 48000)
+                if (outProvider.WaveFormat.SampleRate != 48000)
                 {
                     try
                     {
-                         finalProvider = new WdlResamplingSampleProvider(finalProvider, 48000);
+                         outProvider = new WdlResamplingSampleProvider(outProvider, 48000);
                     }
                     catch
                     {
@@ -189,27 +240,31 @@ namespace Veriflow.Desktop.ViewModels
                 }
 
                 _outputDevice = new WaveOutEvent();
-                _outputDevice.Init(finalProvider);
+                _outputDevice.Init(outProvider);
                 _outputDevice.PlaybackStopped += OnPlaybackStopped;
 
                 FilePath = path;
                 FileName = System.IO.Path.GetFileName(path);
                 IsAudioLoaded = true;
 
-                TotalTimeDisplay = _audioFile.TotalTime.ToString(@"hh\:mm\:ss");
-                PlaybackMaximum = _audioFile.TotalTime.TotalSeconds;
+                TotalTimeDisplay = _inputStream.TotalTime.ToString(@"hh\:mm\:ss");
+                PlaybackMaximum = _inputStream.TotalTime.TotalSeconds;
 
-                // Metadata Extraction
-                var metaReader = new BwfMetadataReader();
-                CurrentMetadata = metaReader.ReadMetadataFromStream(path);
+                // Metadata Extraction (BWF)
+                try
+                {
+                    var metaReader = new BwfMetadataReader();
+                    CurrentMetadata = metaReader.ReadMetadataFromStream(path);
+                }
+                catch { /* Ignore metadata errors */ }
 
-                InitializeTracks(CurrentMetadata.ChannelCount > 0 ? CurrentMetadata.ChannelCount : _audioFile.WaveFormat.Channels);
+                InitializeTracks(CurrentMetadata.ChannelCount > 0 ? CurrentMetadata.ChannelCount : _inputStream.WaveFormat.Channels);
                 GenerateWaveforms(path);
                 GenerateRuler();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors du chargement : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error loading file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -219,9 +274,9 @@ namespace Veriflow.Desktop.ViewModels
         private void GenerateRuler()
         {
             RulerTicks.Clear();
-            if (_audioFile == null) return;
+            if (_inputStream == null) return;
 
-            var totalSeconds = _audioFile.TotalTime.TotalSeconds;
+            var totalSeconds = _inputStream.TotalTime.TotalSeconds;
             if (totalSeconds <= 0) return;
 
             // Absolute Start (SamplesSinceMidnight / Rate)
@@ -249,7 +304,7 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand]
         private void Seek(System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (_audioFile == null) return;
+            if (_inputStream == null) return;
 
             // Resolve position relative to the container (sender)
             if (e.Source is FrameworkElement element)
@@ -260,13 +315,13 @@ namespace Veriflow.Desktop.ViewModels
                 if (width > 0)
                 {
                     double percent = position.X / width;
-                    double seekTime = percent * _audioFile.TotalTime.TotalSeconds;
+                    double seekTime = percent * _inputStream.TotalTime.TotalSeconds;
                     
                     // Clamp
                     if (seekTime < 0) seekTime = 0;
-                    if (seekTime > _audioFile.TotalTime.TotalSeconds) seekTime = _audioFile.TotalTime.TotalSeconds;
+                    if (seekTime > _inputStream.TotalTime.TotalSeconds) seekTime = _inputStream.TotalTime.TotalSeconds;
 
-                    _audioFile.CurrentTime = TimeSpan.FromSeconds(seekTime);
+                    _inputStream.CurrentTime = TimeSpan.FromSeconds(seekTime);
                     PlaybackPosition = seekTime;
                 }
             }
@@ -332,65 +387,72 @@ namespace Veriflow.Desktop.ViewModels
             {
                 await Task.Run(() =>
                 {
-                    using var reader = new AudioFileReader(path);
-                    int totalChannels = reader.WaveFormat.Channels;
-                    
-                    // Resolution: 500 points wide per track
-                    int width = 500;
-                    long totalSamples = reader.Length / (reader.WaveFormat.BitsPerSample / 8); 
-                    long samplesPerChannel = totalSamples / totalChannels;
-                    long samplesPerPoint = samplesPerChannel / width;
-
-                    if (samplesPerPoint < 1) samplesPerPoint = 1;
-
-                    // Data structures
-                    var maxBuffers = new float[totalChannels][]; // Stores peaks
-                    for(int c=0; c<totalChannels; c++) maxBuffers[c] = new float[width];
-
-                    float[] buffer = new float[samplesPerPoint * totalChannels];
-                    int pointIndex = 0;
-
-                    while (pointIndex < width)
+                    try
                     {
-                        int read = reader.Read(buffer, 0, buffer.Length);
-                        if (read == 0) break;
+                        using var reader = new AudioFileReader(path);
+                        int totalChannels = reader.WaveFormat.Channels;
+                        
+                        // Resolution: 500 points wide per track
+                        int width = 500;
+                        long totalSamples = reader.Length / (reader.WaveFormat.BitsPerSample / 8); 
+                        long samplesPerChannel = totalSamples / totalChannels;
+                        long samplesPerPoint = samplesPerChannel / width;
 
-                        // Process this chunk
-                        for (int c = 0; c < totalChannels; c++)
+                        if (samplesPerPoint < 1) samplesPerPoint = 1;
+
+                        // Data structures
+                        var maxBuffers = new float[totalChannels][]; // Stores peaks
+                        for(int c=0; c<totalChannels; c++) maxBuffers[c] = new float[width];
+
+                        float[] buffer = new float[samplesPerPoint * totalChannels];
+                        int pointIndex = 0;
+
+                        while (pointIndex < width)
                         {
-                            float max = 0;
-                            for (int i = c; i < read; i += totalChannels)
+                            int read = reader.Read(buffer, 0, buffer.Length);
+                            if (read == 0) break;
+
+                            // Process this chunk
+                            for (int c = 0; c < totalChannels; c++)
                             {
-                                float val = Math.Abs(buffer[i]);
-                                if (val > max) max = val;
+                                float max = 0;
+                                for (int i = c; i < read; i += totalChannels)
+                                {
+                                    float val = Math.Abs(buffer[i]);
+                                    if (val > max) max = val;
+                                }
+                                maxBuffers[c][pointIndex] = max;
                             }
-                            maxBuffers[c][pointIndex] = max;
+                            pointIndex++;
                         }
-                        pointIndex++;
+
+                        // Convert to Points
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            for (int c = 0; c < totalChannels && c < Tracks.Count; c++)
+                            {
+                                var trackPoints = new PointCollection();
+                                float[] peaks = maxBuffers[c];
+                                
+                                for (int x = 0; x < width; x++)
+                                {
+                                    trackPoints.Add(new Point(x, 20 - (peaks[x] * 19))); // Top
+                                }
+                                
+                                // Bottom mirror
+                                 for (int x = width - 1; x >= 0; x--)
+                                {
+                                    trackPoints.Add(new Point(x, 20 + (peaks[x] * 19))); // Bottom
+                                }
+
+                                Tracks[c].WaveformPoints = trackPoints;
+                            }
+                        });
                     }
-
-                    // Convert to Points
-                    Application.Current.Dispatcher.Invoke(() =>
+                    catch (Exception ex)
                     {
-                        for (int c = 0; c < totalChannels && c < Tracks.Count; c++)
-                        {
-                            var trackPoints = new PointCollection();
-                            float[] peaks = maxBuffers[c];
-                            
-                            for (int x = 0; x < width; x++)
-                            {
-                                trackPoints.Add(new Point(x, 20 - (peaks[x] * 19))); // Top
-                            }
-                            
-                            // Bottom mirror
-                             for (int x = width - 1; x >= 0; x--)
-                            {
-                                trackPoints.Add(new Point(x, 20 + (peaks[x] * 19))); // Bottom
-                            }
-
-                            Tracks[c].WaveformPoints = trackPoints;
-                        }
-                    });
+                        System.Diagnostics.Debug.WriteLine($"Waveform Generation Error: {ex.Message}");
+                    }
                 });
             });
         }
@@ -407,7 +469,7 @@ namespace Veriflow.Desktop.ViewModels
             {
                 PlaybackPosition = 0;
                 CurrentTimeDisplay = "00:00:00";
-                if (_audioFile != null) _audioFile.Position = 0;
+                if (_inputStream != null) _inputStream.Position = 0;
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -453,9 +515,9 @@ namespace Veriflow.Desktop.ViewModels
             PlaybackPercent = 0;
             CurrentTimeDisplay = "00:00:00";
 
-            if (_audioFile != null)
+            if (_inputStream != null)
             {
-                _audioFile.Position = 0;
+                _inputStream.Position = 0;
             }
 
             // Force Meter Reset
@@ -497,10 +559,10 @@ namespace Veriflow.Desktop.ViewModels
                 _outputDevice.Dispose();
                 _outputDevice = null;
             }
-            if (_audioFile != null)
+            if (_inputStream != null)
             {
-                _audioFile.Dispose(); // Disposes the stream
-                _audioFile = null;
+                _inputStream.Dispose(); // Disposes the stream
+                _inputStream = null;
             }
             _mixer = null;
             _meteringProvider = null;
