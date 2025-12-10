@@ -110,9 +110,9 @@
                                                  Width="40" Height="40" BorderBrush="White">
                                              <Grid>
                                                  <!-- Play Icon (Default) -->
-                                                 <Path x:Name="PlayIcon" Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="White" Stretch="Uniform" Margin="2" Visibility="Visible"/>
+                                                 <Path x:Name="PlayIcon" Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="White" Stretch="Uniform" Margin="10" Visibility="Visible"/>
                                                  <!-- Stop Icon (Hidden) -->
-                                                 <Path x:Name="StopIcon" Data="M6,6H18V18H6V6Z" Fill="#FF5252" Stretch="Uniform" Margin="4" Visibility="Collapsed"/>
+                                                 <Path x:Name="StopIcon" Data="M6,6H18V18H6V6Z" Fill="#FF5252" Stretch="Uniform" Margin="12" Visibility="Collapsed"/>
                                              </Grid>
                                          </Button>
                                     </Grid>
@@ -151,13 +151,64 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="MÉTADONNÉES" Style="{StaticResource HeaderStyle}"/>
                 
-                <!-- Placeholder for Metadata -->
-                <StackPanel Grid.Row="1" Margin="10">
-                    <TextBlock Text="{Binding SelectedMedia.Name, StringFormat='Nom: {0}'}" Foreground="White" Margin="0,0,0,5" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding SelectedMedia.FullName, StringFormat='Chemin: {0}'}" Foreground="#AAAAAA" Margin="0,0,0,5" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding SelectedMedia.CreationTime, StringFormat='Créé le: {0}'}" Foreground="#AAAAAA" Margin="0,0,0,5"/>
-                    <TextBlock Text="{Binding SelectedMedia.Length, StringFormat='Taille: {0} octets'}" Foreground="#AAAAAA" Margin="0,0,0,5"/>
-                </StackPanel>
+                <!-- Metadata Display -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <!-- File Info -->
+                        <TextBlock Text="GENERAL" Style="{StaticResource HeaderStyle}" FontSize="12" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding SelectedMedia.Name}" Foreground="White" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding SelectedMedia.FullName}" Foreground="#666666" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Taille:" Foreground="#888888" Margin="0,0,10,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.Length, StringFormat='{}{0:N0} octets'}" Foreground="#CCCCCC"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Date:" Foreground="#888888" Margin="0,5,10,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMedia.CreationTime}" Foreground="#CCCCCC" Margin="0,5,0,0"/>
+                        </Grid>
+
+                        <!-- Audio/Video Info -->
+                        <TextBlock Text="MEDIA INFO" Style="{StaticResource HeaderStyle}" FontSize="12" Margin="0,0,0,5"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Durée:" Foreground="#888888" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMedia.Duration}" Foreground="White" FontWeight="SemiBold" Margin="0,0,0,5"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Format:" Foreground="#888888" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMedia.Format}" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Canaux:" Foreground="#888888" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMedia.Channels}" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Fréq.:" Foreground="#888888" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMedia.SampleRate}" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Mise en bits:" Foreground="#888888" Margin="0,0,0,5"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedMedia.BitDepth}" Foreground="#CCCCCC" Margin="0,0,0,5"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
         </Border>
     </Grid>

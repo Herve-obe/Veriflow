@@ -7,7 +7,7 @@ namespace Veriflow.Desktop.ViewModels
     public partial class MainViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _title = "Veriflow";
+        private string _title = "Veriflow Pro";
 
         [ObservableProperty]
         private object? _currentView;

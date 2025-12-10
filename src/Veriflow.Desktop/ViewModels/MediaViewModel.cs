@@ -18,6 +18,11 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty]
         private MediaItemViewModel? _selectedMedia;
 
+        partial void OnSelectedMediaChanged(MediaItemViewModel? value)
+        {
+            value?.LoadMetadata();
+        }
+
         [ObservableProperty]
         private bool _isPreviewing;
         
@@ -167,13 +172,53 @@ namespace Veriflow.Desktop.ViewModels
     {
         public FileInfo File { get; }
         public string Name => File.Name;
-        
+        public string FullName => File.FullName;
+        public DateTime CreationTime => File.CreationTime;
+        public long Length => File.Length;
+
         [ObservableProperty]
         private bool _isPlaying;
+
+        // Metadata
+        [ObservableProperty] private string _duration = "--:--";
+        [ObservableProperty] private string _sampleRate = "";
+        [ObservableProperty] private string _channels = "";
+        [ObservableProperty] private string _bitDepth = "";
+        [ObservableProperty] private string _format = "";
+        
+        private bool _metadataLoaded;
 
         public MediaItemViewModel(FileInfo file)
         {
             File = file;
+        }
+
+        public void LoadMetadata()
+        {
+            if (_metadataLoaded) return;
+            
+            try
+            {
+                // Only attempt for audio/video files
+                var ext = File.Extension.ToLower();
+                if (new[] { ".wav", ".mp3", ".m4a", ".aiff", ".wma" }.Contains(ext))
+                {
+                    using var reader = new NAudio.Wave.AudioFileReader(File.FullName);
+                    Duration = reader.TotalTime.ToString(@"mm\:ss");
+                    SampleRate = $"{reader.WaveFormat.SampleRate} Hz";
+                    Channels = reader.WaveFormat.Channels == 1 ? "Mono" : "Stereo";
+                    BitDepth = $"{reader.WaveFormat.BitsPerSample} bit";
+                    Format = ext.Substring(1).ToUpper();
+                    _metadataLoaded = true;
+                }
+                // For Video, NAudio MediaFoundationReader might work but is heavier. 
+                // We keep it simple for now or try-catch it.
+            }
+            catch (Exception)
+            {
+                // Metadata load failed (not a valid audio file or locked)
+                Format = "Unknown";
+            }
         }
     }
 

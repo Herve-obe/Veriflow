@@ -23,10 +23,14 @@ namespace Veriflow.Desktop.Services
                 
                 ISampleProvider sampleProvider = _audioFile;
 
-                // Simple Stereo Downmix if needed
-                if (_audioFile.WaveFormat.Channels > 2)
+                // Auto Downmix to Mono for Preview (Listen on both speakers)
+                if (_audioFile.WaveFormat.Channels > 1)
                 {
-                    sampleProvider = new MultiplexingSampleProvider(new[] { _audioFile }, 2);
+                    // Mix all channels to mono 
+                    // (Simple average helps avoiding clipping but reduces volume, 
+                    // but for preview it's safer to just take L+R/2 or similar)
+                    var updated = new StereoToMonoSampleProvider(_audioFile) { LeftVolume = 1.0f, RightVolume = 1.0f };
+                    sampleProvider = updated;
                 }
 
                 _outputDevice = new WaveOutEvent();
