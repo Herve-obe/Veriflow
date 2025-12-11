@@ -20,9 +20,7 @@
                 <views:TranscodeView />
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:PlayerViewModel}">
-                <views:PlayerView />
-            </DataTemplate>
+
 
             <DataTemplate DataType="{x:Type vm:SyncViewModel}">
                 <views:SyncView />

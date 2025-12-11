@@ -1,0 +1,527 @@
+<UserControl x:Class="Veriflow.Desktop.Views.AudioPlayerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Veriflow.Desktop.Views"
+             xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
+             xmlns:conv="clr-namespace:Veriflow.Desktop.Converters"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1024"
+             Focusable="True"
+             FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}">
+    <UserControl.InputBindings>
+        <KeyBinding Key="Space" Command="{Binding TogglePlayPauseCommand}"/>
+        <KeyBinding Key="Return" Command="{Binding StopCommand}"/>
+    </UserControl.InputBindings>
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:PercentToPositionConverter x:Key="PercentToPositionConverter"/>
+
+        <!-- Mute Button Style -->
+        <Style x:Key="DawMuteButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="border" Background="#333333" CornerRadius="2" BorderBrush="#111111" BorderThickness="1">
+                            <TextBlock Text="M" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{StaticResource Font.Size.Mini}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#D32F2F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Solo Button Style -->
+        <Style x:Key="DawSoloButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="border" Background="#333333" CornerRadius="2" BorderBrush="#111111" BorderThickness="1">
+                            <TextBlock x:Name="txt" Text="S" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="{StaticResource Font.Size.Mini}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FBC02D"/>
+                                <Setter TargetName="txt" Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- Modern Transport Button Base Style -->
+        <Style x:Key="Style.Transport.Base" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="circle" Fill="Transparent" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <Setter Property="Foreground" Value="#111111"/> 
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="circle" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <!-- NEW: Trigger based on Binding (passed via Tag) -->
+                            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
+                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <Setter Property="Foreground" Value="#111111"/> 
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Red Stop Button -->
+        <Style x:Key="Style.Transport.Stop" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
+            <Setter Property="BorderBrush" Value="#FF5252"/> <!-- Red Accent -->
+            <Setter Property="Foreground" Value="#FF5252"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+        </Style>
+
+        <!-- Green Play Button -->
+        <Style x:Key="Style.Transport.Play" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
+            <Setter Property="BorderBrush" Value="#69F0AE"/> <!-- Green Accent -->
+            <Setter Property="Foreground" Value="#69F0AE"/>
+            <Setter Property="Width" Value="48"/>
+            <Setter Property="Height" Value="48"/>
+        </Style>
+
+        <!-- Yellow Pause Button -->
+        <Style x:Key="Style.Transport.Pause" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
+            <Setter Property="BorderBrush" Value="#FFD740"/> <!-- Yellow Accent -->
+            <Setter Property="Foreground" Value="#FFD740"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid AllowDrop="True" Background="Transparent">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Drop">
+                <i:InvokeCommandAction Command="{Binding DropFileCommand}" PassEventArgsToCommand="True" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>   <!-- Console (Left) -->
+            <ColumnDefinition Width="300"/>  <!-- Metadata (Right) -->
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT COLUMN: CONSOLE -->
+        <Grid Grid.Column="0" Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header -->
+                <RowDefinition Height="Auto"/> <!-- Transport -->
+                <RowDefinition Height="30"/>   <!-- Ruler Header -->
+                <RowDefinition Height="*"/>    <!-- Tracks -->
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,15">
+                <StackPanel VerticalAlignment="Center">
+                    <!-- Title Row -->
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Headphones Icon -->
+                        <Path Data="M12,1C7,1 3,5 3,10V17A3,3 0 0,0 6,20H9V12H5V10A7,7 0 0,1 12,3A7,7 0 0,1 19,10V12H15V20H18A3,3 0 0,0 21,17V10C21,5 17,1 12,1Z"
+                              Fill="{StaticResource Brush.Accent}"
+                              Height="18" Width="18" Stretch="Uniform"
+                              VerticalAlignment="Center" Margin="0,0,10,0"/>
+                              
+                        <TextBlock Text="DERUSH CONSOLE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding FileName, TargetNullValue='No file loaded'}" FontSize="{StaticResource Font.Size.Header}" FontWeight="Bold" Foreground="#DDDDDD" Margin="0,2"/>
+                    
+                    <!-- Timecode Display -->
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock Text="{Binding CurrentTimeDisplay}" FontSize="{StaticResource Font.Size.Large}" FontFamily="Consolas" Foreground="{StaticResource Brush.Accent}"/>
+                            <TextBlock Text=" / " FontSize="{StaticResource Font.Size.Large}" Opacity="0.5"/>
+                            <TextBlock Text="{Binding TotalTimeDisplay}" FontSize="{StaticResource Font.Size.Large}" FontFamily="Consolas" Opacity="0.5"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- Transport Controls -->
+            <Border Grid.Row="1" Background="Transparent" Margin="0,0,0,10" Padding="0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Center">
+                    
+                    <!-- STOP -->
+                    <Button Command="{Binding StopCommand}" Tag="{Binding IsStopPressed}" Margin="0,0,15,0" ToolTip="Stop" Style="{StaticResource Style.Transport.Stop}">
+                        <Path Data="M6,6H18V18H6V6Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
+                    </Button>
+                    
+                    <!-- PLAY -->
+                    <Button Command="{Binding PlayCommand}" Tag="{Binding IsPlaying}" Margin="0,0,15,0" ToolTip="Play" Style="{StaticResource Style.Transport.Play}">
+                         <Path Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="20" Width="20" Stretch="Uniform" Margin="2,0,0,0"/>
+                    </Button>
+                    
+                    <!-- PAUSE -->
+                    <Button Command="{Binding PauseCommand}" Tag="{Binding IsPaused}" ToolTip="Pause" Style="{StaticResource Style.Transport.Pause}">
+                        <Path Data="M14,19H18V5H14M6,19H10V5H6V19Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
+                    </Button>
+                    
+                </StackPanel>
+            </Border>
+
+            <!-- Ruler (Aligned to Waveform Column) -->
+            <Grid Grid.Row="2" Background="Transparent" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="260"/> <!-- Console Controls Width -->
+                    <ColumnDefinition Width="30"/>  <!-- Meter Width -->
+                    <ColumnDefinition Width="*"/>   <!-- Audio/Ruler Column -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Ruler in Col 2 -->
+                <Border Grid.Column="2" ClipToBounds="True" Margin="0" Background="Transparent" Cursor="Hand">
+                     <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonDown">
+                            <i:InvokeCommandAction Command="{Binding SeekCommand}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    
+                    <Canvas x:Name="RulerCanvas" Background="Transparent">
+                        <ItemsControl ItemsSource="{Binding RulerTicks}" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsItemsHost="True"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Canvas.Left">
+                                        <Setter.Value>
+                                            <MultiBinding Converter="{StaticResource PercentToPositionConverter}">
+                                                <Binding Path="Percent"/>
+                                                <Binding ElementName="RulerCanvas" Path="ActualWidth"/>
+                                            </MultiBinding>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <!-- Tick Mark -->
+                                        <Rectangle Width="1" Height="10" Fill="White" Opacity="0.3" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                                        <!-- Time Label -->
+                                        <TextBlock Text="{Binding Label}" FontSize="{StaticResource Font.Size.Micro}" Opacity="0.7" Margin="2,10,0,0" Foreground="White" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Canvas>
+                </Border>
+            </Grid>
+
+            <!-- Tracks List (Reaper Console Layout) -->
+            <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Background="Transparent" Focusable="False">
+                <Grid VerticalAlignment="Top">
+                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260"/> <!-- Controls -->
+                        <ColumnDefinition Width="30"/>  <!-- Meter -->
+                        <ColumnDefinition Width="*"/>   <!-- Audio -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Tracks ItemsControl (Spans all 3 cols to sync row heights) -->
+                    <ItemsControl Grid.ColumnSpan="3" ItemsSource="{Binding Tracks}" Background="Transparent" BorderThickness="0" Focusable="False">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:TrackViewModel}">
+                                <Border Background="#2E2E2E" Margin="0,0,0,1" BorderBrush="#111111" BorderThickness="0,0,0,2">
+                                    <Grid Height="70"> <!-- Reduced height for density -->
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="260"/>
+                                            <ColumnDefinition Width="30"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Col 0: Console Controls (Name, Faders, Buttons) -->
+                                        <Grid Grid.Column="0" Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/> <!-- Name -->
+                                                <RowDefinition Height="*"/>    <!-- Faders + Buttons -->
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Name -->
+                                            <TextBlock Text="{Binding TrackName}" FontWeight="Bold" Foreground="#ECEFF1" FontSize="{StaticResource Font.Size.Small}" Margin="5,0,0,2" TextTrimming="CharacterEllipsis"/>
+
+                                            <!-- Controls Area -->
+                                            <Grid Grid.Row="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/> <!-- Buttons -->
+                                                    <ColumnDefinition Width="*"/>    <!-- Faders -->
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Buttons -->
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0">
+                                                    <ToggleButton IsChecked="{Binding IsMuted}" Style="{StaticResource DawMuteButtonStyle}" ToolTip="Mute" Focusable="False"/>
+                                                    <ToggleButton IsChecked="{Binding IsSoloed}" Style="{StaticResource DawSoloButtonStyle}" ToolTip="Solo" Focusable="False"/>
+                                                </StackPanel>
+
+                                                <!-- Faders -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <!-- Volume -->
+                                                    <Grid Margin="0,0,0,2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="20"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="VOL" FontSize="{StaticResource Font.Size.Micro}" Opacity="0.6" VerticalAlignment="Center"/>
+                                                        <Slider Grid.Column="1" Value="{Binding Volume}" Maximum="1" Minimum="0" Focusable="False" ToolTip="Volume">
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="MouseDoubleClick">
+                                                                    <i:InvokeCommandAction Command="{Binding ResetVolumeCommand}"/>
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Slider>
+                                                    </Grid>
+                                                    
+                                                    <!-- Pan -->
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="20"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="PAN" FontSize="{StaticResource Font.Size.Micro}" Opacity="0.6" VerticalAlignment="Center"/>
+                                                        <Slider Grid.Column="1" Value="{Binding Pan}" Maximum="1" Minimum="-1" Focusable="False" ToolTip="Pan">
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="MouseDoubleClick">
+                                                                    <i:InvokeCommandAction Command="{Binding ResetPanCommand}"/>
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Slider>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+
+                                        <!-- Col 1: VU Meter (REDESIGNED) -->
+                                        <Border Grid.Column="1" Background="#111111" Width="10" Margin="0,5" VerticalAlignment="Stretch">
+                                           <Rectangle Fill="#00FF00" VerticalAlignment="Stretch">
+                                               <Rectangle.RenderTransform>
+                                                    <ScaleTransform ScaleY="{Binding CurrentLevel}"/>
+                                               </Rectangle.RenderTransform>
+                                               <Rectangle.RenderTransformOrigin>
+                                                   <Point X="0.5" Y="1"/>
+                                               </Rectangle.RenderTransformOrigin>
+                                           </Rectangle>
+                                        </Border>
+
+                                        <!-- Col 2: Audio Waveform -->
+                                        <Border Grid.Column="2" Background="Transparent" ClipToBounds="True" Margin="0,2">
+                                            <Viewbox Stretch="Fill">
+                                                <Polyline Points="{Binding WaveformPoints}" Stroke="#90A4AE" StrokeThickness="1"/>
+                                            </Viewbox>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                
+                    <!-- Overlay Canvas (Global Playhead) -->
+                    <Grid Grid.Column="2" IsHitTestVisible="True" Background="Transparent">
+                        <Canvas Background="Transparent" x:Name="WaveformOverlay">
+                             <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                                    <i:InvokeCommandAction Command="{Binding SeekCommand}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        
+                            <Line Y1="0" Y2="{Binding ActualHeight, ElementName=WaveformOverlay}" 
+                                  Stroke="#FFFFFF" StrokeThickness="1" Opacity="1">
+                                <Line.X1>
+                                    <MultiBinding Converter="{StaticResource PercentToPositionConverter}">
+                                        <Binding Path="PlaybackPercent" />
+                                        <Binding ElementName="WaveformOverlay" Path="ActualWidth"/>
+                                    </MultiBinding>
+                                </Line.X1>
+                                <Line.X2>
+                                    <MultiBinding Converter="{StaticResource PercentToPositionConverter}">
+                                        <Binding Path="PlaybackPercent" />
+                                        <Binding ElementName="WaveformOverlay" Path="ActualWidth"/>
+                                    </MultiBinding>
+                                </Line.X2>
+                            </Line>
+                        </Canvas>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- RIGHT COLUMN: METADATA -->
+        <Border Grid.Column="1" Padding="15" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" CornerRadius="0">
+            <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Hidden">
+                <StackPanel>
+                    
+                    <Button Command="{Binding LoadFileCommand}"
+                            Content="OPEN FILE"
+                            Height="30" Margin="0,0,0,10"
+                            Foreground="White" FontWeight="Bold">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Command="{Binding UnloadMediaCommand}"
+                            Content="CLOSE FILE"
+                            Height="30" Margin="0,0,0,10"
+                            Foreground="White" FontWeight="Bold">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button Command="{Binding SendFileToTranscodeCommand}"
+                            Content="SEND FILE TO TRANSCODE"
+                            Height="30" Margin="0,0,0,20"
+                            Foreground="White" FontWeight="Bold">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!-- SPACER (Compensate for missing 4th button to align with Media Page) -->
+                    <Grid Height="70" />
+
+                    <TextBlock Text="METADATA" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
+
+                    <Grid Margin="0,5">
+                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="SCENE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}" Foreground="White"/>
+                    </Grid>
+                    <Separator Margin="0,5"/>
+
+                    <Grid Margin="0,5">
+                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="TAKE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Take}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
+                    </Grid>
+                     <Separator Margin="0,5"/>
+
+                    <Grid Margin="0,5">
+                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="START TC" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
+                    </Grid>
+                     <Separator Margin="0,5"/>
+                    
+                    <Grid Margin="0,5">
+                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="DURATION" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
+                    </Grid>
+                    <Separator Margin="0,5"/>
+
+                    <Grid Margin="0,5">
+                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="FORMAT" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Format}" FontSize="{StaticResource Font.Size.Body}"/>
+                    </Grid>
+                    <Separator Margin="0,5"/>
+
+                    <Grid Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="ORIGINATOR" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Originator}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
+                    </Grid>
+                    <Separator Margin="0,5"/>
+
+                    <Grid Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="DATE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.CreationDate}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
+                    </Grid>
+                     <Separator Margin="0,5"/>
+
+                    <Grid Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="TAPE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

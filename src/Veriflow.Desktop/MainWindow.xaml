@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
+        xmlns:local="clr-namespace:Veriflow.Desktop.Views"
         mc:Ignorable="d"
         Title="VERIFLOW - Pro" Height="800" Width="1200"
         WindowState="Maximized"
@@ -48,6 +49,26 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- View mappings -->
+        <DataTemplate DataType="{x:Type vm:MediaViewModel}">
+            <local:MediaView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AudioViewModel}">
+            <local:AudioPlayerView/>
+        </DataTemplate>
+         <DataTemplate DataType="{x:Type vm:PlayerViewModel}">
+            <local:VideoPlayerView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:OffloadViewModel}">
+            <local:OffloadView/>
+        </DataTemplate>
+         <DataTemplate DataType="{x:Type vm:TranscodeViewModel}">
+            <local:TranscodeView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SyncViewModel}">
+            <local:SyncView/>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -79,7 +100,7 @@
 
                 <!-- Tools: A/V Switch -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0">
-                    <RadioButton Content="AUDIO" GroupName="AV" IsChecked="True" Style="{StaticResource SegmentedToggleStyle}"
+                    <RadioButton Content="AUDIO" GroupName="AV" IsChecked="{Binding IsAudioActive, Mode=OneWay}" Style="{StaticResource SegmentedToggleStyle}"
                                  Command="{Binding SwitchToAudioCommand}">
                         <RadioButton.Tag>
                             <!-- Waveform Icon -->
@@ -88,7 +109,7 @@
                                   Height="14" Width="14" Stretch="Uniform"/>
                         </RadioButton.Tag>
                     </RadioButton>
-                    <RadioButton Content="VIDEO" GroupName="AV" Style="{StaticResource SegmentedToggleStyle}" Margin="1,0,0,0"
+                    <RadioButton Content="VIDEO" GroupName="AV" IsChecked="{Binding IsVideoActive, Mode=OneWay}" Style="{StaticResource SegmentedToggleStyle}" Margin="1,0,0,0"
                                  Command="{Binding SwitchToVideoCommand}">
                          <RadioButton.Tag>
                             <!-- Clapboard Icon -->
@@ -105,7 +126,7 @@
                     <!-- MEDIA (New, Dashboard Icon) -->
                     <RadioButton Content="MEDIA" 
                                  Command="{Binding ShowMediaCommand}"
-                                 IsChecked="{Binding IsMediaActive}"
+                                 IsChecked="{Binding IsMediaActive, Mode=OneWay}"
                                  Style="{StaticResource NavButtonStyle}">
                         <RadioButton.Tag>
                              <Path Data="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,3V13H11V3" 
@@ -117,7 +138,7 @@
                     <!-- PLAYER (Was Mediaboard, Play Icon) -->
                     <RadioButton Content="PLAYER" 
                                  Command="{Binding ShowPlayerCommand}"
-                                 IsChecked="{Binding IsPlayerActive}"
+                                 IsChecked="{Binding IsPlayerActive, Mode=OneWay}"
                                  Style="{StaticResource NavButtonStyle}">
                         <RadioButton.Tag>
                              <Path Data="M8,5.14V19.14L19,12.14L8,5.14Z" 
@@ -129,7 +150,7 @@
                     <!-- SYNC (New) -->
                     <RadioButton Content="SYNC" 
                                  Command="{Binding ShowSyncCommand}"
-                                 IsChecked="{Binding IsSyncActive}"
+                                 IsChecked="{Binding IsSyncActive, Mode=OneWay}"
                                  Style="{StaticResource NavButtonStyle}">
                         <RadioButton.Tag>
                              <Path Data="M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17A5,5 0 0,0 22,12A5,5 0 0,0 17,7Z" 
@@ -141,7 +162,7 @@
                     <!-- SECURE COPY -->
                     <RadioButton Content="SECURE COPY" 
                                  Command="{Binding ShowOffloadCommand}" 
-                                 IsChecked="{Binding IsOffloadActive}"
+                                 IsChecked="{Binding IsOffloadActive, Mode=OneWay}"
                                  Style="{StaticResource NavButtonStyle}">
                          <RadioButton.Tag>
                              <Path Data="M12,1L3,5V11C3,16.55 6.9,21.74 12,23C17.1,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" 
@@ -153,7 +174,7 @@
                     <!-- TRANSCODE (New) -->
                     <RadioButton Content="TRANSCODE" 
                                  Command="{Binding ShowTranscodeCommand}" 
-                                 IsChecked="{Binding IsTranscodeActive}"
+                                 IsChecked="{Binding IsTranscodeActive, Mode=OneWay}"
                                  Style="{StaticResource NavButtonStyle}">
                          <RadioButton.Tag>
                              <!-- Icon: Swap/Convert -->
@@ -165,7 +186,7 @@
 
                     <RadioButton Content="REPORTS" 
                                  Command="{Binding ShowReportsCommand}" 
-                                 IsChecked="{Binding IsReportsActive}"
+                                 IsChecked="{Binding IsReportsActive, Mode=OneWay}"
                                  Style="{StaticResource NavButtonStyle}">
                          <RadioButton.Tag>
                              <Path Data="M13,9V3.5L18.5,9M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6Z" 

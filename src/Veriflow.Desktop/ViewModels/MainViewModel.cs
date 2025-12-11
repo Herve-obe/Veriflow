@@ -1,9 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Windows.Input;
 
 namespace Veriflow.Desktop.ViewModels
 {
+    public enum AppMode { Audio, Video }
+    public enum PageType { Media, Player, Sync, Offload, Transcode, Reports }
+
     public partial class MainViewModel : ObservableObject
     {
         [ObservableProperty]
@@ -15,9 +19,16 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty]
         private string _applicationBackground = "#121212";
 
+        [ObservableProperty]
+        private AppMode _currentAppMode = AppMode.Audio;
+
+        [ObservableProperty]
+        private PageType _currentPageType = PageType.Media;
+
         // ViewModels
         private readonly OffloadViewModel _offloadViewModel = new();
         private readonly PlayerViewModel _playerViewModel = new(); 
+        private readonly AudioViewModel _audioViewModel = new();
         private readonly TranscodeViewModel _transcodeViewModel = new();
         private readonly MediaViewModel _mediaViewModel = new();
         private readonly SyncViewModel _syncViewModel = new();
@@ -34,34 +45,27 @@ namespace Veriflow.Desktop.ViewModels
 
         public MainViewModel()
         {
-            ShowPlayerCommand = new RelayCommand(() => CurrentView = _playerViewModel);
-            ShowMediaCommand = new RelayCommand(() => 
-            {
-                Console.WriteLine(">>> DEBUG NAV: Attempting to set CurrentPage to MediaViewModel <<<");
-                CurrentView = _mediaViewModel;
-            });
-            ShowTranscodeCommand = new RelayCommand(() => CurrentView = _transcodeViewModel);
-            ShowSyncCommand = new RelayCommand(() => CurrentView = _syncViewModel);
-            ShowOffloadCommand = new RelayCommand(() => CurrentView = _offloadViewModel);
-            ShowReportsCommand = new RelayCommand(() => CurrentView = _reportsView);
+            // Navigation Commands
+            ShowPlayerCommand = new RelayCommand(() => NavigateTo(PageType.Player));
+            ShowMediaCommand = new RelayCommand(() => NavigateTo(PageType.Media));
+            ShowTranscodeCommand = new RelayCommand(() => NavigateTo(PageType.Transcode));
+            ShowSyncCommand = new RelayCommand(() => NavigateTo(PageType.Sync));
+            ShowOffloadCommand = new RelayCommand(() => NavigateTo(PageType.Offload));
+            ShowReportsCommand = new RelayCommand(() => NavigateTo(PageType.Reports));
 
-            SwitchToAudioCommand = new RelayCommand(SwitchToAudio);
-            SwitchToVideoCommand = new RelayCommand(SwitchToVideo);
+            SwitchToAudioCommand = new RelayCommand(() => SetMode(AppMode.Audio));
+            SwitchToVideoCommand = new RelayCommand(() => SetMode(AppMode.Video));
 
-            // Default to Media view (as requested order suggests, or Player? User said Media is "before" Player)
-            // Let's stick to Player as default for now or switch if requested. 
-            // Actually, usually users want the "Home" page. Media might be the new home.
-            // Default to Media View as requested
-            // Default to Media View as requested
-            CurrentView = _mediaViewModel;
+            // Default
+            UpdateCurrentView();
 
             // Navigation Wiring
             _mediaViewModel.RequestOpenInPlayer += async (path) =>
             {
                 try
                 {
-                    await _playerViewModel.LoadAudio(path);
-                    CurrentView = _playerViewModel;
+                    await _audioViewModel.LoadAudio(path);
+                    NavigateTo(PageType.Player); 
                 }
                 catch (Exception ex)
                 {
@@ -72,23 +76,80 @@ namespace Veriflow.Desktop.ViewModels
             _mediaViewModel.RequestOffloadSource += (path) =>
             {
                 _offloadViewModel.SourcePath = path;
-                CurrentView = _offloadViewModel;
+                NavigateTo(PageType.Offload);
             };
 
             _mediaViewModel.RequestTranscode += (files) =>
             {
                 _transcodeViewModel.AddFiles(files);
-                CurrentView = _transcodeViewModel;
+                NavigateTo(PageType.Transcode);
             };
 
-            _playerViewModel.RequestTranscode += (files) =>
+            _audioViewModel.RequestTranscode += (files) =>
             {
                 _transcodeViewModel.AddFiles(files);
-                CurrentView = _transcodeViewModel;
+                NavigateTo(PageType.Transcode);
+            };
+
+             _playerViewModel.RequestTranscode += (files) =>
+            {
+                _transcodeViewModel.AddFiles(files);
+                NavigateTo(PageType.Transcode);
             };
         }
 
-        partial void OnCurrentViewChanged(object? value)
+        private void NavigateTo(PageType page)
+        {
+            try 
+            {
+                CurrentPageType = page;
+                UpdateCurrentView();
+            }
+            catch { /* Log */ }
+        }
+
+        private void SetMode(AppMode mode)
+        {
+            try
+            {
+                CurrentAppMode = mode;
+                UpdateCurrentView();
+            }
+             catch { /* Log */ }
+        }
+
+        private void UpdateCurrentView()
+        {
+            switch (CurrentPageType)
+            {
+                case PageType.Media:
+                    CurrentView = _mediaViewModel;
+                    break;
+                case PageType.Player:
+                    // Smart switch based on Mode
+                    if (CurrentAppMode == AppMode.Audio)
+                        CurrentView = _audioViewModel;
+                    else
+                        CurrentView = _playerViewModel;
+                    break;
+                case PageType.Offload:
+                    CurrentView = _offloadViewModel;
+                    break;
+                case PageType.Transcode:
+                    CurrentView = _transcodeViewModel;
+                    break;
+                case PageType.Sync:
+                    CurrentView = _syncViewModel;
+                    break;
+                case PageType.Reports:
+                    CurrentView = _reportsView;
+                    break;
+            }
+            
+            NotifyNavigationProperties();
+        }
+
+        private void NotifyNavigationProperties()
         {
             OnPropertyChanged(nameof(IsMediaActive));
             OnPropertyChanged(nameof(IsPlayerActive));
@@ -96,52 +157,18 @@ namespace Veriflow.Desktop.ViewModels
             OnPropertyChanged(nameof(IsSyncActive));
             OnPropertyChanged(nameof(IsOffloadActive));
             OnPropertyChanged(nameof(IsReportsActive));
+            OnPropertyChanged(nameof(IsAudioActive));
+            OnPropertyChanged(nameof(IsVideoActive));
         }
 
-        public bool IsMediaActive
-        {
-            get => CurrentView == _mediaViewModel;
-            set { if (value) CurrentView = _mediaViewModel; }
-        }
+        public bool IsMediaActive => CurrentPageType == PageType.Media;
+        public bool IsPlayerActive => CurrentPageType == PageType.Player;
+        public bool IsTranscodeActive => CurrentPageType == PageType.Transcode;
+        public bool IsOffloadActive => CurrentPageType == PageType.Offload;
+        public bool IsSyncActive => CurrentPageType == PageType.Sync;
+        public bool IsReportsActive => CurrentPageType == PageType.Reports;
 
-        public bool IsPlayerActive
-        {
-            get => CurrentView == _playerViewModel;
-            set { if (value) CurrentView = _playerViewModel; }
-        }
-
-        public bool IsTranscodeActive
-        {
-            get => CurrentView == _transcodeViewModel;
-            set { if (value) CurrentView = _transcodeViewModel; }
-        }
-
-        public bool IsOffloadActive
-        {
-            get => CurrentView == _offloadViewModel;
-            set { if (value) CurrentView = _offloadViewModel; }
-        }
-
-        public bool IsSyncActive
-        {
-            get => CurrentView == _syncViewModel;
-            set { if (value) CurrentView = _syncViewModel; }
-        }
-
-        public bool IsReportsActive
-        {
-            get => object.Equals(CurrentView, _reportsView);
-            set { if (value) CurrentView = _reportsView; }
-        }
-
-        private void SwitchToAudio()
-        {
-            ApplicationBackground = "#121212";
-        }
-
-        private void SwitchToVideo()
-        {
-            ApplicationBackground = "#2D2D2D";
-        }
+        public bool IsAudioActive => CurrentAppMode == AppMode.Audio;
+        public bool IsVideoActive => CurrentAppMode == AppMode.Video;
     }
 }
