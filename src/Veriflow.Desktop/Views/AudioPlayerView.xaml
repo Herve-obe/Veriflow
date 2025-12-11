@@ -122,6 +122,66 @@
             <Setter Property="Height" Value="36"/>
         </Style>
 
+        <!-- Round Slider Style -->
+        <Style x:Key="RoundSliderStyle" TargetType="Slider">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#DDDDDD"/>
+            <Setter Property="IsSelectionRangeEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid>
+                            <Grid.Resources>
+                                <!-- Transparent RepeatButton Template to prevent hover effects -->
+                                <Style x:Key="TransparentRepeatButtonStyle" TargetType="RepeatButton">
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="IsTabStop" Value="False"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Rectangle Fill="{TemplateBinding Background}" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Grid.Resources>
+                            
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Track Layer -->
+                            <Border x:Name="TrackBackground" Grid.Row="1" Height="2" Background="#444444" VerticalAlignment="Center" Margin="5,0"/>
+                            
+                            <!-- Thumb -->
+                            <Track x:Name="PART_Track" Grid.Row="1">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Style="{StaticResource TransparentRepeatButtonStyle}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource TransparentRepeatButtonStyle}"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Ellipse Width="12" Height="12" Fill="#FFFFFF" Stroke="#111111" StrokeThickness="1"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
 
     <Grid AllowDrop="True" Background="Transparent">
@@ -304,7 +364,7 @@
                                                             <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Text="VOL" FontSize="{StaticResource Font.Size.Micro}" Opacity="0.6" VerticalAlignment="Center"/>
-                                                        <Slider Grid.Column="1" Value="{Binding Volume}" Maximum="1" Minimum="0" Focusable="False" ToolTip="Volume">
+                                                        <Slider Grid.Column="1" Value="{Binding Volume}" Maximum="1" Minimum="0" Focusable="False" ToolTip="Volume" Style="{StaticResource RoundSliderStyle}">
                                                             <i:Interaction.Triggers>
                                                                 <i:EventTrigger EventName="MouseDoubleClick">
                                                                     <i:InvokeCommandAction Command="{Binding ResetVolumeCommand}"/>
@@ -320,7 +380,7 @@
                                                             <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
                                                         <TextBlock Text="PAN" FontSize="{StaticResource Font.Size.Micro}" Opacity="0.6" VerticalAlignment="Center"/>
-                                                        <Slider Grid.Column="1" Value="{Binding Pan}" Maximum="1" Minimum="-1" Focusable="False" ToolTip="Pan">
+                                                        <Slider Grid.Column="1" Value="{Binding Pan}" Maximum="1" Minimum="-1" Focusable="False" ToolTip="Pan" Style="{StaticResource RoundSliderStyle}">
                                                             <i:Interaction.Triggers>
                                                                 <i:EventTrigger EventName="MouseDoubleClick">
                                                                     <i:InvokeCommandAction Command="{Binding ResetPanCommand}"/>
