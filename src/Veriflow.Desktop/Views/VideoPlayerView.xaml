@@ -132,7 +132,7 @@
 
     </UserControl.Resources>
 
-    <Grid Background="Transparent">
+    <Grid Background="#1E1E1E">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>   <!-- Video Surface (Left) -->
             <ColumnDefinition Width="350"/>  <!-- Metadata (Right) -->
@@ -224,7 +224,7 @@
             </Border>
 
             <!-- Video Surface (Reduced Size via Margins) -->
-            <Border Grid.Row="2" Background="Black" Margin="0,0,0,15" VerticalAlignment="Stretch"
+            <Border Grid.Row="2" Background="#1E1E1E" Margin="0,0,0,15" VerticalAlignment="Stretch"
                     Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <vlc:VideoView x:Name="VideoViewControl" MediaPlayer="{Binding Player}" />
             </Border>

@@ -7,10 +7,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using CSCore.SoundOut;
-using CSCore.Streams;
-using CSCore.CoreAudioAPI;
-using System.Runtime.InteropServices;
+
 using Veriflow.Desktop.Models;
 using Veriflow.Desktop.Services;
 using System.Linq;
@@ -21,6 +18,39 @@ namespace Veriflow.Desktop.ViewModels
     {
         private LibVLC? _libVLC;
         private MediaPlayer? _mediaPlayer;
+
+        // New Master Stereo Control
+        [ObservableProperty]
+        private float _leftVolume = 1.0f;
+
+        [ObservableProperty]
+        private float _rightVolume = 1.0f;
+
+        [ObservableProperty]
+        private bool _isLeftMuted;
+
+        [ObservableProperty]
+        private bool _isRightMuted;
+
+        partial void OnLeftVolumeChanged(float value) => UpdateVolume();
+        partial void OnRightVolumeChanged(float value) => UpdateVolume();
+        partial void OnIsLeftMutedChanged(bool value) => UpdateVolume();
+        partial void OnIsRightMutedChanged(bool value) => UpdateVolume();
+
+        private void UpdateVolume()
+        {
+            if (_mediaPlayer != null)
+            {
+                 // Native Direct Audio doesn't support easy L/R independent volume without filters.
+                 // We will map the Right Volume slider to Master Volume for now, 
+                 // or take the max of both to ensure audible output.
+                 var vol = Math.Max(LeftVolume, RightVolume);
+                 if (IsLeftMuted && IsRightMuted) vol = 0;
+                 
+                 _mediaPlayer.Volume = (int)(vol * 100);
+                 _mediaPlayer.Mute = (IsLeftMuted && IsRightMuted);
+            }
+        }
 
         [ObservableProperty]
         private MediaPlayer? _player; // Expose to View for Binding
@@ -68,44 +98,6 @@ namespace Veriflow.Desktop.ViewModels
         private readonly DispatcherTimer _uiTimer;
         private bool _isUserSeeking; // Prevent timer updates while dragging slider
 
-        // Audio Engine
-        private VLCAudioSource? _vlcAudioSource;
-        private StereoVolumeSource? _stereoSource; 
-        private WasapiOut? _audioOutput;
-        private GCHandle _gcHandle; // Pin callbacks
-
-        // Callbacks must be static or kept alive
-        private LibVLCSharp.Shared.MediaPlayer.LibVLCAudioPlayCb _audioPlayCb;
-
-        // New Master Stereo Control
-        [ObservableProperty]
-        private float _leftVolume = 1.0f;
-
-        [ObservableProperty]
-        private float _rightVolume = 1.0f;
-
-        [ObservableProperty]
-        private bool _isLeftMuted;
-
-        [ObservableProperty]
-        private bool _isRightMuted;
-
-        partial void OnLeftVolumeChanged(float value) => UpdateVolume();
-        partial void OnRightVolumeChanged(float value) => UpdateVolume();
-        partial void OnIsLeftMutedChanged(bool value) => UpdateVolume();
-        partial void OnIsRightMutedChanged(bool value) => UpdateVolume();
-
-        private void UpdateVolume()
-        {
-            if (_stereoSource != null)
-            {
-                _stereoSource.LeftVolume = LeftVolume;
-                _stereoSource.RightVolume = RightVolume;
-                _stereoSource.IsLeftMuted = IsLeftMuted;
-                _stereoSource.IsRightMuted = IsRightMuted;
-            }
-        }
-
         public VideoPlayerViewModel()
         {
             if (!DesignMode.IsDesignMode)
@@ -114,12 +106,6 @@ namespace Veriflow.Desktop.ViewModels
                 _libVLC = new LibVLC();
                 _mediaPlayer = new MediaPlayer(_libVLC);
                 Player = _mediaPlayer; 
-                
-                // Define Callbacks
-                _audioPlayCb = AudioPlay;
-
-                // Set Format on VLC (initially Stereo, will re-init in LoadVideo)
-                _mediaPlayer.SetAudioFormat("f32l", 48000, 2); 
                 
                 _mediaPlayer.LengthChanged += OnLengthChanged;
                 _mediaPlayer.EndReached += OnEndReached;
@@ -132,39 +118,13 @@ namespace Veriflow.Desktop.ViewModels
 
         private void InitializeAudioEngine(int channels)
         {
-            StopAudioEngine();
-
-            if (channels <= 0) channels = 2;
-            if (channels > 8) channels = 8; // Cap generic channels if needed, but VLCAudioSource handles arbitrary
-            
-            _vlcAudioSource = new VLCAudioSource(48000, channels); // Force 48k for simplicity
-            
-            // Chain: VLC -> StereoVolumeSource -> WasapiOut
-            _stereoSource = new StereoVolumeSource(_vlcAudioSource);
-            UpdateVolume(); // Apply initial values
-
-            _audioOutput = new WasapiOut(true, AudioClientShareMode.Shared, 200);
-            
-            // StereoVolumeSource is ISampleSource, needs to be WaveSource
-            // Using explicit wrapper as defined in Veriflow.Desktop.Services
-            _audioOutput.Initialize(new Veriflow.Desktop.Services.SampleSourceToWaveSource(_stereoSource)); 
-            _audioOutput.Play(); // Always running, waiting for data
-            
-            // Set Format on VLC (must be done before Play)
-            _mediaPlayer?.SetAudioFormat("f32l", 48000, (uint)channels);
-            _mediaPlayer?.SetAudioCallbacks(_audioPlayCb, null, null, null, null);
+            // Direct Audio Mode: Just set volume
+            UpdateVolume();
         }
 
         private void StopAudioEngine()
         {
-            _audioOutput?.Stop();
-            _audioOutput?.Dispose();
-            _audioOutput = null;
-
-            _vlcAudioSource?.Dispose(); // Just clears buffer
-            _vlcAudioSource = null;
-
-            _stereoSource = null;
+            // No custom engine to stop
         }
 
         private void OnUiTick(object? sender, EventArgs e)
@@ -216,21 +176,7 @@ namespace Veriflow.Desktop.ViewModels
              _uiTimer.Stop();
         }
 
-        // VLC Audio Callbacks
-        private void AudioPlay(IntPtr data, IntPtr samples, uint count, long pts)
-        {
-            _vlcAudioSource?.Write(samples, count);
-        }
-        
-        // Stubs required by delegate signature, but allowed to be null in SetAudioCallbacks if unused?
-        // LibVLCSharp wrappers might require valid delegates.
-        // Actually SetAudioCallbacks takes "Play" as mandatory. Others optional.
-        private void AudioLock(IntPtr data) { }
-        private void AudioUnlock(IntPtr data) { }
-        private void AudioFlush(IntPtr data, long pts) { } 
-        private void AudioPause(IntPtr data, long pts) { }
-        private void AudioResume(IntPtr data, long pts) { }
-        private void AudioSetVolume(IntPtr data, float volume, bool mute) { }
+
 
 
         public async Task LoadVideo(string path)

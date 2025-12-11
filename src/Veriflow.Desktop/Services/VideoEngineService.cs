@@ -16,9 +16,15 @@ namespace Veriflow.Desktop.Services
 
             LibVLCSharp.Shared.Core.Initialize();
 
-            // --avcodec-hw=any : Valid for any hardware decoder (DXVA2, D3D11VA, etc.)
-            // Essential for 4K/ProRes performance on Windows.
-            var options = new[] { "--avcodec-hw=any" };
+            var options = new string[]
+            {
+                "--avcodec-hw=d3d11va",     // Keep GPU Acceleration
+                "--aout=mmdevice",          // Force WASAPI (Low Latency Audio)
+                "--file-caching=1000",      // Balanced buffer for specific Direct Audio stability
+                "--network-caching=1000",
+                "--clock-jitter=0",
+                "--clock-synchro=0"
+            };
             LibVLC = new LibVLC(options);
         }
     }
