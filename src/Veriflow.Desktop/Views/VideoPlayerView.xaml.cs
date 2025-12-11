@@ -18,6 +18,7 @@ namespace Veriflow.Desktop.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             AttachMediaPlayer();
+            this.Focus();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -39,12 +40,12 @@ namespace Veriflow.Desktop.Views
             // Defensive coding: Check if UI is ready and DataContext is correct
             if (VideoViewControl == null) return;
 
-            if (DataContext is PlayerViewModel vm && vm.MediaPlayer != null)
+            if (DataContext is VideoPlayerViewModel vm && vm.Player != null)
             {
                 // Only attach if not already attached to avoid flickering
-                if (VideoViewControl.MediaPlayer != vm.MediaPlayer)
+                if (VideoViewControl.MediaPlayer != vm.Player)
                 {
-                    VideoViewControl.MediaPlayer = vm.MediaPlayer;
+                    VideoViewControl.MediaPlayer = vm.Player;
                 }
             }
         }

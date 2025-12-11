@@ -29,6 +29,7 @@ namespace Veriflow.Desktop.ViewModels
         private readonly OffloadViewModel _offloadViewModel = new();
         private readonly PlayerViewModel _playerViewModel = new(); 
         private readonly AudioViewModel _audioViewModel = new();
+        private readonly VideoPlayerViewModel _videoPlayerViewModel = new();
         private readonly TranscodeViewModel _transcodeViewModel = new();
         private readonly MediaViewModel _mediaViewModel = new();
         private readonly SyncViewModel _syncViewModel = new();
@@ -64,7 +65,14 @@ namespace Veriflow.Desktop.ViewModels
             {
                 try
                 {
-                    await _audioViewModel.LoadAudio(path);
+                    if (CurrentAppMode == AppMode.Audio)
+                    {
+                         await _audioViewModel.LoadAudio(path);
+                    }
+                    else
+                    {
+                         await _videoPlayerViewModel.LoadVideo(path);
+                    }
                     NavigateTo(PageType.Player); 
                 }
                 catch (Exception ex)
@@ -86,6 +94,12 @@ namespace Veriflow.Desktop.ViewModels
             };
 
             _audioViewModel.RequestTranscode += (files) =>
+            {
+                _transcodeViewModel.AddFiles(files);
+                NavigateTo(PageType.Transcode);
+            };
+
+            _videoPlayerViewModel.RequestTranscode += (files) =>
             {
                 _transcodeViewModel.AddFiles(files);
                 NavigateTo(PageType.Transcode);
@@ -113,6 +127,7 @@ namespace Veriflow.Desktop.ViewModels
             try
             {
                 CurrentAppMode = mode;
+                _mediaViewModel.SetAppMode(mode);
                 UpdateCurrentView();
             }
              catch { /* Log */ }
@@ -130,7 +145,7 @@ namespace Veriflow.Desktop.ViewModels
                     if (CurrentAppMode == AppMode.Audio)
                         CurrentView = _audioViewModel;
                     else
-                        CurrentView = _playerViewModel;
+                        CurrentView = _videoPlayerViewModel;
                     break;
                 case PageType.Offload:
                     CurrentView = _offloadViewModel;

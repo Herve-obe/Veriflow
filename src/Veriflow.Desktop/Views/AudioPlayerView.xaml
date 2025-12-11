@@ -156,7 +156,7 @@
                               Height="18" Width="18" Stretch="Uniform"
                               VerticalAlignment="Center" Margin="0,0,10,0"/>
                               
-                        <TextBlock Text="DERUSH CONSOLE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                        <TextBlock Text="AUDIO PLAYER" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
 
                     </StackPanel>
 
@@ -172,7 +172,8 @@
             </Grid>
 
             <!-- Transport Controls -->
-            <Border Grid.Row="1" Background="Transparent" Margin="0,0,0,10" Padding="0">
+            <Border Grid.Row="1" Background="Transparent" Margin="0,0,0,10" Padding="0"
+                    Visibility="{Binding IsAudioLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Center">
                     
                     <!-- STOP -->
@@ -194,7 +195,8 @@
             </Border>
 
             <!-- Ruler (Aligned to Waveform Column) -->
-            <Grid Grid.Row="2" Background="Transparent" Margin="0,0,0,5">
+            <Grid Grid.Row="2" Background="Transparent" Margin="0,0,0,5"
+                  Visibility="{Binding IsAudioLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="260"/> <!-- Console Controls Width -->
                     <ColumnDefinition Width="30"/>  <!-- Meter Width -->
@@ -244,7 +246,8 @@
             </Grid>
 
             <!-- Tracks List (Reaper Console Layout) -->
-            <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Background="Transparent" Focusable="False">
+            <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" Background="Transparent" Focusable="False"
+                          Visibility="{Binding IsAudioLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid VerticalAlignment="Top">
                      <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="260"/> <!-- Controls -->

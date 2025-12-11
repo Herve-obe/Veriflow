@@ -39,6 +39,33 @@ namespace Veriflow.Desktop.Services
             return metadata;
         }
 
+        public async Task<VideoMetadata> GetVideoMetadataAsync(string filePath)
+        {
+            var metadata = new VideoMetadata
+            {
+                Filename = Path.GetFileName(filePath),
+                Size = GetFileSizeString(filePath)
+            };
+
+            await PopulateVideoFromFFprobeAsync(filePath, metadata);
+            return metadata;
+        }
+
+        private string GetFileSizeString(string path)
+        {
+            try {
+                var fi = new FileInfo(path);
+                double bytes = fi.Length;
+                string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+                int order = 0;
+                while (bytes >= 1024 && order < sizes.Length - 1) {
+                    order++;
+                    bytes = bytes / 1024;
+                }
+                return $"{bytes:0.##} {sizes[order]}";
+            } catch { return ""; }
+        }
+
         private bool IsWavOrBwf(string path)
         {
             var ext = Path.GetExtension(path);
@@ -406,6 +433,142 @@ namespace Veriflow.Desktop.Services
             long frames = remainder % (long)fps;
             
             return $"{hours:00}:{minutes:00}:{seconds:00}:{frames:00}";
+        }
+        #endregion
+
+        #region Video Logic
+        private async Task PopulateVideoFromFFprobeAsync(string filePath, VideoMetadata metadata)
+        {
+            try
+            {
+                string ffprobePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffprobe.exe");
+                if (!File.Exists(ffprobePath)) return;
+
+                var args = $"-v quiet -print_format json -show_format -show_streams -i \"{filePath}\"";
+                
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = ffprobePath,
+                    Arguments = args,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8
+                };
+
+                using var process = new Process { StartInfo = startInfo };
+                process.Start();
+
+                string json = await process.StandardOutput.ReadToEndAsync();
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode == 0 && !string.IsNullOrWhiteSpace(json))
+                {
+                    ParseVideoJson(json, metadata);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"FFprobe Video Error: {ex.Message}");
+            }
+        }
+
+        private void ParseVideoJson(string json, VideoMetadata metadata)
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                // Format Info
+                if (root.TryGetProperty("format", out var format))
+                {
+                   if (format.TryGetProperty("format_long_name", out var container)) metadata.Container = container.GetString();
+                   if (format.TryGetProperty("duration", out var dur) && double.TryParse(dur.GetString(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double d))
+                       metadata.Duration = TimeSpan.FromSeconds(d).ToString(@"hh\:mm\:ss\:ff");
+                   if (format.TryGetProperty("bit_rate", out var br) && double.TryParse(br.GetString(), out double b))
+                       metadata.Bitrate = $"{(b/1000000.0):0.0} Mbps";
+                }
+
+                if (root.TryGetProperty("streams", out var streams))
+                {
+                    foreach (var s in streams.EnumerateArray())
+                    {
+                        if (s.TryGetProperty("codec_type", out var type))
+                        {
+                            string typeStr = type.GetString().ToLower();
+                            if (typeStr == "video")
+                            {
+                                // Video Stream
+                                if (s.TryGetProperty("codec_long_name", out var codec)) metadata.Codec = codec.GetString();
+                                else if (s.TryGetProperty("codec_name", out var cn)) metadata.Codec = cn.GetString();
+
+                                int w = 0, h = 0;
+                                if (s.TryGetProperty("width", out var width)) w = width.GetInt32();
+                                if (s.TryGetProperty("height", out var height)) h = height.GetInt32();
+                                if (w > 0 && h > 0) metadata.Resolution = $"{w}x{h}";
+
+                                if (s.TryGetProperty("display_aspect_ratio", out var dar)) metadata.AspectRatio = dar.GetString();
+                                
+                                if (s.TryGetProperty("r_frame_rate", out var fps)) 
+                                {
+                                    // often "24000/1001" or "25/1"
+                                    string fpsStr = fps.GetString();
+                                    if (fpsStr.Contains("/"))
+                                    {
+                                        var parts = fpsStr.Split('/');
+                                        if (parts.Length == 2 && double.TryParse(parts[0], out double num) && double.TryParse(parts[1], out double den) && den > 0)
+                                            metadata.FrameRate = $"{num/den:0.00} fps";
+                                    }
+                                    else metadata.FrameRate = $"{fpsStr} fps";
+                                }
+
+                                if (s.TryGetProperty("pix_fmt", out var pix)) 
+                                {
+                                    string p = pix.GetString();
+                                    // Heuristic mapping
+                                    if (p.Contains("yuv422")) metadata.ChromaSubsampling = "4:2:2";
+                                    else if (p.Contains("yuv420")) metadata.ChromaSubsampling = "4:2:0";
+                                    else if (p.Contains("yuv444")) metadata.ChromaSubsampling = "4:4:4";
+                                    else metadata.ChromaSubsampling = p;
+
+                                    if (p.Contains("10le") || p.Contains("10be")) metadata.BitDepth = "10-bit";
+                                    else if (p.Contains("12le") || p.Contains("12be")) metadata.BitDepth = "12-bit";
+                                    else metadata.BitDepth = "8-bit";
+                                }
+                                
+                                if (s.TryGetProperty("color_space", out var cs)) metadata.ColorSpace = cs.GetString().ToUpper();
+                                if (s.TryGetProperty("field_order", out var fo)) metadata.ScanType = fo.GetString() == "progressive" ? "Progressive" : "Interlaced";
+                                
+                                // GOP is hard to get from simple show_streams, usually requires frame analysis. 
+                                // We'll infer LongGOP vs Intra based on codec/profile if possible, or leave blank.
+                                if (metadata.Codec.Contains("ProRes") || metadata.Codec.Contains("DNx")) metadata.GopStructure = "Intra-Frame";
+                                else if (metadata.Codec.Contains("H.264") || metadata.Codec.Contains("HEVC")) metadata.GopStructure = "Long-GOP";
+                                
+                                // Timecode from Tags
+                                if (s.TryGetProperty("tags", out var tags))
+                                {
+                                    if (tags.TryGetProperty("timecode", out var tc)) metadata.StartTimecode = tc.GetString();
+                                }
+                            }
+                            else if (typeStr == "audio")
+                            {
+                                // First Audio Stream details
+                                if (string.IsNullOrEmpty(metadata.AudioFormat))
+                                {
+                                    string af = "";
+                                    if (s.TryGetProperty("codec_name", out var ac)) af = ac.GetString();
+                                    if (s.TryGetProperty("sample_rate", out var asr)) af += $" {asr.GetString()}Hz";
+                                    metadata.AudioFormat = af;
+                                    
+                                    if (s.TryGetProperty("channels", out var ch)) metadata.AudioChannels = $"{ch.GetInt32()} Ch";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
         }
         #endregion
     }

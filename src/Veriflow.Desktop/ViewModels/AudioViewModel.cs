@@ -203,7 +203,8 @@ namespace Veriflow.Desktop.ViewModels
                 
                 var finalSource = _mixer.ToWaveSource();
 
-                _outputDevice = new WasapiOut();
+                // Revert to 200ms latency but keeping multi-channel mixer
+                _outputDevice = new WasapiOut(true, CSCore.CoreAudioAPI.AudioClientShareMode.Shared, 200);
                 _outputDevice.Initialize(finalSource);
                 _outputDevice.Stopped += OnPlaybackStopped;
 
@@ -521,10 +522,6 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (CanSendToSecureCopy())
             {
-                // Assuming Offload view expects a folder path, but we have a file path.
-                // The MediaViewModel sends CurrentPath (directory).
-                // If we want to offload just this file or its folder?
-                // Usually offload is directory based. Let's send the directory of the file.
                 string dir = System.IO.Path.GetDirectoryName(FilePath) ?? "";
                 if (!string.IsNullOrEmpty(dir))
                     RequestOffloadSource?.Invoke(dir);
@@ -551,7 +548,6 @@ namespace Veriflow.Desktop.ViewModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Metadata Error: {ex.Message}");
-                // Fallback or leave empty
                 CurrentMetadata = new AudioMetadata { Filename = System.IO.Path.GetFileName(path) };
             }
         }

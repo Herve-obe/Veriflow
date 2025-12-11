@@ -40,6 +40,16 @@ namespace Veriflow.Desktop.ViewModels
         public event Action<string>? RequestOffloadSource;
         public event Action<IEnumerable<string>>? RequestTranscode;
 
+        [ObservableProperty]
+        private bool _isVideoMode;
+
+        public void SetAppMode(AppMode mode)
+        {
+            IsVideoMode = (mode == AppMode.Video);
+            // Tree structure is identical, do not reset drives.
+        }
+
+
         private bool CanSendToSecureCopy() => !string.IsNullOrWhiteSpace(CurrentPath) && Directory.Exists(CurrentPath);
         private bool CanSendToTranscode() => !string.IsNullOrWhiteSpace(CurrentPath) && Directory.Exists(CurrentPath) && FileList.Any();
 
@@ -360,6 +370,9 @@ namespace Veriflow.Desktop.ViewModels
 
         [ObservableProperty]
         private AudioMetadata _currentMetadata = new();
+
+        [ObservableProperty]
+        private VideoMetadata _currentVideoMetadata = new();
         
         [ObservableProperty] private string _duration = "--:--";
         [ObservableProperty] private string _sampleRate = "";
@@ -381,25 +394,38 @@ namespace Veriflow.Desktop.ViewModels
             try
             {
                 var provider = new FFprobeMetadataProvider();
-                CurrentMetadata = await provider.GetMetadataAsync(File.FullName);
-                
-                // Populate simple properties from the rich metadata for consistency
-                if (CurrentMetadata != null)
+                string ext = File.Extension.ToLower();
+                bool isVideo = new[] { ".mov", ".mp4", ".mxf", ".ts", ".avi", ".mkv" }.Contains(ext);
+
+                if (isVideo)
                 {
-                    Duration = CurrentMetadata.Duration;
-                    Format = CurrentMetadata.Format;
-                    // Parse format string "48000Hz / 24bit" if needed or just display as is
-                    // But let's keep consistency with previous ViewModel properties if they are bound
-                    // The FFprobe provider sets Format to "48000Hz / 24bit"
-                    // We can try to split it if we want separate columns
-                    var formatParts = CurrentMetadata.Format.Split('/');
-                    if (formatParts.Length > 0) SampleRate = formatParts[0].Trim();
-                    if (formatParts.Length > 1) BitDepth = formatParts[1].Trim();
+                    CurrentVideoMetadata = await provider.GetVideoMetadataAsync(File.FullName);
+                    if (CurrentVideoMetadata != null)
+                    {
+                        Duration = CurrentVideoMetadata.Duration;
+                        Format = CurrentVideoMetadata.Resolution; // Reuse 'Format' for generic display logic
+                        // We could map other properties if needed for the common list view
+                    }
+                }
+                else
+                {
+                    CurrentMetadata = await provider.GetMetadataAsync(File.FullName);
                     
-                    Channels = CurrentMetadata.ChannelCount.ToString(); // Or map 1->Mono, 2->Stereo
-                    if (CurrentMetadata.ChannelCount == 1) Channels = "Mono";
-                    else if (CurrentMetadata.ChannelCount == 2) Channels = "Stereo";
-                    else Channels = $"{CurrentMetadata.ChannelCount} Ch";
+                    // Populate simple properties from the rich metadata for consistency
+                    if (CurrentMetadata != null)
+                    {
+                        Duration = CurrentMetadata.Duration;
+                        Format = CurrentMetadata.Format;
+                        
+                        var formatParts = CurrentMetadata.Format.Split('/');
+                        if (formatParts.Length > 0) SampleRate = formatParts[0].Trim();
+                        if (formatParts.Length > 1) BitDepth = formatParts[1].Trim();
+                        
+                        Channels = CurrentMetadata.ChannelCount.ToString(); 
+                        if (CurrentMetadata.ChannelCount == 1) Channels = "Mono";
+                        else if (CurrentMetadata.ChannelCount == 2) Channels = "Stereo";
+                        else Channels = $"{CurrentMetadata.ChannelCount} Ch";
+                    }
                 }
 
                 _metadataLoaded = true;
@@ -409,6 +435,7 @@ namespace Veriflow.Desktop.ViewModels
                 // Metadata load failed
                 Format = "Unknown";
                 CurrentMetadata = new AudioMetadata { Filename = File.Name };
+                CurrentVideoMetadata = new VideoMetadata { Filename = File.Name };
             }
         }
     }

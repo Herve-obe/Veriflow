@@ -30,6 +30,9 @@ namespace Veriflow.Desktop.ViewModels
         private float _pan = 0.0f; // -1.0 to 1.0
 
         [ObservableProperty]
+        private bool _isEnabled = true;
+
+        [ObservableProperty]
         private float _currentLevel;
         
         // Visuals

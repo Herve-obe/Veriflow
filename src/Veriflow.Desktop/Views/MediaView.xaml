@@ -181,131 +181,270 @@
                             Style="{StaticResource BlueActionButtonStyle}"/>
                 </StackPanel>
 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <ScrollViewer.Resources>
-                        <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ModernScrollBarStyle}"/>
-                    </ScrollViewer.Resources>
-                    <StackPanel>
-                        <!-- 1. GENERAL INFO -->
-                        <Expander Header="GENERAL INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
-                            <Grid Margin="5,0,5,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                
-                                <TextBlock Text="Name:" Foreground="#888888"/>
-                                <TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="White"/>
-                                
-                                <TextBlock Grid.Row="1" Text="Project:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.Project}" Foreground="White" Margin="0,2,0,0"/>
+                <!-- METADATA PANELS CONTAINER -->
+                <Grid Grid.Row="1">
+                    
+                    <!-- AUDIO METADATA PANEL (Visible when IsVideoMode=False) -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer.Style>
+                            <Style TargetType="ScrollViewer">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.IsVideoMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ScrollViewer.Style>
+                        <ScrollViewer.Resources>
+                            <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ModernScrollBarStyle}"/>
+                        </ScrollViewer.Resources>
 
-                                <TextBlock Grid.Row="2" Text="Scene:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+                        <StackPanel>
+                            <!-- 1. GENERAL INFO -->
+                            <Expander Header="GENERAL INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                                <Grid Margin="5,0,5,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Text="Name:" Foreground="#888888"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="White"/>
+                                    
+                                    <TextBlock Grid.Row="1" Text="Project:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.Project}" Foreground="White" Margin="0,2,0,0"/>
+    
+                                    <TextBlock Grid.Row="2" Text="Scene:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+    
+                                    <TextBlock Grid.Row="3" Text="Take:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.Take}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+    
+                                    <TextBlock Grid.Row="4" Text="Tape:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" Foreground="White" Margin="0,2,0,0"/>
+                                    
+                                    <TextBlock Grid.Row="5" Text="Date:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentMetadata.CreationDate}" Foreground="White" Margin="0,2,0,0"/>
+    
+                                    <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5,0,0">
+                                        <CheckBox IsChecked="{Binding CurrentMetadata.Circled, Mode=OneWay}" Content="Circled" IsEnabled="False" Foreground="White" Margin="0,0,15,0"/>
+                                        <CheckBox IsChecked="{Binding CurrentMetadata.WildTrack, Mode=OneWay}" Content="Wild Track" IsEnabled="False" Foreground="White"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Expander>
+    
+                            <!-- 2. RECORDING INFO -->
+                            <Expander Header="RECORDING INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                                <Grid Margin="5,0,5,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+    
+                                    <TextBlock Text="Sample Rate:" Foreground="#888888"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Format}" Foreground="White"/>
+    
+                                    <TextBlock Grid.Row="1" Text="Frame Rate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.FrameRate}" Foreground="White" Margin="0,2,0,0"/>
+    
+                                    <TextBlock Grid.Row="2" Text="Start TC:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+    
+                                    <TextBlock Grid.Row="3" Text="Length:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
+    
+                                    <TextBlock Grid.Row="4" Text="User Bits:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.UBits}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
+                                </Grid>
+                            </Expander>
+    
+                            <!-- 3. TRACK INFO -->
+                            <Expander Header="TRACK INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                                <DataGrid ItemsSource="{Binding CurrentMetadata.Tracks}" 
+                                          AutoGenerateColumns="False" 
+                                          CanUserAddRows="False" 
+                                          IsReadOnly="True"
+                                          HeadersVisibility="Column"
+                                          GridLinesVisibility="Horizontal"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          RowBackground="Transparent"
+                                          Foreground="White"
+                                          Margin="0,0,20,10">
+                                    <DataGrid.Resources>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="#888888"/>
+                                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                            <Setter Property="BorderBrush" Value="#444444"/>
+                                            <Setter Property="Padding" Value="5,2"/>
+                                        </Style>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="Padding" Value="2"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGrid.Resources>
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="#" Binding="{Binding ChannelIndex}" Width="30"/>
+                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                        <DataGridTextColumn Header="Function" Binding="{Binding Function}" Width="90"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Expander>
+                        </StackPanel>
+                    </ScrollViewer>
 
-                                <TextBlock Grid.Row="3" Text="Take:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.Take}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+                    <!-- VIDEO METADATA PANEL (Visible when IsVideoMode=True) -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer.Style>
+                            <Style TargetType="ScrollViewer">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.IsVideoMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ScrollViewer.Style>
+                        <ScrollViewer.Resources>
+                            <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ModernScrollBarStyle}"/>
+                        </ScrollViewer.Resources>
 
-                                <TextBlock Grid.Row="4" Text="Tape:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" Foreground="White" Margin="0,2,0,0"/>
-                                
-                                <TextBlock Grid.Row="5" Text="Date:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentMetadata.CreationDate}" Foreground="White" Margin="0,2,0,0"/>
+                         <StackPanel>
+                            <!-- 1. FILE INFO -->
+                            <Expander Header="FILE INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                                <Grid Margin="5,0,5,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Text="Name:" Foreground="#888888"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.Filename}" TextTrimming="CharacterEllipsis" Foreground="White"/>
+                                    
+                                    <TextBlock Grid.Row="1" Text="Container:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Container}" Foreground="White" Margin="0,2,0,0"/>
 
-                                <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5,0,0">
-                                    <CheckBox IsChecked="{Binding CurrentMetadata.Circled, Mode=OneWay}" Content="Circled" IsEnabled="False" Foreground="White" Margin="0,0,15,0"/>
-                                    <CheckBox IsChecked="{Binding CurrentMetadata.WildTrack, Mode=OneWay}" Content="Wild Track" IsEnabled="False" Foreground="White"/>
-                                </StackPanel>
-                            </Grid>
-                        </Expander>
+                                    <TextBlock Grid.Row="2" Text="Size:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Size}" Foreground="White" Margin="0,2,0,0"/>
+                                    
+                                    <TextBlock Grid.Row="3" Text="Duration:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Duration}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
+                                </Grid>
+                            </Expander>
 
-                        <!-- 2. RECORDING INFO -->
-                        <Expander Header="RECORDING INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
-                            <Grid Margin="5,0,5,10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="110"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                            <!-- 2. VIDEO STREAM -->
+                            <Expander Header="VIDEO STREAM" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                                <Grid Margin="5,0,5,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock Text="Sample Rate:" Foreground="#888888"/>
-                                <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Format}" Foreground="White"/>
+                                    <TextBlock Text="Codec:" Foreground="#888888"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.Codec}" TextWrapping="Wrap" Foreground="White"/>
 
-                                <TextBlock Grid.Row="1" Text="Frame Rate:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.FrameRate}" Foreground="White" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Text="Resolution:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Resolution}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                                <TextBlock Grid.Row="2" Text="Start TC:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Text="Aspect Ratio:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.AspectRatio}" Foreground="White" Margin="0,2,0,0"/>
 
-                                <TextBlock Grid.Row="3" Text="Length:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Text="Frame Rate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentVideoMetadata.FrameRate}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                                <TextBlock Grid.Row="4" Text="User Bits:" Foreground="#888888" Margin="0,2,0,0"/>
-                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.UBits}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
-                            </Grid>
-                        </Expander>
+                                    <TextBlock Grid.Row="4" Text="Bit Depth:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentVideoMetadata.BitDepth}" Foreground="White" Margin="0,2,0,0"/>
 
-                        <!-- 3. TRACK INFO -->
-                        <Expander Header="TRACK INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
-                            <DataGrid ItemsSource="{Binding CurrentMetadata.Tracks}" 
-                                      AutoGenerateColumns="False" 
-                                      CanUserAddRows="False" 
-                                      IsReadOnly="True"
-                                      HeadersVisibility="Column"
-                                      GridLinesVisibility="Horizontal"
-                                      Background="Transparent"
-                                      BorderThickness="0"
-                                      RowBackground="Transparent"
-                                      Foreground="White"
-                                      Margin="0,0,20,10">
-                                <DataGrid.Resources>
-                                    <Style TargetType="DataGridColumnHeader">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#888888"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Setter Property="BorderBrush" Value="#444444"/>
-                                        <Setter Property="Padding" Value="5,2"/>
-                                    </Style>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="BorderThickness" Value="0"/>
-                                        <Setter Property="Foreground" Value="White"/>
-                                        <Setter Property="Padding" Value="2"/>
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="DataGridCell">
-                                                    <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-                                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </DataGrid.Resources>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="#" Binding="{Binding ChannelIndex}" Width="30"/>
-                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                                    <DataGridTextColumn Header="Function" Binding="{Binding Function}" Width="90"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </Expander>
-                    </StackPanel>
-                </ScrollViewer>
+                                    <TextBlock Grid.Row="5" Text="Chroma:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ChromaSubsampling}" Foreground="White" Margin="0,2,0,0"/>
+
+                                    <TextBlock Grid.Row="6" Text="Color Space:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ColorSpace}" Foreground="White" Margin="0,2,0,0"/>
+
+                                    <TextBlock Grid.Row="7" Text="Scan Type:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ScanType}" Foreground="White" Margin="0,2,0,0"/>
+
+                                    <TextBlock Grid.Row="8" Text="GOP Struct:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding CurrentVideoMetadata.GopStructure}" Foreground="White" Margin="0,2,0,0"/>
+                                    
+                                    <TextBlock Grid.Row="9" Text="Bitrate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Bitrate}" Foreground="White" Margin="0,2,0,0"/>
+                                </Grid>
+                            </Expander>
+
+                            <!-- 3. AUDIO & TIMECODE -->
+                            <Expander Header="AUDIO &amp; TIMECODE" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                                <Grid Margin="5,0,5,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="Audio Format:" Foreground="#888888"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.AudioFormat}" Foreground="White"/>
+
+                                    <TextBlock Grid.Row="1" Text="Channels:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.AudioChannels}" Foreground="White" Margin="0,2,0,0"/>
+                                    
+                                    <TextBlock Grid.Row="2" Text="Start TC:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.StartTimecode}" FontFamily="Consolas" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+                                </Grid>
+                            </Expander>
+                         </StackPanel>
+                    </ScrollViewer>
+                </Grid>
             </Grid>
         </Border>
     </Grid>

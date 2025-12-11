@@ -3,10 +3,384 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Veriflow.Desktop.Views"
+             xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
              xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1024">
-              
-    <vlc:VideoView x:Name="VideoViewControl" Background="Black" />
+             d:DesignHeight="600" d:DesignWidth="1024"
+             Focusable="True"
+             FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"
+             AllowDrop="True">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Drop">
+            <i:InvokeCommandAction Command="{Binding DropFileCommand}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Space" Command="{Binding TogglePlayPauseCommand}"/>
+        <KeyBinding Key="Return" Command="{Binding StopCommand}"/>
+        <KeyBinding Key="Left" Command="{Binding RewindCommand}"/>
+        <KeyBinding Key="Right" Command="{Binding ForwardCommand}"/>
+    </UserControl.InputBindings>
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <!-- Modern Transport Button Base Style (Duplicated from AudioPlayerView) -->
+        <Style x:Key="Style.Transport.Base" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="circle" Fill="Transparent" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <Setter Property="Foreground" Value="#111111"/> 
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="circle" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
+                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <Setter Property="Foreground" Value="#111111"/> 
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Style.Transport.Stop" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
+            <Setter Property="BorderBrush" Value="#FF5252"/> 
+            <Setter Property="Foreground" Value="#FF5252"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+        </Style>
+
+        <Style x:Key="Style.Transport.Play" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
+            <Setter Property="BorderBrush" Value="#69F0AE"/> 
+            <Setter Property="Foreground" Value="#69F0AE"/>
+            <Setter Property="Width" Value="48"/>
+            <Setter Property="Height" Value="48"/>
+        </Style>
+
+        <Style x:Key="Style.Transport.Pause" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
+            <Setter Property="BorderBrush" Value="#FFD740"/> 
+            <Setter Property="Foreground" Value="#FFD740"/>
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+        </Style>
+
+        <!-- Mute Button Style -->
+        <Style x:Key="DawMuteButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="border" Background="#333333" CornerRadius="2" BorderBrush="#111111" BorderThickness="1">
+                            <TextBlock Text="M" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="9"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#D32F2F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Solo Button Style -->
+        <Style x:Key="DawSoloButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="border" Background="#333333" CornerRadius="2" BorderBrush="#111111" BorderThickness="1">
+                            <TextBlock x:Name="txt" Text="S" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="9"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FBC02D"/>
+                                <Setter TargetName="txt" Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>   <!-- Video Surface (Left) -->
+            <ColumnDefinition Width="350"/>  <!-- Metadata (Right) -->
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT COLUMN: VIDEO PLAYER -->
+        <Grid Grid.Column="0" Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header -->
+                <RowDefinition Height="Auto"/> <!-- Transport -->
+                <RowDefinition Height="*"/>    <!-- Video Surface -->
+                <RowDefinition Height="30"/>   <!-- Scrubber -->
+                <RowDefinition Height="Auto"/> <!-- Mixer -->
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,15">
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <!-- Video Icon -->
+                        <Path Data="M17,10.5V7A1,1 0 0,0 16,6H4A1,1 0 0,0 3,7V17A1,1 0 0,0 4,18H16A1,1 0 0,0 17,17V13.5L21,17.5V6.5L17,10.5Z"
+                              Fill="{StaticResource Brush.Accent}"
+                              Height="18" Width="18" Stretch="Uniform"
+                              VerticalAlignment="Center" Margin="0,0,10,0"/>
+                              
+                        <TextBlock Text="VIDEO PLAYER" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding FileName, TargetNullValue='No file loaded'}" FontSize="{StaticResource Font.Size.Header}" FontWeight="Bold" Foreground="#DDDDDD" Margin="0,2"/>
+                    
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock Text="{Binding CurrentTimeDisplay}" FontSize="{StaticResource Font.Size.Large}" FontFamily="Consolas" Foreground="{StaticResource Brush.Accent}"/>
+                            <TextBlock Text=" / " FontSize="{StaticResource Font.Size.Large}" Opacity="0.5"/>
+                            <TextBlock Text="{Binding TotalTimeDisplay}" FontSize="{StaticResource Font.Size.Large}" FontFamily="Consolas" Opacity="0.5"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <!-- Transport Controls (Moved to Top) -->
+            <Border Grid.Row="1" Background="Transparent" Margin="0,0,0,15" Padding="0"
+                    Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/> <!-- Transport -->
+                        <ColumnDefinition Width="*"/>    <!-- Spacer -->
+                        <ColumnDefinition Width="Auto"/> <!-- Stereo Controls -->
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Center">
+                        
+                        <!-- STOP -->
+                        <Button Command="{Binding StopCommand}" Tag="{Binding IsStopPressed}" Margin="0,0,15,0" ToolTip="Stop" Style="{StaticResource Style.Transport.Stop}">
+                            <Path Data="M6,6H18V18H6V6Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
+                        </Button>
+                        
+                        <!-- PLAY -->
+                        <Button Command="{Binding PlayCommand}" Tag="{Binding IsPlaying}" Margin="0,0,15,0" ToolTip="Play" Style="{StaticResource Style.Transport.Play}">
+                             <Path Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="20" Width="20" Stretch="Uniform" Margin="2,0,0,0"/>
+                        </Button>
+                        
+                        <!-- PAUSE -->
+                        <Button Command="{Binding PauseCommand}" Tag="{Binding IsPaused}" ToolTip="Pause" Style="{StaticResource Style.Transport.Pause}">
+                            <Path Data="M14,19H18V5H14M6,19H10V5H6V19Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
+                        </Button>
+                        
+                    </StackPanel>
+
+                    <!-- Stereo Output Controls -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
+                         <!-- Left Channel -->
+                         <StackPanel Orientation="Horizontal" Margin="0,0,15,0">
+                             <TextBlock Text="L" VerticalAlignment="Center" Foreground="{StaticResource Brush.Accent}" FontWeight="Bold" Margin="0,0,5,0" FontSize="10"/>
+                             <!-- Mute -->
+                             <ToggleButton IsChecked="{Binding IsLeftMuted}" Style="{StaticResource DawMuteButtonStyle}" ToolTip="Mute Left" Margin="0,0,5,0"/>
+                             <!-- Volume -->
+                             <Slider Value="{Binding LeftVolume}" Minimum="0" Maximum="1" Width="80" VerticalAlignment="Center" ToolTip="Left Volume" Focusable="False"/>
+                         </StackPanel>
+
+                         <!-- Right Channel -->
+                         <StackPanel Orientation="Horizontal">
+                             <TextBlock Text="R" VerticalAlignment="Center" Foreground="{StaticResource Brush.Accent}" FontWeight="Bold" Margin="0,0,5,0" FontSize="10"/>
+                             <!-- Mute -->
+                             <ToggleButton IsChecked="{Binding IsRightMuted}" Style="{StaticResource DawMuteButtonStyle}" ToolTip="Mute Right" Margin="0,0,5,0"/>
+                             <!-- Volume -->
+                             <Slider Value="{Binding RightVolume}" Minimum="0" Maximum="1" Width="80" VerticalAlignment="Center" ToolTip="Right Volume" Focusable="False"/>
+                         </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Video Surface (Reduced Size via Margins) -->
+            <Border Grid.Row="2" Background="Black" Margin="0,0,0,15" VerticalAlignment="Stretch"
+                    Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <vlc:VideoView x:Name="VideoViewControl" MediaPlayer="{Binding Player}" />
+            </Border>
+
+            <!-- Scrubber (Moved Bottom) -->
+            <Grid Grid.Row="3" VerticalAlignment="Center"
+                  Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Slider Value="{Binding PlaybackPercent}" Maximum="1.0" LargeChange="0.1" Focusable="False" VerticalAlignment="Center" IsMoveToPointEnabled="True">
+                   <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDown">
+                            <i:CallMethodAction TargetObject="{Binding}" MethodName="BeginSeek"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseUp">
+                            <i:CallMethodAction TargetObject="{Binding}" MethodName="EndSeek"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Slider>
+            </Grid>
+        </Grid>
+
+        <!-- RIGHT COLUMN: METADATA -->
+        <Border Grid.Column="1" Padding="10" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" CornerRadius="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Buttons -->
+                    <RowDefinition Height="*"/>    <!-- Layout -->
+                </Grid.RowDefinitions>
+
+                <!-- Action Buttons Area -->
+                <!-- Action Buttons Area -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,41">
+                    <Button Command="{Binding OpenFileCommand}"
+                            Content="OPEN FILE" Height="26" ToolTip="Import Video File" Margin="0,0,0,5"
+                            Style="{StaticResource BlueActionButtonStyle}"/>
+                    
+                    <Button Command="{Binding UnloadMediaCommand}"
+                            Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,5"
+                            Style="{StaticResource BlueActionButtonStyle}"/>
+
+                    <Button Command="{Binding SendFileToTranscodeCommand}"
+                            Content="SEND TO TRANSCODE" Height="26" ToolTip="Send current file to Transcode Page"
+                            Style="{StaticResource BlueActionButtonStyle}"/>
+                </StackPanel>
+
+                <!-- VIDEO METADATA SCROLLVIEWER -->
+                <ScrollViewer Grid.Row="1" Focusable="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Resources>
+                         <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ModernScrollBarStyle}"/>
+                    </ScrollViewer.Resources>
+                    <StackPanel>
+                        <!-- 1. FILE INFO -->
+                        <Expander Header="FILE INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                            <Grid Margin="5,0,5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Text="Name:" Foreground="#888888"/>
+                                <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.Filename}" TextTrimming="CharacterEllipsis" Foreground="White"/>
+                                
+                                <TextBlock Grid.Row="1" Text="Container:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Container}" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="2" Text="Size:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Size}" Foreground="White" Margin="0,2,0,0"/>
+                                
+                                <TextBlock Grid.Row="3" Text="Duration:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Duration}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
+                            </Grid>
+                        </Expander>
+
+                        <!-- 2. VIDEO STREAM -->
+                        <Expander Header="VIDEO STREAM" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                            <Grid Margin="5,0,5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Codec:" Foreground="#888888"/>
+                                <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.Codec}" TextWrapping="Wrap" Foreground="White"/>
+
+                                <TextBlock Grid.Row="1" Text="Resolution:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Resolution}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="2" Text="Aspect Ratio:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.AspectRatio}" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="3" Text="Frame Rate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentVideoMetadata.FrameRate}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="4" Text="Bit Depth:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentVideoMetadata.BitDepth}" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="5" Text="Chroma:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ChromaSubsampling}" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="6" Text="Color Space:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ColorSpace}" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="7" Text="Scan Type:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ScanType}" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="8" Text="GOP Struct:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding CurrentVideoMetadata.GopStructure}" Foreground="White" Margin="0,2,0,0"/>
+                                
+                                <TextBlock Grid.Row="9" Text="Bitrate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Bitrate}" Foreground="White" Margin="0,2,0,0"/>
+                            </Grid>
+                        </Expander>
+
+                        <!-- 3. AUDIO & TIMECODE -->
+                        <Expander Header="AUDIO &amp; TIMECODE" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                            <Grid Margin="5,0,5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Audio Format:" Foreground="#888888"/>
+                                <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.AudioFormat}" Foreground="White"/>
+
+                                <TextBlock Grid.Row="1" Text="Channels:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.AudioChannels}" Foreground="White" Margin="0,2,0,0"/>
+                                
+                                <TextBlock Grid.Row="2" Text="Start TC:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.StartTimecode}" FontFamily="Consolas" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+                            </Grid>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>
