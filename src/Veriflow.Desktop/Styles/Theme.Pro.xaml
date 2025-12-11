@@ -213,6 +213,46 @@
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
     </Style>
 
+    <!-- BLUE ACTION BUTTON (Gray Independent, Blue Active) -->
+    <Style x:Key="BlueActionButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border" Background="#333333" BorderBrush="#555555" BorderThickness="1">
+                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Enabled = Blue -->
+                        <Trigger Property="IsEnabled" Value="True">
+                             <Setter TargetName="border" Property="Background" Value="{StaticResource Brush.Accent}"/>
+                             <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource Brush.Accent}"/>
+                             <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <!-- Disabled = Gray -->
+                        <Trigger Property="IsEnabled" Value="False">
+                             <Setter TargetName="border" Property="Background" Value="#222222"/>
+                             <Setter TargetName="border" Property="BorderBrush" Value="#333333"/>
+                             <Setter Property="Foreground" Value="#666666"/>
+                        </Trigger>
+                         <!-- Hover (only when enabled) -->
+                         <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="#108BDE"/> <!-- Lighter Blue -->
+                        </MultiTrigger>
+                         <Trigger Property="IsPressed" Value="True">
+                             <Setter TargetName="border" Property="Background" Value="#005A9E"/> <!-- Darker Blue -->
+                         </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- TRANSPORT CONTROL STYLE -->
     <Style x:Key="Style.Transport.Base" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Background" Value="Transparent"/>
@@ -233,6 +273,126 @@
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                              <Setter Property="Background" Value="#88FFFFFF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- MODERN SCROLLBAR STYLE ("Antigravity") -->
+    <Style x:Key="ModernScrollBarThumb" TargetType="{x:Type Thumb}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Border CornerRadius="4" Background="#555555" BorderThickness="0"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ModernScrollBarStyle" TargetType="{x:Type ScrollBar}">
+        <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
+        <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="MinWidth" Value="8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                    <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                        <Track x:Name="PART_Track" IsDirectionReversed="true">
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource ModernScrollBarThumb}"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Orientation" Value="Horizontal">
+                            <Setter Property="Height" Value="8"/>
+                            <Setter Property="MinHeight" Value="8"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- PRO EXPANDER STYLE -->
+    <Style x:Key="ProExpanderStyle" TargetType="{x:Type Expander}">
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="BorderBrush" Value="#444444"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="0,5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Expander}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{TemplateBinding Background}" 
+                            SnapsToDevicePixels="true">
+                        <DockPanel>
+                            <!-- Header Toggle Button -->
+                            <ToggleButton x:Name="HeaderSite" 
+                                          DockPanel.Dock="Top" 
+                                          FontWeight="SemiBold" 
+                                          Foreground="{TemplateBinding Foreground}"
+                                          FontSize="{StaticResource Font.Size.Small}"
+                                          Padding="{TemplateBinding Padding}"
+                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Grid Background="Transparent">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="20"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Expander Header Content -->
+                                            <ContentPresenter Grid.Column="0" Content="{Binding Header, RelativeSource={RelativeSource AncestorType=Expander}}" 
+                                                              VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            
+                                            <!-- Arrow -->
+                                            <Path x:Name="arrow" Grid.Column="1" Data="M1,1.5 L4.5,5 L8,1.5" 
+                                                  Stroke="{TemplateBinding Foreground}" StrokeThickness="2" 
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  RenderTransformOrigin="0.5,0.5">
+                                                <Path.RenderTransform>
+                                                    <RotateTransform Angle="0"/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsChecked" Value="False">
+                                                <Setter TargetName="arrow" Property="RenderTransform">
+                                                    <Setter.Value>
+                                                        <RotateTransform Angle="-90"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Opacity" Value="0.7"/> 
+                                            </Trigger>
+                                             <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="White"/> 
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            
+                            <!-- Content -->
+                            <ContentPresenter x:Name="ExpandSite" DockPanel.Dock="Bottom" Focusable="false" 
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                              Margin="{TemplateBinding Padding}" 
+                                              Visibility="Collapsed" 
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </DockPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="true">
+                            <Setter TargetName="ExpandSite" Property="Visibility" Value="Visible"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

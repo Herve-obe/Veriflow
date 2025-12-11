@@ -206,6 +206,15 @@ namespace Veriflow.Desktop.ViewModels
             if (SelectedMedia != null) SelectedMedia.IsPlaying = false;
         }
 
+        private bool CanUnloadMedia() => SelectedMedia != null;
+
+        [RelayCommand(CanExecute = nameof(CanUnloadMedia))]
+        private void UnloadMedia()
+        {
+            StopPreview();
+            SelectedMedia = null;
+        }
+
         public event Action<string>? RequestOpenInPlayer;
 
         private bool CanOpenInPlayer() => SelectedMedia != null;
@@ -352,8 +361,6 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty]
         private AudioMetadata _currentMetadata = new();
         
-        // Keep simple properties for fallback or list display if needed, 
-        // but primarily rely on CurrentMetadata for the detailed view.
         [ObservableProperty] private string _duration = "--:--";
         [ObservableProperty] private string _sampleRate = "";
         [ObservableProperty] private string _channels = "";
@@ -367,46 +374,35 @@ namespace Veriflow.Desktop.ViewModels
             File = file;
         }
 
-        public void LoadMetadata()
+        public async void LoadMetadata()
         {
             if (_metadataLoaded) return;
             
             try
             {
-                // Only attempt for audio/video/metadata files
-                var ext = File.Extension.ToLower();
-                if (new[] { ".wav", ".bwf" }.Contains(ext))
+                var provider = new FFprobeMetadataProvider();
+                CurrentMetadata = await provider.GetMetadataAsync(File.FullName);
+                
+                // Populate simple properties from the rich metadata for consistency
+                if (CurrentMetadata != null)
                 {
-                    // Use BwfMetadataReader for rich metadata
-                    var reader = new BwfMetadataReader();
-                    CurrentMetadata = reader.ReadMetadataFromStream(File.FullName);
-                    
-                    // Populate simple properties from the rich metadata for consistency
                     Duration = CurrentMetadata.Duration;
                     Format = CurrentMetadata.Format;
-                    // others...
-                    _metadataLoaded = true;
-                }
-                else if (new[] { ".mp3", ".m4a", ".aiff", ".wma", ".wav", ".flac" }.Contains(ext))
-                {
-                    // Fallback for non-BWF or general formats
-                    try 
-                    {
-                        using var source = CSCore.Codecs.CodecFactory.Instance.GetCodec(File.FullName);
-                        Duration = source.GetLength().ToString(@"mm\:ss");
-                        SampleRate = $"{source.WaveFormat.SampleRate} Hz";
-                        Channels = source.WaveFormat.Channels == 1 ? "Mono" : "Stereo";
-                        BitDepth = $"{source.WaveFormat.BitsPerSample} bit";
-                        Format = ext.Substring(1).ToUpper();
-                    }
-                    catch
-                    {
-                        // Ignore codecs we can't open
-                    }            
-                    _metadataLoaded = true;
-                }
+                    // Parse format string "48000Hz / 24bit" if needed or just display as is
+                    // But let's keep consistency with previous ViewModel properties if they are bound
+                    // The FFprobe provider sets Format to "48000Hz / 24bit"
+                    // We can try to split it if we want separate columns
+                    var formatParts = CurrentMetadata.Format.Split('/');
+                    if (formatParts.Length > 0) SampleRate = formatParts[0].Trim();
+                    if (formatParts.Length > 1) BitDepth = formatParts[1].Trim();
                     
+                    Channels = CurrentMetadata.ChannelCount.ToString(); // Or map 1->Mono, 2->Stereo
+                    if (CurrentMetadata.ChannelCount == 1) Channels = "Mono";
+                    else if (CurrentMetadata.ChannelCount == 2) Channels = "Stereo";
+                    else Channels = $"{CurrentMetadata.ChannelCount} Ch";
+                }
 
+                _metadataLoaded = true;
             }
             catch (Exception)
             {

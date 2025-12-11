@@ -42,7 +42,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/> <!-- Explorer -->
             <ColumnDefinition Width="*"/>   <!-- Browser -->
-            <ColumnDefinition Width="300"/> <!-- Metadata -->
+            <ColumnDefinition Width="350"/> <!-- Metadata -->
         </Grid.ColumnDefinitions>
         
         <!-- COL 1: EXPLORER -->
@@ -155,161 +155,155 @@
         </Border>
 
         <!-- COL 3: METADATA -->
-        <Border Grid.Column="2" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" Background="{StaticResource Brush.Panel}" Padding="15" DataContext="{Binding SelectedMedia}">
+        <Border Grid.Column="2" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" Background="{StaticResource Brush.Panel}" Padding="10" DataContext="{Binding SelectedMedia}">
             <Grid>
                  <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/> <!-- Buttons -->
+                    <RowDefinition Height="*"/>    <!-- Layout -->
                 </Grid.RowDefinitions>
                 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Focusable="False">
+                <!-- Action Buttons Area (Vertical Stack) -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                    <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="OPEN FILE IN PLAYER" Height="26" ToolTip="Open selected file in Player" Margin="0,0,0,5"
+                            Style="{StaticResource BlueActionButtonStyle}"/>
+                    
+                    <Button Command="{Binding DataContext.SendToSecureCopyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="SEND TO SECURE COPY" Height="26" ToolTip="Send selected folder to Secure Copy" Margin="0,0,0,5"
+                            Style="{StaticResource BlueActionButtonStyle}"/>
+
+                    <Button Command="{Binding DataContext.SendFileToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="SEND FILE TO TRANSCODE" Height="26" ToolTip="Send selected file to Transcode" Margin="0,0,0,5"
+                            Style="{StaticResource BlueActionButtonStyle}"/>
+
+                    <Button Command="{Binding DataContext.SendToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="SEND FOLDER TO TRANSCODE" Height="26" ToolTip="Send all files in folder to Transcode"
+                            Style="{StaticResource BlueActionButtonStyle}"/>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ModernScrollBarStyle}"/>
+                    </ScrollViewer.Resources>
                     <StackPanel>
+                        <!-- 1. GENERAL INFO -->
+                        <Expander Header="GENERAL INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                            <Grid Margin="5,0,5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Text="Name:" Foreground="#888888"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" Foreground="White"/>
+                                
+                                <TextBlock Grid.Row="1" Text="Project:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.Project}" Foreground="White" Margin="0,2,0,0"/>
 
+                                <TextBlock Grid.Row="2" Text="Scene:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                        <!-- LINK TO PLAYER BUTTON -->
-                        <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Content="OPEN FILE IN PLAYER"
-                                Height="30" Margin="0,0,0,10"
-                                Foreground="White" FontWeight="Bold">
-                             <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsEnabled" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                                <TextBlock Grid.Row="3" Text="Take:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.Take}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                        <!-- SEND TO SECURE COPY -->
-                        <Button Command="{Binding DataContext.SendToSecureCopyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Content="SEND TO SECURE COPY"
-                                Height="30" Margin="0,0,0,10"
-                                Background="{StaticResource Brush.Accent}" Foreground="White" FontWeight="Bold"
-                                ToolTip="Send current folder to Secure Copy"/>
+                                <TextBlock Grid.Row="4" Text="Tape:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" Foreground="White" Margin="0,2,0,0"/>
+                                
+                                <TextBlock Grid.Row="5" Text="Date:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentMetadata.CreationDate}" Foreground="White" Margin="0,2,0,0"/>
 
-                        <!-- SEND FILE TO TRANSCODE -->
-                        <Button Command="{Binding DataContext.SendFileToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Content="SEND FILE TO TRANSCODE"
-                                Height="30" Margin="0,0,0,10"
-                                Foreground="White" FontWeight="Bold"
-                                ToolTip="Send selected file to Transcode">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsEnabled" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                                <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5,0,0">
+                                    <CheckBox IsChecked="{Binding CurrentMetadata.Circled, Mode=OneWay}" Content="Circled" IsEnabled="False" Foreground="White" Margin="0,0,15,0"/>
+                                    <CheckBox IsChecked="{Binding CurrentMetadata.WildTrack, Mode=OneWay}" Content="Wild Track" IsEnabled="False" Foreground="White"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander>
 
-                        <!-- SEND TO TRANSCODE -->
-                        <Button Command="{Binding DataContext.SendToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                Content="SEND FOLDER TO TRANSCODE"
-                                Height="30" Margin="0,0,0,20"
-                                Foreground="White" FontWeight="Bold"
-                                ToolTip="Send all files in folder to Transcode">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsEnabled" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
+                        <!-- 2. RECORDING INFO -->
+                        <Expander Header="RECORDING INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                            <Grid Margin="5,0,5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                        <!-- SPACER -->
-                        <Grid Height="30"/>
+                                <TextBlock Text="Sample Rate:" Foreground="#888888"/>
+                                <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Format}" Foreground="White"/>
 
-                        <TextBlock Text="METADATA" Margin="0,0,0,15" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="SemiBold"/>
-    
-                        <Grid Margin="0,5">
-                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="SCENE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}" Foreground="White"/>
-                        </Grid>
-                        <Separator Margin="0,5"/>
-    
-                        <Grid Margin="0,5">
-                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="TAKE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Take}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
-                        </Grid>
-                         <Separator Margin="0,5"/>
-    
-                        <Grid Margin="0,5">
-                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="START TC" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
-                        </Grid>
-                         <Separator Margin="0,5"/>
-                        
-                        <Grid Margin="0,5">
-                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="DURATION" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Body}"/>
-                        </Grid>
-                        <Separator Margin="0,5"/>
-    
-                        <Grid Margin="0,5">
-                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="FORMAT" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Format}" FontSize="{StaticResource Font.Size.Body}"/>
-                        </Grid>
-                        <Separator Margin="0,5"/>
-    
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="ORIGINATOR" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Originator}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
-                        </Grid>
-                        <Separator Margin="0,5"/>
-    
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="DATE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.CreationDate}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
-                        </Grid>
-                         <Separator Margin="0,5"/>
-    
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="TAPE" FontWeight="Bold" Opacity="0.6" Width="80" FontSize="{StaticResource Font.Size.Small}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" TextWrapping="Wrap" FontSize="{StaticResource Font.Size.Body}"/>
-                        </Grid>
-    
+                                <TextBlock Grid.Row="1" Text="Frame Rate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.FrameRate}" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="2" Text="Start TC:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="3" Text="Length:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
+
+                                <TextBlock Grid.Row="4" Text="User Bits:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.UBits}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
+                            </Grid>
+                        </Expander>
+
+                        <!-- 3. TRACK INFO -->
+                        <Expander Header="TRACK INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}">
+                            <DataGrid ItemsSource="{Binding CurrentMetadata.Tracks}" 
+                                      AutoGenerateColumns="False" 
+                                      CanUserAddRows="False" 
+                                      IsReadOnly="True"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      RowBackground="Transparent"
+                                      Foreground="White"
+                                      Margin="0,0,20,10">
+                                <DataGrid.Resources>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="#888888"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="BorderBrush" Value="#444444"/>
+                                        <Setter Property="Padding" Value="5,2"/>
+                                    </Style>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="Padding" Value="2"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridCell">
+                                                    <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#" Binding="{Binding ChannelIndex}" Width="30"/>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                    <DataGridTextColumn Header="Function" Binding="{Binding Function}" Width="90"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Expander>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

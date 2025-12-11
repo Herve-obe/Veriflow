@@ -512,6 +512,24 @@ namespace Veriflow.Desktop.ViewModels
             CleanUpAudio();
         }
         public event Action<IEnumerable<string>>? RequestTranscode;
+        public event Action<string>? RequestOffloadSource;
+
+        private bool CanSendToSecureCopy() => IsAudioLoaded && !string.IsNullOrEmpty(FilePath);
+
+        [RelayCommand(CanExecute = nameof(CanSendToSecureCopy))]
+        private void SendToSecureCopy()
+        {
+            if (CanSendToSecureCopy())
+            {
+                // Assuming Offload view expects a folder path, but we have a file path.
+                // The MediaViewModel sends CurrentPath (directory).
+                // If we want to offload just this file or its folder?
+                // Usually offload is directory based. Let's send the directory of the file.
+                string dir = System.IO.Path.GetDirectoryName(FilePath) ?? "";
+                if (!string.IsNullOrEmpty(dir))
+                    RequestOffloadSource?.Invoke(dir);
+            }
+        }
         
         private bool CanSendFileToTranscode() => IsAudioLoaded && !string.IsNullOrEmpty(FilePath);
 
