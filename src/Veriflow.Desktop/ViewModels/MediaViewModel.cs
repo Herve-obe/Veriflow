@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibVLCSharp.Shared;
 using CommunityToolkit.Mvvm.Input;
 using CSCore;
 using CSCore.Codecs;
@@ -9,6 +10,7 @@ using Veriflow.Desktop.Services;
 using System.Windows.Input;
 using Veriflow.Desktop.Models;
 using System.Windows;
+using Veriflow.Desktop.Views;
 
 namespace Veriflow.Desktop.ViewModels
 {
@@ -188,11 +190,30 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
+        [ObservableProperty]
+        private bool _isVideoPlaying;
+
+        public MediaPlayer? PreviewPlayer { get; private set; }
+        private VideoPreviewWindow? _previewWindow;
+
+        private void InitializePreviewPlayer()
+        {
+            if (PreviewPlayer == null)
+            {
+                // Ensure Core is initialized
+                VideoEngineService.Instance.Initialize();
+                if (VideoEngineService.Instance.LibVLC != null)
+                {
+                    PreviewPlayer = new MediaPlayer(VideoEngineService.Instance.LibVLC);
+                }
+            }
+        }
+
         [RelayCommand]
         private void PreviewFile(MediaItemViewModel item)
         {
              // If clicking the currently playing item, stop it.
-             if (SelectedMedia == item && IsPreviewing)
+             if (SelectedMedia == item && (IsPreviewing || IsVideoPlaying))
              {
                  StopPreview();
                  return;
@@ -203,16 +224,67 @@ namespace Veriflow.Desktop.ViewModels
 
              SelectedMedia = item;
              SelectedMedia.IsPlaying = true;
-             IsPreviewing = true;
-             
-             _audioService.Play(item.File.FullName);
+
+             if (IsVideoMode)
+             {
+                 // Video Preview Logic (Floating Window)
+                 InitializePreviewPlayer();
+                 if (PreviewPlayer != null && VideoEngineService.Instance.LibVLC != null)
+                 {
+                     IsVideoPlaying = true;
+                     using var media = new Media(VideoEngineService.Instance.LibVLC, item.FullName, FromType.FromPath);
+                     media.AddOption(":avcodec-hw=d3d11va"); 
+                     PreviewPlayer.Play(media);
+
+                     // Manage Window
+                     if (_previewWindow == null || !_previewWindow.IsLoaded)
+                     {
+                         _previewWindow = new VideoPreviewWindow();
+                         _previewWindow.DataContext = this; // Bind to VM for Player property
+                         _previewWindow.Closed += (s, e) => StopPreview(); // Handle manual close
+                         _previewWindow.Show();
+                     }
+                     
+                     if (_previewWindow.WindowState == WindowState.Minimized)
+                        _previewWindow.WindowState = WindowState.Normal;
+                        
+                     _previewWindow.Activate();
+                 }
+             }
+             else
+             {
+                 // Audio Preview Logic
+                 IsPreviewing = true;
+                 _audioService.Play(item.File.FullName);
+             }
         }
 
         [RelayCommand]
         private void StopPreview()
         {
-            _audioService.Stop();
-            IsPreviewing = false;
+            if (IsVideoMode)
+            {
+                IsVideoPlaying = false;
+                if (PreviewPlayer != null && PreviewPlayer.IsPlaying)
+                {
+                    PreviewPlayer.Stop();
+                }
+
+                // Close Window
+                if (_previewWindow != null)
+                {
+                    // Remove Event Handler to prevent recursive loop if called from Closed event
+                    _previewWindow.Closed -= (s, e) => StopPreview(); 
+                    _previewWindow.Close();
+                    _previewWindow = null;
+                }
+            }
+            else
+            {
+                _audioService.Stop();
+                IsPreviewing = false;
+            }
+            
             if (SelectedMedia != null) SelectedMedia.IsPlaying = false;
         }
 
