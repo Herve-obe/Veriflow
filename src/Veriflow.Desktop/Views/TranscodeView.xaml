@@ -342,47 +342,98 @@
         <Border Grid.Column="1" Background="{StaticResource Brush.Panel}" BorderThickness="1,0,0,0" BorderBrush="{StaticResource Brush.Border}" CornerRadius="0" Padding="10">
             <StackPanel>
                 
-                <TextBlock Text="CHOOSE FUNCTION" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
-                
-                <!-- Formats -->
-                <ComboBox ItemsSource="{Binding AvailableFormats}" SelectedItem="{Binding SelectedFormat}" Margin="0,0,0,20">
-                     <ComboBox.ItemContainerStyle>
-                        <Style TargetType="ComboBoxItem">
-                            <Setter Property="Padding" Value="10"/>
-                        </Style>
-                    </ComboBox.ItemContainerStyle>
-                </ComboBox>
+                <TextBlock Text="EXPORT SETTINGS" Style="{StaticResource HeaderStyle}" Margin="0,0,0,20"/>
+
+                <!-- Function Selection Area (Dual Dropdowns) -->
+                <StackPanel Margin="0,0,0,20">
+                    
+                    <!-- VIDEO FUNCTION -->
+                    <TextBlock Text="CHOOSE VIDEO FUNCTION" Style="{StaticResource HeaderStyle}" FontSize="{StaticResource Font.Size.Standard}" Margin="0,0,0,10" Foreground="#888"/>
+                    <ComboBox ItemsSource="{Binding VideoFormats}" 
+                              SelectedItem="{Binding SelectedVideoFormat}"
+                              Height="30" Margin="0,0,0,20"
+                              Style="{StaticResource {x:Type ComboBox}}">
+                    </ComboBox>
+
+                    <!-- AUDIO FUNCTION -->
+                    <TextBlock Text="CHOOSE AUDIO FUNCTION" Style="{StaticResource HeaderStyle}" FontSize="{StaticResource Font.Size.Standard}" Margin="0,0,0,10" Foreground="#888"/>
+                    <ComboBox ItemsSource="{Binding AudioFormats}" 
+                              SelectedItem="{Binding SelectedAudioFormat}"
+                              Height="30" Margin="0,0,0,10"
+                              Style="{StaticResource {x:Type ComboBox}}">
+                    </ComboBox>
+
+                </StackPanel>
+
+
 
                 <!-- Divider -->
                 <Rectangle Height="1" Fill="#333" Margin="0,0,0,20"/>
 
-                <TextBlock Text="AUDIO SETTINGS" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
-                
-                <StackPanel Margin="0,0,0,10">
-                    <StackPanel Margin="0,0,0,15">
-                        <TextBlock Text="Sample Rate" Foreground="#888" Margin="0,0,0,5"/>
-                        <ComboBox ItemsSource="{Binding AvailableSampleRates}" SelectedItem="{Binding SelectedSampleRate}"/>
-                    </StackPanel>
+                <!-- AUDIO SETTINGS -->
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAudioCategory}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
 
-                    <StackPanel Margin="0,0,0,15">
-                         <TextBlock Text="Bit Depth" Foreground="#888" Margin="0,0,0,5"/>
-                        <ComboBox ItemsSource="{Binding AvailableBitDepths}" SelectedItem="{Binding SelectedBitDepth}"/>
-                    </StackPanel>
+                    <TextBlock Text="AUDIO SETTINGS" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
+                    
+                    <StackPanel Margin="0,0,0,10">
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Sample Rate" Foreground="#888" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailableSampleRates}" SelectedItem="{Binding SelectedSampleRate}"/>
+                        </StackPanel>
 
-                    <StackPanel>
-                        <TextBlock Text="Bitrate" Foreground="#888" Margin="0,0,0,5"/>
-                        <ComboBox ItemsSource="{Binding AvailableBitrates}" SelectedItem="{Binding SelectedBitrate}" IsEnabled="{Binding AvailableBitrates.Count}">
-                            <ComboBox.Style>
-                                <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding AvailableBitrates.Count}" Value="0">
-                                            <Setter Property="IsEnabled" Value="False"/>
-                                            <Setter Property="Opacity" Value="0.3"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Style>
-                        </ComboBox>
+                        <StackPanel Margin="0,0,0,15">
+                             <TextBlock Text="Bit Depth" Foreground="#888" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailableBitDepths}" SelectedItem="{Binding SelectedBitDepth}"/>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="Bitrate" Foreground="#888" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailableBitrates}" SelectedItem="{Binding SelectedBitrate}" IsEnabled="{Binding AvailableBitrates.Count}">
+                                <ComboBox.Style>
+                                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding AvailableBitrates.Count}" Value="0">
+                                                <Setter Property="IsEnabled" Value="False"/>
+                                                <Setter Property="Opacity" Value="0.3"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- VIDEO SETTINGS -->
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsVideoCategory}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <TextBlock Text="VIDEO SETTINGS" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
+
+                    <StackPanel Margin="0,0,0,10">
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Bit Depth (Color)" Foreground="#888" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding AvailableVideoBitDepths}" SelectedItem="{Binding SelectedVideoBitDepth}"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
