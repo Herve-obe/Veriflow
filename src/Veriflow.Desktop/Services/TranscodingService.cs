@@ -269,11 +269,20 @@ namespace Veriflow.Desktop.Services
                     // FORCE RIFF HEADER (Disable RF64) for compatibility with older tools/NAudio default
                     args += " -f wav -rf64 never"; 
 
-                    // PCM Map
+                    // PCM Map (Little Endian)
                     if (options.BitDepth == "16-bit") args += " -c:a pcm_s16le";
                     else if (options.BitDepth == "24-bit") args += " -c:a pcm_s24le";
                     else if (options.BitDepth == "32-bit Float") args += " -c:a pcm_f32le";
                     else if (options.BitDepth == "32-bit") args += " -c:a pcm_s32le"; // Integer 32-bit
+                }
+                else if (fmt == "AIFF")
+                {
+                    args += " -f aiff"; 
+                    // PCM Map (Big Endian standard for AIFF)
+                    if (options.BitDepth == "24-bit") args += " -c:a pcm_s24be";
+                    else if (options.BitDepth == "32-bit") args += " -c:a pcm_s32be";
+                    else if (options.BitDepth == "32-bit Float") args += " -c:a pcm_f32be";
+                    else args += " -c:a pcm_s16be"; // Default 16
                 }
                 else if (fmt == "MP3")
                 {
@@ -284,6 +293,7 @@ namespace Veriflow.Desktop.Services
                 else if (fmt == "FLAC")
                 {
                     args += " -c:a flac";
+                    if (options.BitDepth == "24-bit") args += " -sample_fmt s32"; // FFmpeg FLAC encoder handles depth automatically usually, but forcing s32 input usually preserves 24-bit source
                 }
                 else if (fmt == "AAC")
                 {
@@ -291,7 +301,19 @@ namespace Veriflow.Desktop.Services
                     if (int.TryParse(br, out _)) br += "k";
                     args += $" -c:a aac -b:a {br}";
                 }
-                else if (fmt == "OGG")
+                else if (fmt == "AC3")
+                {
+                    string br = !string.IsNullOrEmpty(options.Bitrate) ? options.Bitrate : "384k";
+                    if (int.TryParse(br, out _)) br += "k";
+                    args += $" -c:a ac3 -b:a {br}";
+                }
+                else if (fmt == "OPUS")
+                {
+                    string br = !string.IsNullOrEmpty(options.Bitrate) ? options.Bitrate : "128k";
+                    if (int.TryParse(br, out _)) br += "k";
+                    args += $" -c:a libopus -b:a {br} -vbr on";
+                }
+                else if (fmt == "VORBIS")
                 {
                     string br = !string.IsNullOrEmpty(options.Bitrate) ? options.Bitrate : "192k";
                     if (int.TryParse(br, out _)) br += "k";

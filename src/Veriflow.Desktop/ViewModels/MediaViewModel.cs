@@ -169,8 +169,8 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        private readonly string[] _audioExtensions = { ".wav", ".mp3", ".m4a" };
-        private readonly string[] _videoExtensions = { ".mov", ".mp4", ".ts", ".mxf", ".avi" };
+        public static readonly string[] AudioExtensions = { ".wav", ".mp3", ".m4a", ".aac", ".aiff", ".aif", ".flac", ".ogg", ".opus", ".ac3" };
+        public static readonly string[] VideoExtensions = { ".mov", ".mp4", ".ts", ".mxf", ".avi", ".mkv", ".webm", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".3gp", ".dv", ".ogv", ".m2v", ".vob", ".m2ts" };
 
         private void LoadDirectory(string path)
         {
@@ -183,7 +183,7 @@ namespace Veriflow.Desktop.ViewModels
                 try
                 {
                     // Filter based on Mode
-                    var targetExtensions = IsVideoMode ? _videoExtensions : _audioExtensions;
+                    var targetExtensions = IsVideoMode ? VideoExtensions : AudioExtensions;
                     
                     var files = dirInfo.GetFiles()
                                        .Where(f => targetExtensions.Contains(f.Extension.ToLower()))
@@ -482,7 +482,7 @@ namespace Veriflow.Desktop.ViewModels
 
             // Trigger thumbnail generation immediately for videos
             string ext = File.Extension.ToLower();
-            if (new[] { ".mov", ".mp4", ".mxf", ".ts", ".avi", ".mkv" }.Contains(ext))
+            if (MediaViewModel.VideoExtensions.Contains(ext))
             {
                 TriggerThumbnailLoad();
             }
@@ -520,7 +520,7 @@ namespace Veriflow.Desktop.ViewModels
             {
                 var provider = new FFprobeMetadataProvider();
                 string ext = File.Extension.ToLower();
-                bool isVideo = new[] { ".mov", ".mp4", ".mxf", ".ts", ".avi", ".mkv" }.Contains(ext);
+                bool isVideo = MediaViewModel.VideoExtensions.Contains(ext);
 
                 if (isVideo)
                 {

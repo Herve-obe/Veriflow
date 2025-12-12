@@ -20,7 +20,27 @@ namespace Veriflow.Desktop.Services
             {
                 if (!File.Exists(filePath)) return;
 
-                _audioSource = CodecFactory.Instance.GetCodec(filePath);
+                // Try Native Codecs first (Faster, Seekable)
+                try
+                {
+                    _audioSource = CodecFactory.Instance.GetCodec(filePath);
+                }
+                catch (Exception)
+                {
+                    // Fallback to FFmpeg Pipe (Slower start, Non-seekable, universal support)
+                    System.Diagnostics.Debug.WriteLine("[AudioPreview] Native codec failed, trying FFmpeg fallback...");
+                    try 
+                    {
+                         _audioSource = new FFmpegWaveSource(filePath);
+                    }
+                    catch (Exception exFF)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[AudioPreview] FFmpeg fallback failed: {exFF.Message}");
+                        return; // Give up
+                    }
+                }
+
+                if (_audioSource == null) return;
 
                 if (_audioSource.WaveFormat.Channels > 1)
                 {

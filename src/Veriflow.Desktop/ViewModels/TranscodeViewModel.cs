@@ -35,17 +35,27 @@ namespace Veriflow.Desktop.ViewModels
 
 
 
-        // Formats
         public List<string> AudioFormats { get; } = new() 
         { 
-            "WAV", "FLAC", "MP3", "AAC", "OGG", "AIFF" 
+            "WAV", "AIFF", "FLAC", "MP3", "AAC", "AC3", "Opus", "Vorbis" 
         };
 
         public List<string> VideoFormats { get; } = new() 
         { 
-            "H.264 (MP4)", "H.265 (MP4)",
-            "ProRes 422 Proxy", "ProRes 422 LT", "ProRes 422", "ProRes 422 HQ", "ProRes 4444",
-            "DNxHD LB", "DNxHD SQ", "DNxHD HQ"
+            "--- STANDARD (EXCHANGE) ---",
+            "H.264 (MP4)", "H.265 (MP4)", 
+
+            "--- BROADCAST & LIVE ---",
+            "XDCAM HD422", "AVC-Intra 100", "XAVC", "HAP",
+
+            "--- POST-PRODUCTION ---",
+            "ProRes", "DNxHD", "DNxHR", "GoPro CineForm", "QT Animation", "Uncompressed",
+
+            "--- MODERN WEB ---",
+            "AV1", "VP9", "VP8",
+
+            "--- LEGACY & ARCHIVE ---",
+            "MPEG-2", "MPEG-1", "DV", "theora", "MJPEG", "Xvid", "WMV"
         };
         
         // No longer using single list
@@ -159,8 +169,13 @@ namespace Veriflow.Desktop.ViewModels
             "Same as Source", "8-bit", "10-bit"
         };
 
+
+
         [ObservableProperty]
         private string _selectedVideoBitDepth = "Same as Source";
+
+        [ObservableProperty]
+        private string _outputExtension = ".mp4";
 
         [ObservableProperty]
         private string _destinationFolder = "";
@@ -176,6 +191,9 @@ namespace Veriflow.Desktop.ViewModels
             
             // Initialize
 
+
+            // Initialize
+
             UpdateFormatOptions(SelectedFormat);
         }
 
@@ -186,15 +204,155 @@ namespace Veriflow.Desktop.ViewModels
             AvailableBitrates.Clear();
             SelectedBitrate = "";
 
-            // Determine Type based on Format Name String
-            bool isVideo = format.Contains("ProRes") || format.Contains("DNxHD") || format.Contains("H.264") || format.Contains("H.265") || format.Contains("MP4");
-            IsVideoFormat = isVideo; // Updates UI Flags
+            // Determine Type
+            bool isVideo = format.Contains("ProRes") || format.Contains("DNxHD") || format.Contains("DNxHR") || format.Contains("H.264") || format.Contains("H.265") || format.Contains("MP4") 
+               || format.Contains("CineForm") || format.Contains("Animation") || format.Contains("Uncompressed")
+               || format.Contains("VP") || format.Contains("AV1") || format.Contains("XDCAM") || format.Contains("AVC-Intra") || format.Contains("XAVC") || format.Contains("HAP")
+               || format.Contains("Theora") || format.Contains("MPEG") || format.Contains("MJPEG") || format.Contains("Xvid") || format.Contains("DV") || format.Contains("WMV");
+            
+            IsVideoFormat = isVideo;
 
             if (IsVideoFormat)
             {
-                // Video Specific Defaults
-                // ... (Logic preserved)
-                if (SelectedVideoBitDepth == "Same as Source" && format.Contains("ProRes")) SelectedVideoBitDepth = "10-bit";
+                // Reset Bit Depths
+                AvailableVideoBitDepths.Clear();
+
+                // --- H.264 ---
+                if (format.Contains("H.264") || format.Equals("MP4"))
+                {
+                     AvailableBitrates.Add("Auto"); AvailableBitrates.Add("2000k"); AvailableBitrates.Add("5000k"); AvailableBitrates.Add("8000k"); AvailableBitrates.Add("10000k"); AvailableBitrates.Add("15000k"); AvailableBitrates.Add("20000k"); AvailableBitrates.Add("30000k"); AvailableBitrates.Add("50000k");
+                     SelectedBitrate = "Auto";
+                     
+                     AvailableVideoBitDepths.Add("8-bit");
+                     SelectedVideoBitDepth = "8-bit";
+                }
+                // --- H.265 / AV1 / VP9 (Modern High Depth) ---
+                else if (format.Contains("H.265") || format.Contains("AV1") || format.Contains("VP9"))
+                {
+                     AvailableBitrates.Add("Auto"); AvailableBitrates.Add("2000k"); AvailableBitrates.Add("5000k"); AvailableBitrates.Add("8000k"); AvailableBitrates.Add("10000k"); AvailableBitrates.Add("15000k"); AvailableBitrates.Add("20000k"); AvailableBitrates.Add("30000k"); AvailableBitrates.Add("50000k");
+                     SelectedBitrate = "Auto";
+
+                     AvailableVideoBitDepths.Add("8-bit"); AvailableVideoBitDepths.Add("10-bit"); AvailableVideoBitDepths.Add("12-bit");
+                     SelectedVideoBitDepth = "8-bit";
+                }
+                // --- PRORES (Fixed 10-bit) ---
+                else if (format.Contains("ProRes"))
+                {
+                    AvailableBitrates.Add("Proxy"); AvailableBitrates.Add("LT"); AvailableBitrates.Add("422"); AvailableBitrates.Add("HQ"); AvailableBitrates.Add("4444");
+                    SelectedBitrate = "422";
+
+                    AvailableVideoBitDepths.Add("10-bit");
+                    SelectedVideoBitDepth = "10-bit";
+                }
+                // --- DNxHD (Fixed 8/10 depending on profile, treat as generic selectable for now or assume 8 unless X) ---
+                else if (format.Contains("DNxHD"))
+                {
+                    AvailableBitrates.Add("36M (Proxy)"); AvailableBitrates.Add("115M (SQ)"); AvailableBitrates.Add("175M (HQ)"); AvailableBitrates.Add("175X (10-bit)");
+                    SelectedBitrate = "115M (SQ)";
+                    
+                    AvailableVideoBitDepths.Add("8-bit"); AvailableVideoBitDepths.Add("10-bit");
+                    SelectedVideoBitDepth = "8-bit"; 
+                }
+                // --- DNxHR ---
+                else if (format.Contains("DNxHR"))
+                {
+                    AvailableBitrates.Add("LB"); AvailableBitrates.Add("SQ"); AvailableBitrates.Add("HQ"); AvailableBitrates.Add("HQX (10-bit)"); AvailableBitrates.Add("444 (12-bit)");
+                    SelectedBitrate = "SQ";
+
+                    AvailableVideoBitDepths.Add("8-bit"); AvailableVideoBitDepths.Add("10-bit"); AvailableVideoBitDepths.Add("12-bit");
+                    SelectedVideoBitDepth = "8-bit";
+                }
+                // --- CINEFORM ---
+                else if (format.Contains("CineForm"))
+                {
+                    AvailableBitrates.Add("Low"); AvailableBitrates.Add("Medium"); AvailableBitrates.Add("High"); AvailableBitrates.Add("Film Scan 1"); AvailableBitrates.Add("Film Scan 2");
+                    SelectedBitrate = "Medium";
+
+                    AvailableVideoBitDepths.Add("10-bit");
+                    SelectedVideoBitDepth = "10-bit";
+                }
+                // --- XDCAM (Fixed) ---
+                else if (format.Contains("XDCAM"))
+                {
+                    AvailableBitrates.Add("50Mbps");
+                    SelectedBitrate = "50Mbps";
+                    
+                    AvailableVideoBitDepths.Add("8-bit");
+                    SelectedVideoBitDepth = "8-bit";
+                }
+                // --- AVC-INTRA / XAVC (High Depth) ---
+                else if (format.Contains("AVC-Intra") || format.Contains("XAVC"))
+                {
+                     if (format.Contains("XAVC"))
+                     {
+                        AvailableBitrates.Add("100Mbps (Class 100)"); AvailableBitrates.Add("300Mbps (Class 300)"); AvailableBitrates.Add("480Mbps (Class 480)");
+                        SelectedBitrate = "300Mbps (Class 300)";
+                     }
+                     else
+                     {
+                        AvailableBitrates.Add("100Mbps");
+                        SelectedBitrate = "100Mbps";
+                     }
+
+                     AvailableVideoBitDepths.Add("10-bit");
+                     SelectedVideoBitDepth = "10-bit";
+                }
+                // --- HAP ---
+                else if (format.Contains("HAP"))
+                {
+                    AvailableBitrates.Add("Hap"); AvailableBitrates.Add("Hap Alpha"); AvailableBitrates.Add("Hap Q");
+                    SelectedBitrate = "Hap";
+
+                    AvailableVideoBitDepths.Add("8-bit");
+                    SelectedVideoBitDepth = "8-bit";
+                }
+                // --- LEGACY / OTHER ---
+                else
+                {
+                    // MPEG-2, DV, WMV, etc.
+                    if (format.Contains("DV"))
+                    {
+                        AvailableBitrates.Add("Standard (25Mbps)");
+                        SelectedBitrate = "Standard (25Mbps)";
+                    }
+                    else if (format.Contains("MPEG-2"))
+                    {
+                        AvailableBitrates.Add("5000k"); AvailableBitrates.Add("10000k"); AvailableBitrates.Add("15000k"); AvailableBitrates.Add("30000k"); AvailableBitrates.Add("50000k");
+                        SelectedBitrate = "15000k";
+                    }
+                    else
+                    {
+                        // Generic Legacy (Theora, Xvid, WMV, VP8, MJPEG)
+                        AvailableBitrates.Add("Auto"); AvailableBitrates.Add("2000k"); AvailableBitrates.Add("5000k"); AvailableBitrates.Add("10000k");
+                        SelectedBitrate = "Auto";
+                    }
+
+                    AvailableVideoBitDepths.Add("8-bit");
+                    SelectedVideoBitDepth = "8-bit";
+                    
+                    if (format == "Uncompressed")
+                    {
+                         AvailableBitrates.Clear();
+                         AvailableBitrates.Add("YUV 4:2:2"); AvailableBitrates.Add("RGB 24-bit"); AvailableBitrates.Add("RGBA 32-bit");
+                         SelectedBitrate = "YUV 4:2:2";
+                         
+                         AvailableVideoBitDepths.Clear();
+                         AvailableVideoBitDepths.Add("8-bit"); AvailableVideoBitDepths.Add("10-bit"); AvailableVideoBitDepths.Add("12-bit");
+                         SelectedVideoBitDepth = "8-bit";
+                    }
+                }
+
+                // --- Dynamic Container Logic ---
+                if (format.Contains("ProRes") || format.Contains("DNxHD") || format.Contains("DNxHR") || format.Contains("Animation") || format.Contains("CineForm") || format.Contains("Uncompressed")) OutputExtension = ".mov";
+                else if (format.Contains("HAP") || format.Contains("MJPEG")) OutputExtension = ".mov";
+                else if (format.Contains("XDCAM") || format.Contains("AVC-Intra") || format.Contains("XAVC")) OutputExtension = ".mxf";
+                else if (format.Contains("VP8") || format.Contains("VP9")) OutputExtension = ".webm";
+                else if (format.Contains("Theora")) OutputExtension = ".ogv";
+                else if (format.Contains("WMV")) OutputExtension = ".wmv";
+                else if (format.Contains("Xvid")) OutputExtension = ".avi";
+                else if (format.Contains("DV")) OutputExtension = ".dv";
+                else if (format.Contains("MPEG-2") || format.Contains("MPEG-1")) OutputExtension = ".mpg";
+                else OutputExtension = ".mp4"; // Default
             }
             else
             {
@@ -203,17 +361,35 @@ namespace Veriflow.Desktop.ViewModels
                 {
                     AvailableBitrates.Add("320k"); AvailableBitrates.Add("256k"); AvailableBitrates.Add("192k"); AvailableBitrates.Add("128k");
                     SelectedBitrate = "320k";
+                    OutputExtension = ".mp3";
                 }
                 else if (format == "AAC")
                 {
-                    AvailableBitrates.Add("320k"); AvailableBitrates.Add("256k"); AvailableBitrates.Add("192k");
+                    AvailableBitrates.Add("320k"); AvailableBitrates.Add("256k"); AvailableBitrates.Add("192k"); AvailableBitrates.Add("128k");
                     SelectedBitrate = "256k";
+                    OutputExtension = ".m4a";
                 }
-                else if (format == "OGG")
+                else if (format == "AC3")
                 {
-                     AvailableBitrates.Add("192k"); AvailableBitrates.Add("128k");
-                     SelectedBitrate = "192k";
+                    AvailableBitrates.Add("640k"); AvailableBitrates.Add("448k"); AvailableBitrates.Add("384k"); AvailableBitrates.Add("192k");
+                    SelectedBitrate = "384k";
+                    OutputExtension = ".ac3";
                 }
+                else if (format == "Opus")
+                {
+                    AvailableBitrates.Add("320k"); AvailableBitrates.Add("256k"); AvailableBitrates.Add("192k"); AvailableBitrates.Add("160k"); AvailableBitrates.Add("128k"); AvailableBitrates.Add("96k"); AvailableBitrates.Add("64k");
+                    SelectedBitrate = "128k"; // Opus default quality is good at lower rates
+                    OutputExtension = ".opus";
+                }
+                else if (format == "Vorbis")
+                {
+                    AvailableBitrates.Add("320k"); AvailableBitrates.Add("256k"); AvailableBitrates.Add("192k"); AvailableBitrates.Add("128k"); AvailableBitrates.Add("96k");
+                    SelectedBitrate = "192k";
+                    OutputExtension = ".ogg";
+                }
+                else if (format == "WAV") OutputExtension = ".wav";
+                else if (format == "AIFF") OutputExtension = ".aif";
+                else if (format == "FLAC") OutputExtension = ".flac";
             }
         }
 
@@ -362,16 +538,8 @@ namespace Veriflow.Desktop.ViewModels
                     string outDir = rawDir ?? ""; 
                     string fileName = System.IO.Path.GetFileNameWithoutExtension(item.FilePath);
                     
-                    // Extension Logic
-                    string extension = "wav"; // fallback
-                    if (currentFormat.Contains("MP3")) extension = "mp3";
-                    else if (currentFormat.Contains("AAC")) extension = "m4a";
-                    else if (currentFormat.Contains("WAV")) extension = "wav";
-                    else if (currentFormat.Contains("FLAC")) extension = "flac";
-                    else if (currentFormat.Contains("OGG")) extension = "ogg";
-                    else if (currentFormat.Contains("AIFF")) extension = "aif";
-                    else if (currentFormat.Contains("H.264") || currentFormat.Contains("H.265")) extension = "mp4";
-                    else if (currentFormat.Contains("ProRes") || currentFormat.Contains("DNxHD")) extension = "mov";
+                    // Extension Logic (Centralized from Property)
+                    string extension = OutputExtension.TrimStart('.'); 
 
                     string outputFile = System.IO.Path.Combine(outDir, $"{fileName}_{currentFormat.Split(' ')[0].ToUpper()}.{extension}");
 
