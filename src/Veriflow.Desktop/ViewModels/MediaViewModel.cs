@@ -69,7 +69,7 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (FileList.Any())
             {
-               RequestCreateReport?.Invoke(FileList, IsVideoMode);
+               RequestCreateReport?.Invoke(FileList.ToList(), IsVideoMode);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Veriflow.Desktop.ViewModels
         {
              if (FileList.Any())
             {
-               RequestAddToReport?.Invoke(FileList);
+               RequestAddToReport?.Invoke(FileList.ToList());
             }
         }
 

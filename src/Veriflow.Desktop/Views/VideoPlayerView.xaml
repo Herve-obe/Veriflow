@@ -369,7 +369,7 @@
                             Style="{StaticResource BlueActionButtonStyle}"/>
 
                     <Button Command="{Binding ModifyInReportCommand}"
-                            Content="MODIFY IN REPORT" Height="26" ToolTip="Locate file in Reports" Margin="0,0,0,5"
+                            Content="UPDATE REPORT" Height="26" ToolTip="Locate file in Reports" Margin="0,0,0,5"
                             Style="{StaticResource BlueActionButtonStyle}"/>
 
                     <Button Command="{Binding SendFileToTranscodeCommand}"

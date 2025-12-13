@@ -13,7 +13,17 @@ namespace Veriflow.Desktop.Models
     public partial class ReportHeader : ObservableObject
     {
         [ObservableProperty] private string _projectName = "";
-        [ObservableProperty] private DateTime _reportDate = DateTime.Now;
+        [ObservableProperty] private string _reportDate = "";
+        
+        [ObservableProperty] private DateTime? _calendarDate;
+
+        partial void OnCalendarDateChanged(DateTime? value)
+        {
+            if (value.HasValue)
+            {
+                ReportDate = value.Value.ToShortDateString();
+            }
+        }
         [ObservableProperty] private string _productionCompany = "";
         [ObservableProperty] private string _operatorName = "";
         
@@ -21,6 +31,17 @@ namespace Veriflow.Desktop.Models
         [ObservableProperty] private string _director = ""; // Video
         [ObservableProperty] private string _dop = "";      // Video
         [ObservableProperty] private string _soundMixer = ""; // Audio
+        [ObservableProperty] private string _boomOperator = ""; // Audio
+        [ObservableProperty] private string _location = "";     // Audio
+        [ObservableProperty] private string _timecodeRate = ""; // Audio
+        [ObservableProperty] private string _bitDepth = "";     // Audio
+        [ObservableProperty] private string _sampleRate = "";   // Audio
+        [ObservableProperty] private string _filesType = "";    // Audio
+        
+        [ObservableProperty] private string _dataManager = ""; // Video
+        [ObservableProperty] private string _cameraId = "";    // Video
+        [ObservableProperty] private string _reelName = "";    // Video
+        [ObservableProperty] private string _lensInfo = "";    // Video
         
         [ObservableProperty] private string _episode = "";
         [ObservableProperty] private string _scene = "";
@@ -98,5 +119,12 @@ namespace Veriflow.Desktop.Models
         public string Resolution { get; set; } = "";
         public string Codec { get; set; } = "";
         public string? ThumbnailPath { get; set; }
+        
+        // Additional Video Properties
+        public string Fps { get; set; } = "";
+        public string Iso { get; set; } = "";
+        public string WhiteBalance { get; set; } = "";
+
+
     }
 }

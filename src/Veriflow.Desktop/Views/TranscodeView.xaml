@@ -526,7 +526,21 @@
 
                  <StackPanel Margin="0,20,0,0">
                      <!-- Progress Bar -->
-                     <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center" Foreground="{DynamicResource Brush.Accent}" Margin="0,0,0,10" FontWeight="Bold"/>
+                     <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Center" Foreground="{DynamicResource Brush.Accent}" Margin="0,0,0,10" FontWeight="Bold">
+                         <TextBlock.Style>
+                             <Style TargetType="TextBlock">
+                                 <Style.Triggers>
+                                     <MultiDataTrigger>
+                                         <MultiDataTrigger.Conditions>
+                                             <Condition Binding="{Binding IsEnabled, ElementName=StartTranscodeButton}" Value="False"/>
+                                             <Condition Binding="{Binding Text, RelativeSource={RelativeSource Self}}" Value="Ready"/>
+                                         </MultiDataTrigger.Conditions>
+                                         <Setter Property="Visibility" Value="Hidden"/>
+                                     </MultiDataTrigger>
+                                 </Style.Triggers>
+                             </Style>
+                         </TextBlock.Style>
+                     </TextBlock>
                      <ProgressBar Value="{Binding TotalProgressValue}" Height="10" Background="#222" BorderThickness="0" Foreground="{DynamicResource Brush.Accent}" Margin="0,0,0,20">
                          <ProgressBar.Style>
                              <Style TargetType="ProgressBar">
@@ -543,7 +557,8 @@
                      </ProgressBar>
 
                      <!-- START BUTTON -->
-                     <Button Content="START TRANSCODE" 
+                     <Button x:Name="StartTranscodeButton" 
+                             Content="START TRANSCODE" 
                              Command="{Binding StartTranscodeCommand}"
                              Height="26"
                              Style="{StaticResource BlueActionButtonStyle}">

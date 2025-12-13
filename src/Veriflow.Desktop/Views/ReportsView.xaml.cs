@@ -10,6 +10,20 @@ namespace Veriflow.Desktop.Views
             Loaded += (s, e) => Focus();
         }
 
+        protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+
+            if (e.Key == System.Windows.Input.Key.Enter || e.Key == System.Windows.Input.Key.Return)
+            {
+                if (e.OriginalSource is TextBox textBox && !textBox.AcceptsReturn)
+                {
+                    e.Handled = true;
+                    textBox.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next) { Wrapped = true });
+                }
+            }
+        }
+
         private void Slider_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (sender is Slider slider)

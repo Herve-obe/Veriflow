@@ -107,7 +107,7 @@ namespace Veriflow.Desktop.Services
             // Row 1
             var r1 = new TableRow();
             r1.Cells.Add(CreateHeaderInfoCell("PROJECT", header.ProjectName));
-            r1.Cells.Add(CreateHeaderInfoCell("DATE", header.ReportDate.ToShortDateString()));
+            r1.Cells.Add(CreateHeaderInfoCell("DATE", header.ReportDate));
             r1.Cells.Add(CreateHeaderInfoCell("EPISODE / SCENE", $"{header.Episode} / {header.Scene}"));
             headerRowGroup.Rows.Add(r1);
 

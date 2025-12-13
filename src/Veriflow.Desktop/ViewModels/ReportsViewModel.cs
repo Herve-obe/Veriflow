@@ -12,11 +12,26 @@ namespace Veriflow.Desktop.ViewModels
     public partial class ReportsViewModel : ObservableObject
     {
         // --- DATA ---
-        [ObservableProperty] private ReportHeader _header = new();
+        private ReportHeader _videoHeader = new() { ProductionCompany = "Veriflow Video" };
+        private ReportHeader _audioHeader = new() { ProductionCompany = "SoundLog Pro Production" };
+
+        [ObservableProperty] private ReportHeader _header;
         [ObservableProperty] private ObservableCollection<ReportItem> _reportItems = new();
         [ObservableProperty] 
         [NotifyPropertyChangedFor(nameof(ReportTitle))]
         private ReportType _currentReportType = ReportType.Video;
+
+        partial void OnCurrentReportTypeChanged(ReportType value)
+        {
+            if (value == ReportType.Audio)
+            {
+                Header = _audioHeader;
+            }
+            else
+            {
+                Header = _videoHeader;
+            }
+        }
 
         public string ReportTitle => CurrentReportType == ReportType.Audio ? "SOUND REPORT" : "CAMERA REPORT";
 
@@ -27,6 +42,11 @@ namespace Veriflow.Desktop.ViewModels
 
         public bool HasReport => IsReportActive && ReportItems.Count > 0;
 
+
+
+        [ObservableProperty] private bool _isVideoCalendarOpen;
+        [ObservableProperty] private bool _isAudioCalendarOpen;
+
         // --- NAVIGATION REQUEST ---
         // Simple event or messenger could be used. For simplicity, we might assume MainViewModel 
         // observes this or we inject a service. 
@@ -35,6 +55,9 @@ namespace Veriflow.Desktop.ViewModels
         public ReportsViewModel()
         {
             _printingService = new ReportPrintingService();
+            _header = _videoHeader; // Initialize default
+            SubscribeToHeader();
+            ReportItems.CollectionChanged += (s, e) => ClearListCommand.NotifyCanExecuteChanged();
             // Default title logic handles initialization
         }
 
@@ -50,11 +73,18 @@ namespace Veriflow.Desktop.ViewModels
         public void CreateReport(IEnumerable<MediaItemViewModel> items, ReportType type)
         {
             CurrentReportType = type;
-            Header = new ReportHeader(); // Reset header
             
-            // Set Defaults based on Type
-            if (type == ReportType.Audio) Header.ProductionCompany = "SoundLog Pro Production";
-            else Header.ProductionCompany = "Veriflow Video";
+            // Re-initialize specific header
+            if (type == ReportType.Audio) 
+            {
+                 _audioHeader = new ReportHeader() { ProductionCompany = "SoundLog Pro Production" };
+                 Header = _audioHeader;
+            }
+            else 
+            {
+                 _videoHeader = new ReportHeader() { ProductionCompany = "Veriflow Video" };
+                 Header = _videoHeader;
+            }
 
             ReportItems.Clear();
             foreach (var item in items)
@@ -71,15 +101,28 @@ namespace Veriflow.Desktop.ViewModels
 
             foreach (var item in items)
             {
-                // Avoid duplicates? Or allow? Usually reports list events, so duplicates "might" be valid but unlikely for same file.
-                // Let's filter exact object refs.
-                if (!ReportItems.Any(r => r.OriginalMedia == item))
-                {
-                    ReportItems.Add(new ReportItem(item));
-                }
+                ReportItems.Add(new ReportItem(item));
             }
-            OnPropertyChanged(nameof(HasReport)); // Ensure property updates
         }
+
+        [RelayCommand]
+        private void AddFiles()
+        {
+            // TODO: Implement file picker
+        }
+
+        private bool CanClearList() => ReportItems.Count > 0;
+
+        [RelayCommand(CanExecute = nameof(CanClearList))]
+        private void ClearList()
+        {
+            ReportItems.Clear();
+        }
+
+
+
+
+
 
         public void NavigateToItem(MediaItemViewModel item)
         {
@@ -112,7 +155,8 @@ namespace Veriflow.Desktop.ViewModels
             {
                 if (Header == null) return false;
                 // Check if any significant field is modified from default
-                bool hasData = !string.IsNullOrEmpty(Header.ProjectName) || 
+                bool hasData = !string.IsNullOrEmpty(Header.ReportDate) ||
+                               !string.IsNullOrEmpty(Header.ProjectName) || 
                                !string.IsNullOrEmpty(Header.OperatorName) || 
                                !string.IsNullOrEmpty(Header.Director) ||
                                !string.IsNullOrEmpty(Header.Dop) ||
@@ -149,8 +193,16 @@ namespace Veriflow.Desktop.ViewModels
         {
             Header = new ReportHeader();
             // Retain default values logic
-             if (CurrentReportType == ReportType.Audio) Header.ProductionCompany = "SoundLog Pro Production";
-            else Header.ProductionCompany = "Veriflow Video";
+             if (CurrentReportType == ReportType.Audio) 
+             {
+                 Header.ProductionCompany = "SoundLog Pro Production";
+                 _audioHeader = Header;
+             }
+            else 
+            {
+                Header.ProductionCompany = "Veriflow Video";
+                _videoHeader = Header;
+            }
             
             SubscribeToHeader(); 
             OnPropertyChanged(nameof(HasInfos));
@@ -187,6 +239,12 @@ namespace Veriflow.Desktop.ViewModels
 
         private void Header_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+             if (e.PropertyName == nameof(ReportHeader.CalendarDate))
+             {
+                 if (CurrentReportType == ReportType.Audio) IsAudioCalendarOpen = false;
+                 else IsVideoCalendarOpen = false;
+             }
+ 
              OnPropertyChanged(nameof(HasInfos));
              OnPropertyChanged(nameof(HasAnyData));
              ClearInfosCommand.NotifyCanExecuteChanged();
