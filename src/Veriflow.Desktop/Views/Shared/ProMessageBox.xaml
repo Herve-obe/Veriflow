@@ -18,7 +18,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -36,12 +39,16 @@
         </Style>
 
         <Style TargetType="Button" x:Key="DialogPrimaryButtonStyle" BasedOn="{StaticResource DialogButtonStyle}">
-            <Setter Property="Background" Value="#1A4CB1"/>
+            <Setter Property="Background" Value="{DynamicResource Brush.Accent}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Style.Triggers>
+                <Trigger Property="IsDefault" Value="True">
+                     <Setter Property="Background" Value="{DynamicResource Brush.Accent}"/>
+                     <Setter Property="FontWeight" Value="Bold"/>
+                </Trigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#3565C8"/>
+                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Hover}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -85,23 +92,46 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- Icon -->
-                <Path x:Name="IconPath" Width="32" Height="32" Stretch="Uniform" Margin="0,0,20,0" VerticalAlignment="Top"
-                      Fill="#1A4CB1">
+                <Path x:Name="IconPath" Width="32" Height="32" Stretch="Uniform" Margin="0,0,20,0" VerticalAlignment="Top">
                     <Path.Style>
                         <Style TargetType="Path">
+                            <Setter Property="Fill" Value="White"/> <!-- Default -->
                             <Style.Triggers>
+                                <!-- Warning / Exclamation -->
                                 <DataTrigger Binding="{Binding MessageIcon}" Value="Warning">
                                     <Setter Property="Data" Value="M13,14H11V9H13M13,18H11V16H13M1,21H23L12,2L1,21Z"/>
                                     <Setter Property="Fill" Value="#FFCC00"/>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding MessageIcon}" Value="Exclamation">
+                                    <Setter Property="Data" Value="M13,14H11V9H13M13,18H11V16H13M1,21H23L12,2L1,21Z"/>
+                                    <Setter Property="Fill" Value="#FFCC00"/>
+                                </DataTrigger>
+
+                                <!-- Error / Stop / Hand -->
                                 <DataTrigger Binding="{Binding MessageIcon}" Value="Error">
                                     <Setter Property="Data" Value="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"/>
                                     <Setter Property="Fill" Value="#FF4444"/>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding MessageIcon}" Value="Stop">
+                                    <Setter Property="Data" Value="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"/>
+                                    <Setter Property="Fill" Value="#FF4444"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding MessageIcon}" Value="Hand">
+                                    <Setter Property="Data" Value="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"/>
+                                    <Setter Property="Fill" Value="#FF4444"/>
+                                </DataTrigger>
+                                
+                                <!-- Info / Asterisk -->
                                 <DataTrigger Binding="{Binding MessageIcon}" Value="Information">
                                     <Setter Property="Data" Value="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
                                     <Setter Property="Fill" Value="#2196F3"/>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding MessageIcon}" Value="Asterisk">
+                                    <Setter Property="Data" Value="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"/>
+                                    <Setter Property="Fill" Value="#2196F3"/>
+                                </DataTrigger>
+
+                                <!-- Question -->
                                 <DataTrigger Binding="{Binding MessageIcon}" Value="Question">
                                     <Setter Property="Data" Value="M10,19H13V22H10V19M12,2C17.35,2.22 19.68,7.62 16.5,11.67C15.67,12.67 14.33,13.33 13.67,14.17C13,15 13,16 13,17H10C10,15.33 10,13.92 10.67,12.92C11.33,11.92 12.67,11.33 13.5,10.67C15.92,8.43 15.32,5.26 12,5A3,3 0 0,0 9,8H6A6,6 0 0,1 12,2Z"/>
                                     <Setter Property="Fill" Value="#2196F3"/>
@@ -118,9 +148,9 @@
 
             <!-- Footer -->
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="15,0,15,15">
-                <Button x:Name="BtnYes" Content="Yes" 
+                <Button x:Name="BtnYes" Content="Yes" IsDefault="True"
                         Style="{StaticResource DialogPrimaryButtonStyle}" Click="BtnPos_Click"/>
-                <Button x:Name="BtnOk" Content="OK" 
+                <Button x:Name="BtnOk" Content="OK" IsDefault="True"
                         Style="{StaticResource DialogPrimaryButtonStyle}" Click="BtnPos_Click"/>
                 <Button x:Name="BtnNo" Content="No" 
                         Style="{StaticResource DialogButtonStyle}" Click="BtnNeg_Click"/>

@@ -29,7 +29,7 @@ namespace Veriflow.Desktop.Views.Shared
         public ProMessageBox(string message, string title, MessageBoxButton buttons, MessageBoxImage icon)
         {
             InitializeComponent();
-            DataContext = this;
+            this.DataContext = this;
 
             Message = message;
             Title = title;

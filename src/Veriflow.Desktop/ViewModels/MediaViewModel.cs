@@ -188,8 +188,8 @@ namespace Veriflow.Desktop.ViewModels
             // 1. Critical Warning
             // 1. Critical Warning
             var result = ProMessageBox.Show(
-                "Modifier les métadonnées va réécrire le fichier et changer son Checksum. Cela invalidera les rapports de vérification précédents. Continuer ?",
-                "Attention - Modification Destructive",
+                "Modifying metadata will rewrite the file and change its Checksum. This will invalidate previous verification reports.\n\nContinue?",
+                "Warning - Destructive Action",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
@@ -227,7 +227,7 @@ namespace Veriflow.Desktop.ViewModels
                 }
                 else
                 {
-                     ProMessageBox.Show("Erreur lors de la mise à jour des métadonnées.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ProMessageBox.Show("Error updating metadata.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
