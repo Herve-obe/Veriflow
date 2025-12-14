@@ -212,7 +212,7 @@
                          <!-- Volume Group -->
                          <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                                      Visibility="{Binding ShowVolumeControls, Converter={StaticResource BooleanToVisibilityConverter}}">
-                              <Button Command="{Binding ToggleMuteCommand}" ToolTip="Mute/Unmute" Background="Transparent" BorderThickness="0" Margin="0,0,10,0">
+                              <Button Command="{Binding ToggleMuteCommand}" Focusable="False" ToolTip="Mute/Unmute" Background="Transparent" BorderThickness="0" Margin="0,0,10,0">
                                   <Button.Template>
                                       <ControlTemplate TargetType="Button">
                                           <Grid>
@@ -229,7 +229,7 @@
                                       </ControlTemplate>
                                   </Button.Template>
                               </Button>
-                              <Slider Value="{Binding Volume}" Maximum="1" Minimum="0" Width="100" Style="{StaticResource RoundFilledSliderStyle}"
+                              <Slider Value="{Binding Volume}" Maximum="1" Minimum="0" Width="100" Focusable="False" Style="{StaticResource RoundFilledSliderStyle}"
                                       PreviewMouseLeftButtonDown="Slider_PreviewMouseLeftButtonDown"
                                       PreviewMouseMove="Slider_PreviewMouseMove"
                                       PreviewMouseLeftButtonUp="Slider_PreviewMouseLeftButtonUp"/>
