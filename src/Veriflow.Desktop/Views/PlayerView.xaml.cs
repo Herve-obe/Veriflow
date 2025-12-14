@@ -2,43 +2,22 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Veriflow.Desktop.Views.Shared
+namespace Veriflow.Desktop.Views
 {
-    public partial class TransportControls : UserControl
+    public partial class PlayerView : UserControl
     {
-        public TransportControls()
+        public PlayerView()
         {
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty ShowVolumeProperty = 
-            DependencyProperty.Register("ShowVolume", typeof(bool), typeof(TransportControls), new PropertyMetadata(true));
-
-        public bool ShowVolume
-        {
-            get { return (bool)GetValue(ShowVolumeProperty); }
-            set { SetValue(ShowVolumeProperty, value); }
-        }
+        // --- SLIDER INTERACTION LOGIC (Migrated from TransportControls) ---
 
         private void Slider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is Slider slider)
             {
-                // Scrubber Logic: Pause Timer if supported by ViewModel
-                if (slider.Tag?.ToString() == "Scrubber")
-                {
-                    dynamic vm = DataContext;
-                    // Check if method exists (simplistic dynamic dispatch allow it to fail silently or throw if not present, 
-                    // but in this controlled env, we assume ViewModels have it if they use this control for scrubbing)
-                    // However, TransportControl usually doesn't have the scrubber inside it in the original VideoView. 
-                    // WAIT: The scrubber was separate in VideoView (Grid.Row=3). 
-                    // In the TransportControls XAML I pasted, there IS NO Scrubber. Only Volume. 
-                    // BUT I should keep the logic generic just in case or for volume sliding?
-                    // Actually, volume sliding doesn't need BeginSeek/EndSeek. 
-                    // So simple slider update is enough for Volume.
-                }
-
-                // Force Capture
+                // Force Capture for "Jump to Click" behavior
                 bool captured = slider.CaptureMouse();
                 if (captured)
                 {

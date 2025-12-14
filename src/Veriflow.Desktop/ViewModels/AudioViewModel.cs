@@ -24,6 +24,9 @@ namespace Veriflow.Desktop.ViewModels
         private IWaveSource? _inputStream;
         private MultiChannelAudioMixer? _mixer;
         private VeriflowMeteringProvider? _meteringProvider;
+        
+        public bool ShowVolumeControls => false; // Audio Player uses external mixer console
+
         private readonly DispatcherTimer _playbackTimer;
         private double _fps = 25.0; // Default Frame Rate
         private System.Diagnostics.Stopwatch _stopwatch = new();

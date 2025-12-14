@@ -56,14 +56,13 @@
             <local:MediaView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:AudioViewModel}">
-            <local:AudioPlayerView/>
+            <local:PlayerView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PlayerViewModel}">
-             <!-- Legacy/Placeholder -->
-             <local:AudioPlayerView/> 
+             <local:PlayerView/> 
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:VideoPlayerViewModel}">
-            <local:VideoPlayerView/>
+            <local:PlayerView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:OffloadViewModel}">
             <local:OffloadView/>

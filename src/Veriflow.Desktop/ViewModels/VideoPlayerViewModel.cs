@@ -18,6 +18,8 @@ namespace Veriflow.Desktop.ViewModels
     {
         private MediaPlayer? _mediaPlayer;
 
+        public bool ShowVolumeControls => true; // Video Player uses internal volume slider
+
         // Unified Volume Control
         private float _volume = 1.0f;
         private float _preMuteVolume = 1.0f; // Store volume before muting

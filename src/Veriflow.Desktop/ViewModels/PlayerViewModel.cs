@@ -11,6 +11,8 @@ namespace Veriflow.Desktop.ViewModels
     {
         public MediaPlayer MediaPlayer { get; private set; }
 
+        public bool ShowVolumeControls => false; // Audio Player uses external mixer console
+
         private float _volume = 1.0f;
         private float _preMuteVolume = 1.0f; // Store volume before muting
 
