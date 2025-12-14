@@ -162,20 +162,7 @@
         <Setter Property="Foreground" Value="#888888"/>
     </Style>
 
-    <!-- MENU STYLE -->
-    <Style TargetType="{x:Type Menu}">
-        <Setter Property="Background" Value="{StaticResource Brush.Panel}"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
-        <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
-        <Setter Property="Padding" Value="2"/>
-    </Style>
-    <Style TargetType="{x:Type MenuItem}">
-        <Setter Property="Background" Value="{StaticResource Brush.Panel}"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
-        <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
-        <Setter Property="Height" Value="26"/>
-        <Setter Property="Padding" Value="5,0"/>
-    </Style>
+
 
     <!-- NAV BUTTON STYLE (Bottom Bar) -->
     <Style x:Key="NavButtonStyle" TargetType="RadioButton">
