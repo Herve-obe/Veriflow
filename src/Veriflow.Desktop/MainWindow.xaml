@@ -6,7 +6,7 @@
         xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
         xmlns:local="clr-namespace:Veriflow.Desktop.Views"
         mc:Ignorable="d"
-        Title="VERIFLOW - Pro" Height="800" Width="1200"
+        Title="Veriflow" Height="800" Width="1200"
         Icon="/Assets/veriflow.ico"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
@@ -205,7 +205,7 @@
 
                 <!-- Info -->
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0">
-                    <TextBlock Text="Veriflow Pro" Opacity="0.3" FontSize="{StaticResource Font.Size.Small}"/>
+                    <TextBlock Text="Veriflow 1.0 (Beta)" Opacity="0.3" FontSize="{StaticResource Font.Size.Small}"/>
                 </StackPanel>
             </Grid>
         </Border>
