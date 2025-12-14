@@ -19,12 +19,24 @@
     <sys:Double x:Key="Font.Size.Large">32.0</sys:Double>
 
     <!-- PALETTE -->
+    <Color x:Key="Color.Accent.Video">#1A4CB1</Color>
+    <Color x:Key="Color.Accent.Audio">#E64B3D</Color>
+
+    <Color x:Key="Color.Accent.Video.Pressed">#143A8C</Color>
+    <Color x:Key="Color.Accent.Audio.Pressed">#B71C1C</Color>
+
+    <SolidColorBrush x:Key="Brush.Accent.Video" Color="{StaticResource Color.Accent.Video}"/>
+    <SolidColorBrush x:Key="Brush.Accent.Video.Pressed" Color="{StaticResource Color.Accent.Video.Pressed}"/>
+    <SolidColorBrush x:Key="Brush.Accent.Audio" Color="{StaticResource Color.Accent.Audio}"/>
+    <SolidColorBrush x:Key="Brush.Accent.Audio.Pressed" Color="{StaticResource Color.Accent.Audio.Pressed}"/>
+
     <SolidColorBrush x:Key="Brush.Background" Color="#121212"/>
     <SolidColorBrush x:Key="Brush.Panel" Color="#1E1E1E"/>
     <SolidColorBrush x:Key="Brush.Panel.Deep" Color="#181818"/>
     <SolidColorBrush x:Key="Brush.Border" Color="#333333"/>
-    <Color x:Key="Color.Accent">#1A4CB1</Color>
-    <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}"/>
+    
+    <!-- Default Accent (Blue) -->
+    <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent.Video}"/>
     <SolidColorBrush x:Key="Brush.Text" Color="#CCCCCC"/>
     <SolidColorBrush x:Key="Brush.Text.Dark" Color="#111111"/>
     <SolidColorBrush x:Key="Brush.Input" Color="#101010"/>
@@ -43,7 +55,8 @@
     <SolidColorBrush x:Key="Brush.Accent.Transparent" Color="#331A4CB1"/>
 
     <!-- SEMANTIC STATES -->
-    <SolidColorBrush x:Key="Brush.State.Mute" Color="#D32F2F"/>
+    <Color x:Key="Color.State.Mute">#D32F2F</Color>
+    <SolidColorBrush x:Key="Brush.State.Mute" Color="{StaticResource Color.State.Mute}"/>
     <SolidColorBrush x:Key="Brush.State.Solo" Color="#FBC02D"/>
     
     <!-- TRANSPORT COLORS -->
@@ -239,7 +252,7 @@
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
     </Style>
 
-    <!-- BLUE ACTION BUTTON (Gray Independent, Blue Active) -->
+    <!-- BLUE ACTION BUTTON (Video) -->
     <Style x:Key="BlueActionButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Height" Value="26"/>
         <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
@@ -252,8 +265,8 @@
                     <ControlTemplate.Triggers>
                         <!-- Enabled = Blue -->
                         <Trigger Property="IsEnabled" Value="True">
-                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent}"/>
-                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent}"/>
+                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Video}"/>
+                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Video}"/>
                              <Setter Property="Foreground" Value="White"/>
                         </Trigger>
                         <!-- Disabled = Gray -->
@@ -272,7 +285,48 @@
                             <Setter TargetName="border" Property="BorderBrush" Value="#555555"/>
                         </MultiTrigger>
                          <Trigger Property="IsPressed" Value="True">
-                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Pressed}"/> <!-- Darker Blue -->
+                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Video.Pressed}"/>
+                         </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- RED ACTION BUTTON (Audio) -->
+    <Style x:Key="AudioActionButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border" Background="#333333" BorderBrush="#555555" BorderThickness="1">
+                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Enabled = Red -->
+                        <Trigger Property="IsEnabled" Value="True">
+                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio}"/>
+                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Audio}"/>
+                             <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <!-- Disabled = Gray -->
+                        <Trigger Property="IsEnabled" Value="False">
+                             <Setter TargetName="border" Property="Background" Value="#222222"/>
+                             <Setter TargetName="border" Property="BorderBrush" Value="#333333"/>
+                             <Setter Property="Foreground" Value="#666666"/>
+                        </Trigger>
+                         <!-- Hover (only when enabled) -->
+                         <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource Brush.Control.Hover}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="#555555"/>
+                        </MultiTrigger>
+                         <Trigger Property="IsPressed" Value="True">
+                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio.Pressed}"/>
                          </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -531,7 +585,7 @@
                                 <VisualState x:Name="Unselected"/>
                                 <VisualState x:Name="Selected">
                                     <Storyboard>
-                                        <ColorAnimation Duration="0" To="{StaticResource Color.Accent}" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="Root"/>
+                                        <ColorAnimation Duration="0" To="{StaticResource Color.Accent.Video}" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="Root"/>
                                          <ColorAnimation Duration="0" To="White" Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Content"/>
                                     </Storyboard>
                                 </VisualState>
@@ -681,7 +735,7 @@
                                  <VisualState x:Name="Selected">
                                      <Storyboard>
                                          <!-- RED ACCENT FOR AUDIO -->
-                                         <ColorAnimation Duration="0" To="#D32F2F" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="Root"/>
+                                         <ColorAnimation Duration="0" To="{StaticResource Color.Accent.Audio}" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="Root"/>
                                           <ColorAnimation Duration="0" To="White" Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Content"/>
                                      </Storyboard>
                                  </VisualState>

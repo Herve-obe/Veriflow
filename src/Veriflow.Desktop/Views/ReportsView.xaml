@@ -108,24 +108,54 @@
         </Style>
 
 
-         <Style x:Key="ClearInfoButtonStyle" TargetType="Button" BasedOn="{StaticResource Style.Button.Secondary}">
+        <!-- Explicit Clear Button Styles -->
+        <Style x:Key="Style.Button.Clear.Video" TargetType="Button" BasedOn="{StaticResource BlueActionButtonStyle}">
+            <!-- Background handled by Base Style Triggers -->
+        </Style>
+
+        <Style x:Key="Style.Button.Clear.Audio" TargetType="Button" BasedOn="{StaticResource AudioActionButtonStyle}">
+            <!-- Background handled by Base Style Triggers -->
+        </Style>
+
+        <!-- Explicit Calendar Toggle Styles -->
+        <Style x:Key="Style.Toggle.Calendar.Base" TargetType="ToggleButton">
+            <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#666666"/>
+                                <Setter Property="BorderBrush" Value="#666666"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Style.Toggle.Calendar.Video" TargetType="ToggleButton" BasedOn="{StaticResource Style.Toggle.Calendar.Base}">
             <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding ReportTitle}" Value="CAMERA REPORT"/>
-                        <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Background" Value="#1A4CB1"/>
-                    <Setter Property="BorderBrush" Value="#1A4CB1"/>
-                </MultiDataTrigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding ReportTitle}" Value="SOUND REPORT"/>
-                        <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Background" Value="#D32F2F"/>
-                    <Setter Property="BorderBrush" Value="#D32F2F"/>
-                </MultiDataTrigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Video}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Video}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="Style.Toggle.Calendar.Audio" TargetType="ToggleButton" BasedOn="{StaticResource Style.Toggle.Calendar.Base}">
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Brush.Accent.Audio}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent.Audio}"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
 
@@ -825,50 +855,8 @@
                                         
                                         <!-- Calendar Trigger -->
                                         <ToggleButton x:Name="DateToggle" Grid.Column="1" Width="26" Height="26" Margin="2,0,0,0"
-                                                      IsChecked="{Binding IsVideoCalendarOpen}" Focusable="False">
-                                            <ToggleButton.Style>
-                                                <Style TargetType="ToggleButton">
-                                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
-                                                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}"/>
-                                                    <Setter Property="BorderThickness" Value="1"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="ToggleButton">
-                                                                <Border Background="{TemplateBinding Background}" 
-                                                                        BorderBrush="{TemplateBinding BorderBrush}" 
-                                                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Style.Triggers>
-                                                        <!-- Hover Effect (Gray) -->
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="#666666"/>
-                                                            <Setter Property="BorderBrush" Value="#666666"/>
-                                                        </Trigger>
-                                                        <!-- Video Mode (Blue) -->
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True"/>
-                                                                <Condition Binding="{Binding ReportTitle}" Value="CAMERA REPORT"/>
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Background" Value="#1A4CB1"/>
-                                                            <Setter Property="BorderBrush" Value="#1A4CB1"/>
-                                                        </MultiDataTrigger>
-                                                        <!-- Audio Mode (Red) -->
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True"/>
-                                                                <Condition Binding="{Binding ReportTitle}" Value="SOUND REPORT"/>
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Background" Value="#D32F2F"/>
-                                                            <Setter Property="BorderBrush" Value="#D32F2F"/>
-                                                        </MultiDataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ToggleButton.Style>
+                                                      IsChecked="{Binding IsVideoCalendarOpen}" Focusable="False"
+                                                      Style="{StaticResource Style.Toggle.Calendar.Video}">
                                             <Path Data="M7,10H12V15H7M19,19H5V8H19M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.9 20.1,3 19,3Z" 
                                                   Stretch="Uniform" Fill="White" Width="12" Height="12"/>
                                         </ToggleButton>
@@ -924,7 +912,7 @@
                             <TextBox Text="{Binding Header.LensInfo, UpdateSourceTrigger=PropertyChanged}"/>
 
                             <!-- CLEAR BUTTON -->
-                            <Button Content="CLEAR INFOS" Command="{Binding ClearInfosCommand}" Margin="0,20,0,0" Style="{StaticResource ClearInfoButtonStyle}"/>
+                            <Button Content="CLEAR INFOS" Command="{Binding ClearInfosCommand}" Margin="0,20,0,0" Style="{StaticResource Style.Button.Clear.Video}"/>
 
                         </StackPanel>
 
@@ -973,50 +961,8 @@
                                         
                                         <!-- Calendar Trigger (Renamed for Audio) -->
                                         <ToggleButton x:Name="DateToggleAudio" Grid.Column="1" Width="26" Height="26" Margin="2,0,0,0"
-                                                      IsChecked="{Binding IsAudioCalendarOpen}" Focusable="False">
-                                            <ToggleButton.Style>
-                                                <Style TargetType="ToggleButton">
-                                                    <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
-                                                    <Setter Property="BorderBrush" Value="{StaticResource Brush.Border}"/>
-                                                    <Setter Property="BorderThickness" Value="1"/>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="ToggleButton">
-                                                                <Border Background="{TemplateBinding Background}" 
-                                                                        BorderBrush="{TemplateBinding BorderBrush}" 
-                                                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Style.Triggers>
-                                                        <!-- Hover Effect (Gray) -->
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="#666666"/>
-                                                            <Setter Property="BorderBrush" Value="#666666"/>
-                                                        </Trigger>
-                                                        <!-- Video Mode (Blue) -->
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True"/>
-                                                                <Condition Binding="{Binding ReportTitle}" Value="CAMERA REPORT"/>
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Background" Value="#1A4CB1"/>
-                                                            <Setter Property="BorderBrush" Value="#1A4CB1"/>
-                                                        </MultiDataTrigger>
-                                                        <!-- Audio Mode (Red) -->
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True"/>
-                                                                <Condition Binding="{Binding ReportTitle}" Value="SOUND REPORT"/>
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Background" Value="#D32F2F"/>
-                                                            <Setter Property="BorderBrush" Value="#D32F2F"/>
-                                                        </MultiDataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ToggleButton.Style>
+                                                      IsChecked="{Binding IsAudioCalendarOpen}" Focusable="False"
+                                                      Style="{StaticResource Style.Toggle.Calendar.Audio}">
                                             <Path Data="M7,10H12V15H7M19,19H5V8H19M19,3H18V1H16V3H8V1H6V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.9 20.1,3 19,3Z" 
                                                   Stretch="Uniform" Fill="White" Width="12" Height="12"/>
                                         </ToggleButton>
@@ -1070,7 +1016,7 @@
                             </Grid>
 
                             <!-- CLEAR BUTTON -->
-                            <Button Content="CLEAR INFOS" Command="{Binding ClearInfosCommand}" Margin="0,20,0,0" Style="{StaticResource ClearInfoButtonStyle}"/>
+                            <Button Content="CLEAR INFOS" Command="{Binding ClearInfosCommand}" Margin="0,20,0,0" Style="{StaticResource Style.Button.Clear.Audio}"/>
 
                         </StackPanel>
                     </Grid>
