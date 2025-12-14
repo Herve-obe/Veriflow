@@ -108,7 +108,7 @@ namespace Veriflow.Desktop.ViewModels
 
         
         // --- REPORT NOTE EDITING ---
-        private object? _linkedReportItem;
+        private ReportItem? _linkedReportItem;
 
         [ObservableProperty]
         private string? _currentNote;
@@ -119,7 +119,7 @@ namespace Veriflow.Desktop.ViewModels
         private bool _canEditNote;
 
         // Callback to find if current file is in Report
-        public Func<string, object?>? GetReportItemCallback;
+        public Func<string, ReportItem?>? GetReportItemCallback;
 
 
         // Timer for updating UI slider/time
@@ -241,7 +241,7 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (string.IsNullOrEmpty(FilePath)) return;
 
-            object? linkedItem = null;
+            ReportItem? linkedItem = null;
             if (GetReportItemCallback != null)
             {
                 linkedItem = GetReportItemCallback.Invoke(FilePath);
@@ -249,30 +249,13 @@ namespace Veriflow.Desktop.ViewModels
 
             _linkedReportItem = linkedItem;
 
-            if (_linkedReportItem != null)
+            if (_linkedReportItem is ReportItem)
             {
-                try
-                {
-                    var prop = _linkedReportItem.GetType().GetProperty("ItemNotes");
-                    if (prop != null)
-                    {
-                        CurrentNote = prop.GetValue(_linkedReportItem) as string;
-                        CanEditNote = true;
-                    }
-                    else
-                    {
-                        CanEditNote = false;
-                    }
-                }
-                catch
-                {
-                    CanEditNote = false;
-                }
+                CanEditNote = true;
             }
             else
             {
                 CanEditNote = false;
-                CurrentNote = null;
             }
             
             // Notify command
@@ -553,26 +536,18 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(CanEditNote))]
         private void UpdateReport()
         {
-             if (_linkedReportItem == null) return;
-
-             var window = new Veriflow.Desktop.Views.ReportNoteWindow(CurrentNote ?? "");
-             if (window.ShowDialog() == true)
+             if (_linkedReportItem is ReportItem item)
              {
-                 CurrentNote = window.NoteText;
-
-                 // Update linked object via Reflection
-                 try
+                 var window = new Veriflow.Desktop.Views.ReportNoteWindow(item);
+                 // Center Owner Logic is handled by WindowStartupLocation="CenterOwner" usually,
+                 // but we need to ensure Owner is set.
+                 if (Application.Current.MainWindow != null)
                  {
-                     var prop = _linkedReportItem.GetType().GetProperty("ItemNotes");
-                     if (prop != null && prop.CanWrite)
-                     {
-                         prop.SetValue(_linkedReportItem, CurrentNote);
-                     }
+                     window.Owner = Application.Current.MainWindow;
                  }
-                 catch (Exception ex)
-                 {
-                     System.Diagnostics.Debug.WriteLine($"Error updating note: {ex.Message}");
-                 }
+                 
+                 window.ShowDialog();
+                 // No need to copy back values, DateBinding does it.
              }
         }
 

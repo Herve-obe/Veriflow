@@ -1,32 +1,32 @@
 using System.Windows;
+using System.Windows.Input;
+using Veriflow.Desktop.Models;
 
 namespace Veriflow.Desktop.Views
 {
     public partial class ReportNoteWindow : Window
     {
-        public string NoteText
-        {
-            get => NoteTextBox.Text;
-            set => NoteTextBox.Text = value;
-        }
+        public bool Saved { get; private set; } = false;
 
-        public ReportNoteWindow(string initialNote)
+        public ReportNoteWindow(ReportItem item)
         {
             InitializeComponent();
-            NoteText = initialNote ?? string.Empty;
-            
-            // Focus text box
-            Loaded += (s, e) => NoteTextBox.Focus();
+            DataContext = item;
+
+            // Enable Dragging
+            MouseLeftButtonDown += (s, e) => DragMove();
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            Saved = true;
             DialogResult = true;
             Close();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            Saved = false;
             DialogResult = false;
             Close();
         }
