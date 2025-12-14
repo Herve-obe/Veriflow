@@ -89,10 +89,7 @@
                         <!-- Empty State Hint -->
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" 
                                     Visibility="{Binding VideoPool.Count, Converter={x:Static local:Converters.ZeroToVisibleConverter}}">
-                             <!-- Folder/Plus Icon -->
-                             <Path Data="M9,16V10H5L12,3L19,10H15V16H9M16,20V18H4V20H16Z" 
-                                   Fill="#333333" Height="32" Width="32" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                             <TextBlock Text="Drop Video Files" Foreground="#555555" HorizontalAlignment="Center"/>
+                             <TextBlock Text="DROP VIDEO MEDIA FILES HERE" Foreground="#555555" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <ListBox ItemsSource="{Binding VideoPool}" Background="Transparent" BorderThickness="0" 
@@ -228,9 +225,7 @@
                         <!-- Empty State Hint -->
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" 
                                     Visibility="{Binding AudioPool.Count, Converter={x:Static local:Converters.ZeroToVisibleConverter}}">
-                             <Path Data="M9,16V10H5L12,3L19,10H15V16H9M16,20V18H4V20H16Z" 
-                                   Fill="#333333" Height="32" Width="32" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                             <TextBlock Text="Drop Audio Files" Foreground="#555555" HorizontalAlignment="Center"/>
+                             <TextBlock Text="DROP AUDIO MEDIA FILES HERE" Foreground="#555555" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <ListBox ItemsSource="{Binding AudioPool}" Background="Transparent" BorderThickness="0" 
