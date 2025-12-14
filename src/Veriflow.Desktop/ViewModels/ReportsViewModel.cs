@@ -109,7 +109,53 @@ namespace Veriflow.Desktop.ViewModels
                  foreach (var item in items) VideoReportItems.Add(new ReportItem(item));
             }
 
+            // AUTO-POPULATE HEADER (New Feature)
+            var firstItem = items.FirstOrDefault();
+            if (firstItem != null)
+            {
+                PopulateHeaderFromMedia(firstItem, type);
+            }
+
             IsReportActive = true;
+        }
+
+        private void PopulateHeaderFromMedia(MediaItemViewModel item, ReportType type)
+        {
+            if (type == ReportType.Audio)
+            {
+                // Map Audio Metadata
+                if (item.CurrentMetadata != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(item.CurrentMetadata.Project)) Header.ProjectName = item.CurrentMetadata.Project;
+                    if (!string.IsNullOrWhiteSpace(item.CurrentMetadata.Scene)) Header.Scene = item.CurrentMetadata.Scene;
+                    if (!string.IsNullOrWhiteSpace(item.CurrentMetadata.Take)) Header.Take = item.CurrentMetadata.Take;
+                    if (!string.IsNullOrWhiteSpace(item.CurrentMetadata.CreationDate) && DateTime.TryParse(item.CurrentMetadata.CreationDate, out DateTime date))
+                    {
+                         Header.CalendarDate = date;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(item.CurrentMetadata.FrameRate)) 
+                        Header.TimecodeRate = item.CurrentMetadata.FrameRate;
+
+                    // Files Type from Extension (e.g. WAV, MP3)
+                    string ext = System.IO.Path.GetExtension(item.FullName);
+                    if (!string.IsNullOrEmpty(ext)) 
+                        Header.FilesType = ext.TrimStart('.').ToUpper();
+                    
+                    // Technicals (Moved to per-file columns)
+                    // if (!string.IsNullOrWhiteSpace(item.SampleRate)) Header.SampleRate = item.SampleRate;
+                    // if (!string.IsNullOrWhiteSpace(item.BitDepth)) Header.BitDepth = item.BitDepth;
+                }
+            }
+            else
+            {
+                // Map Video Metadata (Limited mapping as VideoMetadata usually lacks Production info)
+                if (item.CurrentVideoMetadata != null)
+                {
+                    // Video specific props if available
+                    // if (!string.IsNullOrWhiteSpace(item.CurrentVideoMetadata.Project)) Header.ProjectName = ... (Not currently in VideoMetadata)
+                }
+            }
         }
 
         public void AddToReport(IEnumerable<MediaItemViewModel> items)
@@ -136,6 +182,9 @@ namespace Veriflow.Desktop.ViewModels
                 AudioReportItems.Clear();
             else
                 VideoReportItems.Clear();
+            
+            // Auto-clear Infos when list is cleared (Requested behavior)
+            ClearInfos();
         }
 
         [RelayCommand(CanExecute = nameof(CanRemoveFile))]

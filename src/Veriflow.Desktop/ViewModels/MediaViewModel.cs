@@ -707,8 +707,13 @@ namespace Veriflow.Desktop.ViewModels
                         Format = CurrentMetadata.Format;
                         
                         var formatParts = CurrentMetadata.Format.Split('/');
-                        if (formatParts.Length > 0) SampleRate = formatParts[0].Trim();
-                        if (formatParts.Length > 1) BitDepth = formatParts[1].Trim();
+                        SampleRate = !string.IsNullOrEmpty(CurrentMetadata.SampleRateString) 
+                                     ? CurrentMetadata.SampleRateString 
+                                     : (formatParts.Length > 0 ? formatParts[0].Trim() : "");
+
+                        BitDepth = !string.IsNullOrEmpty(CurrentMetadata.BitDepthString) 
+                                   ? CurrentMetadata.BitDepthString 
+                                   : (formatParts.Length > 1 ? formatParts[1].Trim() : "");
                         
                         Channels = CurrentMetadata.ChannelCount.ToString(); 
                         if (CurrentMetadata.ChannelCount == 1) Channels = "Mono";

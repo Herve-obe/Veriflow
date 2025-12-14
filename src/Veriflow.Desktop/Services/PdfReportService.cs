@@ -141,8 +141,6 @@ namespace Veriflow.Desktop.Services
                         else
                         {
                             c.Item().Text(t => { t.Span("Timecode Rate: ").SemiBold(); t.Span(header.TimecodeRate); });
-                            c.Item().Text(t => { t.Span("Bit Depth: ").SemiBold(); t.Span(header.BitDepth); });
-                            c.Item().Text(t => { t.Span("Sample Rate: ").SemiBold(); t.Span(header.SampleRate); });
                             c.Item().Text(t => { t.Span("Files Info: ").SemiBold(); t.Span(header.FilesType); });
                         }
                         
@@ -274,11 +272,13 @@ namespace Veriflow.Desktop.Services
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.RelativeColumn(3); // Filename
+                    columns.RelativeColumn(1.5f); // Filename (Reduced by half from 3)
                     columns.RelativeColumn(1); // Scene
                     columns.RelativeColumn(1); // Take
                     columns.ConstantColumn(85);   // Start TC
                     columns.ConstantColumn(85);   // Duration
+                    columns.RelativeColumn(0.8f); // Sample Rate
+                    columns.RelativeColumn(0.6f); // Bit Depth
                     columns.RelativeColumn(2); // Notes (Added)
                 });
 
@@ -289,6 +289,8 @@ namespace Veriflow.Desktop.Services
                     header.Cell().Element(CellStyle).Text("Take");
                     header.Cell().Element(CellStyle).Text("Start TC");
                     header.Cell().Element(CellStyle).Text("Duration");
+                    header.Cell().Element(CellStyle).Text("SR");
+                    header.Cell().Element(CellStyle).Text("Bit");
                     header.Cell().Element(CellStyle).Text("Notes");
                 });
 
@@ -303,6 +305,8 @@ namespace Veriflow.Desktop.Services
                     table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Take ?? ""); if (isCircled) s.SemiBold(); });
                     table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
                     table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Duration ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.SampleRate ?? ""); if (isCircled) s.SemiBold(); });
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.BitDepth ?? ""); if (isCircled) s.SemiBold(); });
                     table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.ItemNotes ?? ""); if (isCircled) s.SemiBold(); });
                 }
             });

@@ -672,10 +672,28 @@
                                 </DataGridTemplateColumn>
 
                                 <!-- DURATION (Increased) -->
-                                <DataGridTemplateColumn Header="DURATION" Width="100" SortMemberPath="Duration" IsReadOnly="True">
+                                <DataGridTemplateColumn Header="DURATION" Width="80" SortMemberPath="Duration" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Duration}" FontFamily="Consolas" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <!-- SAMPLE RATE -->
+                                <DataGridTemplateColumn Header="SR" Width="60" SortMemberPath="SampleRate" IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding SampleRate}" Foreground="#AAA" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <!-- BIT DEPTH -->
+                                <DataGridTemplateColumn Header="BIT" Width="40" SortMemberPath="BitDepth" IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding BitDepth}" Foreground="#AAA" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -1043,25 +1061,6 @@
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="TIMECODE RATE"/>
                                     <TextBox Text="{Binding Header.TimecodeRate, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-                                
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Text="BIT DEPTH"/>
-                                    <TextBox Text="{Binding Header.BitDepth, UpdateSourceTrigger=PropertyChanged}"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- TECHNICAL INFO ROW 2 -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="10"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="SAMPLE RATE"/>
-                                    <TextBox Text="{Binding Header.SampleRate, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
                                 
                                 <StackPanel Grid.Column="2">

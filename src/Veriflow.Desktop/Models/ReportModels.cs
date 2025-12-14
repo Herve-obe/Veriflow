@@ -81,6 +81,7 @@ namespace Veriflow.Desktop.Models
         // Audio Specific (Editable)
         [ObservableProperty] private string _tracks = ""; // For track names
         [ObservableProperty] private string _sampleRate = "";
+        [ObservableProperty] private string _bitDepth = "";
 
         public ReportItem(MediaItemViewModel media)
         {
