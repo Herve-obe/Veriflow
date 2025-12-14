@@ -161,7 +161,24 @@ namespace Veriflow.Desktop.ViewModels
 
         public ReportItem? GetReportItem(string path)
         {
-            return CurrentReportItems.FirstOrDefault(r => r.OriginalMedia.FullName.Equals(path, System.StringComparison.OrdinalIgnoreCase));
+            // Condition 1: Report Generated (Active)
+            if (!IsReportActive) return null;
+
+            // Condition 2: List not empty (Optimization)
+            if (!HasMedia) return null;
+
+            // Condition 3: File match (Robust Path Comparison)
+            try
+            {
+                var fullPath = System.IO.Path.GetFullPath(path);
+                return CurrentReportItems.FirstOrDefault(r => 
+                    string.Equals(System.IO.Path.GetFullPath(r.OriginalMedia.FullName), fullPath, System.StringComparison.OrdinalIgnoreCase));
+            }
+            catch
+            {
+                // Fallback to simple comparison if path is invalid
+                return CurrentReportItems.FirstOrDefault(r => r.OriginalMedia.FullName.Equals(path, System.StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         public void NavigateToPath(string path)

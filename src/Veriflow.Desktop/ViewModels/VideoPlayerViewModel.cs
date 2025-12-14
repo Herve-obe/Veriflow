@@ -105,8 +105,22 @@ namespace Veriflow.Desktop.ViewModels
         private VideoMetadata _currentVideoMetadata = new();
 
         public event Action<IEnumerable<string>>? RequestTranscode;
-        public event Action<string>? RequestModifyReport;
-        // public event Action<string>? RequestOffloadSource;
+
+        
+        // --- REPORT NOTE EDITING ---
+        private object? _linkedReportItem;
+
+        [ObservableProperty]
+        private string? _currentNote;
+
+        [ObservableProperty]
+
+        [NotifyCanExecuteChangedFor(nameof(UpdateReportCommand))]
+        private bool _canEditNote;
+
+        // Callback to find if current file is in Report
+        public Func<string, object?>? GetReportItemCallback;
+
 
         // Timer for updating UI slider/time
         private readonly DispatcherTimer _uiTimer;
@@ -215,6 +229,57 @@ namespace Veriflow.Desktop.ViewModels
 
 
         public async Task LoadVideo(string path)
+        {
+             // Set Path first so Refresh can use it
+             FilePath = path;
+             RefreshReportLink();            
+             
+             await LoadMediaContext(path);
+        }
+
+        public void RefreshReportLink()
+        {
+            if (string.IsNullOrEmpty(FilePath)) return;
+
+            object? linkedItem = null;
+            if (GetReportItemCallback != null)
+            {
+                linkedItem = GetReportItemCallback.Invoke(FilePath);
+            }
+
+            _linkedReportItem = linkedItem;
+
+            if (_linkedReportItem != null)
+            {
+                try
+                {
+                    var prop = _linkedReportItem.GetType().GetProperty("ItemNotes");
+                    if (prop != null)
+                    {
+                        CurrentNote = prop.GetValue(_linkedReportItem) as string;
+                        CanEditNote = true;
+                    }
+                    else
+                    {
+                        CanEditNote = false;
+                    }
+                }
+                catch
+                {
+                    CanEditNote = false;
+                }
+            }
+            else
+            {
+                CanEditNote = false;
+                CurrentNote = null;
+            }
+            
+            // Notify command
+            UpdateReportCommand.NotifyCanExecuteChanged();
+        }
+
+        public async Task LoadMediaContext(string path)
         {
             try
             {
@@ -485,14 +550,33 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        [RelayCommand(CanExecute = nameof(CanSendFileToTranscode))]
-        private void ModifyInReport()
+        [RelayCommand(CanExecute = nameof(CanEditNote))]
+        private void UpdateReport()
         {
-             if (!string.IsNullOrEmpty(FilePath))
+             if (_linkedReportItem == null) return;
+
+             var window = new Veriflow.Desktop.Views.ReportNoteWindow(CurrentNote ?? "");
+             if (window.ShowDialog() == true)
              {
-                 RequestModifyReport?.Invoke(FilePath);
+                 CurrentNote = window.NoteText;
+
+                 // Update linked object via Reflection
+                 try
+                 {
+                     var prop = _linkedReportItem.GetType().GetProperty("ItemNotes");
+                     if (prop != null && prop.CanWrite)
+                     {
+                         prop.SetValue(_linkedReportItem, CurrentNote);
+                     }
+                 }
+                 catch (Exception ex)
+                 {
+                     System.Diagnostics.Debug.WriteLine($"Error updating note: {ex.Message}");
+                 }
              }
         }
+
+
 
         public void Dispose()
         {

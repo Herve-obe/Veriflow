@@ -1,0 +1,80 @@
+<Window x:Class="Veriflow.Desktop.Views.ReportNoteWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edit Report Note" Height="700" Width="600"
+        WindowStyle="None" ResizeMode="NoResize"
+        Background="#1E1E1E" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    
+    <Window.Resources>
+        <!-- Simple Dark Styles -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#DDDDDD"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#333"/>
+            <Setter Property="Foreground" Value="#CCC"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                             <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,15">
+            <Grid>
+                <TextBlock Text="EDIT REPORT NOTE" FontSize="16" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                <Button Content="✕" Width="24" Height="24" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                        Click="Cancel_Click" Background="Transparent" Foreground="#666" FontSize="14"/>
+            </Grid>
+        </Border>
+
+        <!-- Notes Box -->
+        <TextBox Grid.Row="1" x:Name="NoteTextBox"
+                 Background="#2D2D2D" Foreground="White" BorderBrush="#444" BorderThickness="1"
+                 Padding="8" FontSize="13" TextWrapping="Wrap" AcceptsReturn="True" 
+                 VerticalScrollBarVisibility="Auto" Margin="0,0,0,20"/>
+
+        <!-- Footer -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="CANCEL" Click="Cancel_Click"
+                    Width="100" Height="32" Margin="0,0,10,0"/>
+
+            <Button Content="SAVE" Click="Save_Click" IsDefault="True"
+                    Width="100" Height="32"
+                    Background="{DynamicResource Brush.Accent}" Foreground="White" FontWeight="Bold">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                         <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource Brush.Accent.Hover}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

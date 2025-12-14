@@ -164,11 +164,10 @@ namespace Veriflow.Desktop.ViewModels
                  }
             };
 
-            _videoPlayerViewModel.RequestModifyReport += (path) =>
-            {
-                _reportsViewModel.NavigateToPath(path);
-                NavigateTo(PageType.Reports);
-            };
+            // _videoPlayerViewModel.RequestModifyReport Removed
+            
+            // Connect Player callback for Button Enability
+            _videoPlayerViewModel.GetReportItemCallback = (path) => _reportsViewModel.GetReportItem(path);
 
             // Real-time Feedback Loop
             // Real-time Feedback Loop
@@ -178,6 +177,8 @@ namespace Veriflow.Desktop.ViewModels
                 {
                      var paths = _reportsViewModel.VideoReportItems.Select(x => x.OriginalMedia.FullName).ToList();
                      _mediaViewModel.UpdateReportContext(paths, _reportsViewModel.VideoReportItems.Any());
+                     // Refresh Player Link in case current video was just added
+                     _videoPlayerViewModel.RefreshReportLink();
                 }
             };
 
@@ -187,6 +188,16 @@ namespace Veriflow.Desktop.ViewModels
                 {
                     var paths = _reportsViewModel.AudioReportItems.Select(x => x.OriginalMedia.FullName).ToList();
                     _mediaViewModel.UpdateReportContext(paths, _reportsViewModel.AudioReportItems.Any());
+                }
+            };
+            
+            // Generic Report Property Changes (Safety for IsReportActive)
+            _reportsViewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(ReportsViewModel.IsReportActive))
+                {
+                     // If report status changes (e.g. cleared), refresh player button
+                     Application.Current.Dispatcher.Invoke(() => _videoPlayerViewModel.RefreshReportLink());
                 }
             };
         }
@@ -250,7 +261,7 @@ namespace Veriflow.Desktop.ViewModels
                      var paths = _reportsViewModel.AudioReportItems.Select(x => x.OriginalMedia.FullName).ToList();
                      _mediaViewModel.UpdateReportContext(paths, _reportsViewModel.AudioReportItems.Any());
                 }
-                
+
                 UpdateCurrentView();
             }
              catch { /* Log */ }
