@@ -130,7 +130,7 @@ namespace Veriflow.Desktop.Models
                  if (aMeta != null)
                  {
                       SampleRate = media.SampleRate ?? ""; // User instruction for SampleRate
-                      // BitDepth = media.BitDepth; // Skipped as property not added yet
+                      BitDepth = aMeta.BitDepthString ?? ""; // Fixed mapping
                       StartTimeCode = aMeta.TimecodeStart ?? "00:00:00:00";
                       
                       if (aMeta.Tracks != null)

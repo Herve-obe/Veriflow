@@ -19,50 +19,75 @@ namespace Veriflow.Desktop.ViewModels
         private MediaPlayer? _mediaPlayer;
 
         // Unified Volume Control
-        [ObservableProperty]
         private float _volume = 1.0f;
+        private float _preMuteVolume = 1.0f; // Store volume before muting
 
-        private float _previousVolume = 1.0f;
         private double _fps = 25.0; // Default Frame Rate
         private long _lastMediaTime;
         private System.Diagnostics.Stopwatch _stopwatch = new();
         private TimeSpan _startHeaderOffset = TimeSpan.Zero;
 
-        [ObservableProperty]
-        private bool _isMuted;
-
-        partial void OnVolumeChanged(float value) => UpdateVolume();
-        partial void OnIsMutedChanged(bool value) => UpdateVolume();
-
-        private void UpdateVolume()
+        public float Volume
         {
-            if (_mediaPlayer != null)
+            get => _volume;
+            set
             {
-                 // If muted, force 0. But ViewModel property might be non-zero if user slides it while muted? 
-                 // Usually sliding un-mutes. Let's keep it simple: matches Volume property.
-                 // The Mute logic in LibVLC is separate from Volume, but user requested fader moves to 0.
-                 _mediaPlayer.Volume = (int)(Volume * 100);
-                 _mediaPlayer.Mute = IsMuted;
+                if (SetProperty(ref _volume, value))
+                {
+                    if (_mediaPlayer != null) _mediaPlayer.Volume = (int)(value * 100);
+
+                    // "Unmute on Drag" feature
+                    // Fix "Ping-Pong": Only unmute if currently muted.
+                    // IMPORTANT: The UI slider sets this. If user drags slider up, value > 0.
+                    // We simply set IsMuted = false. 
+                    // The IsMuted setter will handle the rest (and NOT restore old volume because Volume > 0).
+                    if (value > 0 && IsMuted)
+                    {
+                        IsMuted = false;
+                    }
+                }
+            }
+        }
+
+        private bool _isMuted;
+        public bool IsMuted
+        {
+            get => _isMuted;
+            set
+            {
+                if (SetProperty(ref _isMuted, value))
+                {
+                    if (_mediaPlayer != null) _mediaPlayer.Mute = value;
+
+                    if (value) // MUTE ACTIVATION
+                    {
+                        // Store current volume if valid
+                        if (Volume > 0)
+                        {
+                            _preMuteVolume = Volume;
+                        }
+                        // Drop UI to 0
+                        Volume = 0;
+                    }
+                    else // MUTE DEACTIVATION
+                    {
+                        // CRITICAL FIX for Ping-Pong Effect:
+                        // Only restore _preMuteVolume if the current Volume is 0.
+                        // If Volume > 0, it means the user UNMUTED by DRAGGING the slider (Volume property set first).
+                        // In that case, we respect the user's dragged value and DO NOT overwrite it.
+                        if (Volume == 0)
+                        {
+                            Volume = _preMuteVolume > 0.05f ? _preMuteVolume : 0.5f; // Default if too low
+                        }
+                    }
+                }
             }
         }
 
         [RelayCommand]
         private void ToggleMute()
         {
-            if (IsMuted)
-            {
-                // UNMUTE
-                IsMuted = false;
-                if (_previousVolume <= 0) _previousVolume = 0.5f; // Safety
-                Volume = _previousVolume;
-            }
-            else
-            {
-                // MUTE
-                _previousVolume = Volume;
-                IsMuted = true;
-                Volume = 0;
-            }
+            IsMuted = !IsMuted;
         }
 
         [ObservableProperty]

@@ -11,6 +11,62 @@ namespace Veriflow.Desktop.ViewModels
     {
         public MediaPlayer MediaPlayer { get; private set; }
 
+        private float _volume = 1.0f;
+        private float _preMuteVolume = 1.0f; // Store volume before muting
+
+        public float Volume
+        {
+            get => _volume;
+            set
+            {
+                if (SetProperty(ref _volume, value) && MediaPlayer != null)
+                {
+                    MediaPlayer.Volume = (int)(value * 100);
+
+                    // "Unmute on Drag" feature
+                    if (value > 0 && IsMuted)
+                    {
+                        IsMuted = false;
+                        // When unmuting via drag, we do NOT restore _preMuteVolume
+                        // The IsMuted setter handle this check.
+                    }
+                }
+            }
+        }
+
+        private bool _isMuted;
+        public bool IsMuted
+        {
+            get => _isMuted;
+            set
+            {
+                if (SetProperty(ref _isMuted, value) && MediaPlayer != null)
+                {
+                    MediaPlayer.Mute = value;
+
+                    if (value) // MUTE ACTIVATION
+                    {
+                        // Store current volume if valid
+                        if (Volume > 0) 
+                        {
+                            _preMuteVolume = Volume;
+                        }
+                        // Drop UI to 0
+                        Volume = 0;
+                    }
+                    else // MUTE DEACTIVATION
+                    {
+                        // Restore only if creating logical Unmute (not via Drag)
+                        // If Volume is > 0, it means we are likely dragging or set it manually
+                        if (Volume == 0)
+                        {
+                             Volume = _preMuteVolume > 0.05f ? _preMuteVolume : 0.5f; // Default to 50% causes if too low
+                        }
+                    }
+                }
+            }
+        }
+
         public PlayerViewModel()
         {
             if (VideoEngineService.Instance.LibVLC == null)
@@ -32,6 +88,12 @@ namespace Veriflow.Desktop.ViewModels
             {
                 MediaPlayer.Play();
             }
+        }
+
+        [RelayCommand]
+        private void ToggleMute()
+        {
+            IsMuted = !IsMuted;
         }
 
         public void Dispose()

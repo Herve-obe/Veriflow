@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Veriflow.Desktop.Views"
+             xmlns:shared="clr-namespace:Veriflow.Desktop.Views.Shared"
              xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
              xmlns:conv="clr-namespace:Veriflow.Desktop.Converters"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -69,58 +70,7 @@
 
 
         <!-- Modern Transport Button Base Style -->
-        <Style x:Key="Style.Transport.Base" TargetType="Button">
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse x:Name="circle" Fill="Transparent" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2"/>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
-                                <Setter Property="Foreground" Value="#111111"/> 
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="circle" Property="Opacity" Value="0.8"/>
-                            </Trigger>
-                            <!-- NEW: Trigger based on Binding (passed via Tag) -->
-                            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
-                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
-                                <Setter Property="Foreground" Value="#111111"/> 
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Red Stop Button -->
-        <Style x:Key="Style.Transport.Stop" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
-            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Transport.Stop}"/> <!-- Red Accent -->
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Transport.Stop}"/>
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
-        </Style>
-
-        <!-- Green Play Button -->
-        <Style x:Key="Style.Transport.Play" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
-            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Transport.Play}"/> <!-- Green Accent -->
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Transport.Play}"/>
-            <Setter Property="Width" Value="48"/>
-            <Setter Property="Height" Value="48"/>
-        </Style>
-
-        <!-- Yellow Pause Button -->
-        <Style x:Key="Style.Transport.Pause" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
-            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Transport.Pause}"/> <!-- Yellow Accent -->
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Transport.Pause}"/>
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
-        </Style>
+        <!-- Transport Styles Moved to Shared -->
 
         <!-- Round Slider Style -->
         <Style x:Key="RoundSliderStyle" TargetType="Slider">
@@ -217,9 +167,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Grid Background="Transparent">
-                                                    <Rectangle Fill="{TemplateBinding Background}" Height="2" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                                                </Grid>
+                                                <Rectangle Fill="{TemplateBinding Background}" Height="2" VerticalAlignment="Center" Margin="5,0,0,0"/>
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -321,27 +269,10 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Transport Controls -->
+            <!-- Transport Controls (Shared) -->
             <Border Grid.Row="1" Background="Transparent" Margin="0,0,0,10" Padding="0"
                     Visibility="{Binding IsAudioLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Center">
-                    
-                    <!-- STOP -->
-                    <Button Command="{Binding StopCommand}" Tag="{Binding IsStopPressed}" Margin="0,0,15,0" ToolTip="Stop" Style="{StaticResource Style.Transport.Stop}">
-                        <Path Data="M6,6H18V18H6V6Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
-                    </Button>
-                    
-                    <!-- PLAY -->
-                    <Button Command="{Binding PlayCommand}" Tag="{Binding IsPlaying}" Margin="0,0,15,0" ToolTip="Play" Style="{StaticResource Style.Transport.Play}">
-                         <Path Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="20" Width="20" Stretch="Uniform" Margin="2,0,0,0"/>
-                    </Button>
-                    
-                    <!-- PAUSE -->
-                    <Button Command="{Binding PauseCommand}" Tag="{Binding IsPaused}" ToolTip="Pause" Style="{StaticResource Style.Transport.Pause}">
-                        <Path Data="M14,19H18V5H14M6,19H10V5H6V19Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
-                    </Button>
-                    
-                </StackPanel>
+                 <shared:TransportControls DataContext="{Binding}" ShowVolume="False" />
             </Border>
 
             <!-- Ruler (Aligned to Waveform Column) -->

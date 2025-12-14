@@ -23,6 +23,9 @@ namespace Veriflow.Desktop.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+             // Do NOT Stop() here if we want to Resume. 
+             // Just detach the VideoView to clean up the Vout/HWND connection.
+             
             // Detach to prevent memory leaks and "stolen" instance issues
             if (VideoViewControl != null)
             {
@@ -32,7 +35,10 @@ namespace Veriflow.Desktop.Views
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            AttachMediaPlayer();
+             if (this.IsLoaded)
+             {
+                 AttachMediaPlayer();
+             }
         }
 
         private void AttachMediaPlayer()
@@ -42,11 +48,25 @@ namespace Veriflow.Desktop.Views
 
             if (DataContext is VideoPlayerViewModel vm && vm.Player != null)
             {
-                // Only attach if not already attached to avoid flickering
-                if (VideoViewControl.MediaPlayer != vm.Player)
+                // Defer attachment to ensure HWND is ready (fixes Black Screen on tab switch)
+                // Defer attachment to ensure HWND is ready (fixes Black Screen on tab switch)
+                Dispatcher.BeginInvoke(new Action(() => 
                 {
-                    VideoViewControl.MediaPlayer = vm.Player;
-                }
+                    // FORCE Re-attach even if same instance to refresh HWND linkage
+                    if (VideoViewControl != null)
+                    {
+                        VideoViewControl.MediaPlayer = null; 
+                        VideoViewControl.MediaPlayer = vm.Player;
+                    }
+
+                    // FORCE FRAME REPAINT
+                    // If paused, the Vout might render black until the next frame decode.
+                    // NextFrame() forces the pipeline to decode and render one frame to the new Vout.
+                    if (vm.Player != null && vm.Player.State == LibVLCSharp.Shared.VLCState.Paused)
+                    {
+                        vm.Player.NextFrame();
+                    }
+                }), System.Windows.Threading.DispatcherPriority.ContextIdle);
             }
         }
 

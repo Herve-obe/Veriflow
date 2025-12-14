@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Veriflow.Desktop.Views"
+             xmlns:shared="clr-namespace:Veriflow.Desktop.Views.Shared"
              xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
              xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -27,110 +28,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-        <!-- Modern Transport Button Base Style (Duplicated from AudioPlayerView) -->
-        <Style x:Key="Style.Transport.Base" TargetType="Button">
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Ellipse x:Name="circle" Fill="Transparent" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2"/>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Dark}"/> 
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="circle" Property="Opacity" Value="0.8"/>
-                            </Trigger>
-                            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
-                                <Setter TargetName="circle" Property="Fill" Value="{Binding BorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Dark}"/> 
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="Style.Transport.Stop" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
-            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Transport.Stop}"/> 
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Transport.Stop}"/>
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
-        </Style>
-
-        <Style x:Key="Style.Transport.Play" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
-            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Transport.Play}"/> 
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Transport.Play}"/>
-            <Setter Property="Width" Value="48"/>
-            <Setter Property="Height" Value="48"/>
-        </Style>
-
-        <Style x:Key="Style.Transport.Pause" TargetType="Button" BasedOn="{StaticResource Style.Transport.Base}">
-            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Transport.Pause}"/> 
-            <Setter Property="Foreground" Value="{DynamicResource Brush.Transport.Pause}"/>
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
-        </Style>
-
-        <!-- Mute Button Style -->
-        <Style x:Key="DawMuteButtonStyle" TargetType="ToggleButton">
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Margin" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Border x:Name="border" Background="{DynamicResource Brush.Control}" CornerRadius="2" BorderBrush="{DynamicResource Brush.Text.Dark}" BorderThickness="1">
-                            <TextBlock Text="M" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="9"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.3"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.State.Mute}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Solo Button Style -->
-        <Style x:Key="DawSoloButtonStyle" TargetType="ToggleButton">
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="Margin" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Border x:Name="border" Background="{DynamicResource Brush.Control}" CornerRadius="2" BorderBrush="{DynamicResource Brush.Text.Dark}" BorderThickness="1">
-                            <TextBlock x:Name="txt" Text="S" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="9"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.3"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.State.Solo}"/>
-                                <Setter TargetName="txt" Property="Foreground" Value="Black"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Round Filled Slider Style (For Volume - Blue Fill) -->
+        <!-- Round Filled Slider Style (For Scrubber) -->
         <Style x:Key="RoundFilledSliderStyle" TargetType="Slider">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -141,7 +39,6 @@
                     <ControlTemplate TargetType="Slider">
                         <Grid>
                             <Grid.Resources>
-                                <!-- Blue RepeatButton Template for Filled Track -->
                                 <Style x:Key="BlueTrackRepeatButtonStyle" TargetType="RepeatButton">
                                     <Setter Property="OverridesDefaultStyle" Value="True"/>
                                     <Setter Property="Background" Value="{DynamicResource Brush.Accent}"/>
@@ -204,7 +101,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </UserControl.Resources>
 
     <Grid Background="{StaticResource Brush.Background}">
@@ -246,79 +142,12 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Transport Controls (Moved to Top) -->
-            <Border Grid.Row="1" Background="Transparent" Margin="0,0,0,15" Padding="0"
-                    Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/> <!-- Transport + Volume -->
-                        <ColumnDefinition Width="*"/>    <!-- Spacer -->
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Center">
-                        
-                        <!-- STOP -->
-                        <Button Command="{Binding StopCommand}" Tag="{Binding IsStopPressed}" Margin="0,0,15,0" ToolTip="Stop" Style="{StaticResource Style.Transport.Stop}">
-                            <Path Data="M6,6H18V18H6V6Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
-                        </Button>
-                        
-                        <!-- PLAY -->
-                        <Button Command="{Binding PlayCommand}" Tag="{Binding IsPlaying}" Margin="0,0,15,0" ToolTip="Play" Style="{StaticResource Style.Transport.Play}">
-                             <Path Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="20" Width="20" Stretch="Uniform" Margin="2,0,0,0"/>
-                        </Button>
-                        
-                        <!-- PAUSE -->
-                        <Button Command="{Binding PauseCommand}" Tag="{Binding IsPaused}" ToolTip="Pause" Style="{StaticResource Style.Transport.Pause}" Margin="0,0,20,0">
-                            <Path Data="M14,19H18V5H14M6,19H10V5H6V19Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
-                        </Button>
-
-                        <!-- Volume Control -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                             <!-- Mute Button -->
-                             <Button Command="{Binding ToggleMuteCommand}" 
-                                     ToolTip="Mute / Unmute" 
-                                     Cursor="Hand"
-                                     Focusable="False"
-                                     Background="Transparent"
-                                     BorderThickness="0"
-                                     Margin="0,0,10,0">
-                                 <Button.Template>
-                                     <ControlTemplate TargetType="Button">
-                                         <Grid>
-                                             <Path x:Name="Icon" 
-                                                   Data="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.84 14,18.7V20.77C18,19.86 21,16.28 21,12C21,7.72 18,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16C15.5,15.29 16.5,13.76 16.5,12M3,9V15H7L12,20V4L7,9H3Z" 
-                                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
-                                                   Height="16" Width="16" Stretch="Uniform"/>
-                                         </Grid>
-                                         <ControlTemplate.Triggers>
-                                             <Trigger Property="IsMouseOver" Value="True">
-                                                 <Setter Property="Foreground" Value="White"/>
-                                             </Trigger>
-                                             <Trigger Property="IsMouseOver" Value="False">
-                                                 <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Secondary}"/>
-                                             </Trigger>
-                                             <DataTrigger Binding="{Binding IsMuted}" Value="True">
-                                                  <!-- Barred Speaker Icon -->
-                                                  <Setter TargetName="Icon" Property="Data" Value="M3.63,3.63L19.33,19.33L18.06,20.6L16.28,18.82C15.57,19.23 14.8,19.57 14,19.82V17.75C14.44,17.58 14.86,17.37 15.25,17.12L12,13.88V20L7,15H3V9H6.88L3.63,5.75L3.63,3.63M12,4L16.03,8.03L14,6V4H12M19,12C19,12.89 18.82,13.73 18.5,14.5L20,16C20.63,14.78 21,13.43 21,12C21,7.72 18,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.66 16.09,9.45 15.4,8.44L14,7.03V12.17L16.44,14.61C16.48,14.41 16.5,14.21 16.5,12Z"/>
-                                                  <Setter Property="Foreground" Value="{DynamicResource Brush.State.Mute}"/> <!-- Red when muted -->
-                                             </DataTrigger>
-                                         </ControlTemplate.Triggers>
-                                     </ControlTemplate>
-                                 </Button.Template>
-                             </Button>
-                             
-                             <!-- Volume Slider -->
-                             <Slider Value="{Binding Volume}" Maximum="1" Minimum="0" Width="100" 
-                                     LargeChange="0.1" SmallChange="0.01" 
-                                     Focusable="False" ToolTip="Volume" Style="{StaticResource RoundFilledSliderStyle}"
-                                     PreviewMouseLeftButtonDown="Slider_PreviewMouseLeftButtonDown"
-                                     PreviewMouseMove="Slider_PreviewMouseMove"
-                                     PreviewMouseLeftButtonUp="Slider_PreviewMouseLeftButtonUp"/>
-                        </StackPanel>
-
-                    </StackPanel>
-                </Grid>
-            </Border>
+            <!-- Transport Controls (Shared) -->
+            <shared:TransportControls Grid.Row="1" 
+                                      DataContext="{Binding}" 
+                                      ShowVolume="True"
+                                      Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                      Margin="0,0,0,15"/>
 
             <!-- Video Surface (Reduced Size via Margins) -->
             <Border Grid.Row="2" Background="{DynamicResource Brush.Panel}" Margin="0,0,0,15" VerticalAlignment="Stretch"
@@ -332,10 +161,7 @@
                 <Slider Value="{Binding PlaybackPercent}" Maximum="1.0" LargeChange="0.1" 
                         Focusable="False" VerticalAlignment="Center" 
                         Style="{StaticResource RoundFilledSliderStyle}"
-                        Tag="Scrubber"
-                        PreviewMouseLeftButtonDown="Slider_PreviewMouseLeftButtonDown"
-                        PreviewMouseMove="Slider_PreviewMouseMove"
-                        PreviewMouseLeftButtonUp="Slider_PreviewMouseLeftButtonUp">
+                        Tag="Scrubber">
                    <i:Interaction.Triggers>
                         <!-- Keep Behaviours for Begin/End Seek logic (Backup) -->
                         <i:EventTrigger EventName="PreviewMouseDown">

@@ -14,6 +14,9 @@ namespace Veriflow.Desktop.Views
         {
             if (sender is Slider slider)
             {
+                // Allow DoubleClick to bubble up (for Reset Command)
+                if (e.ClickCount == 2) return;
+
                 // Disable IsMoveToPointEnabled in code if set in XAML, 
                 // but better to remove it in XAML.
                 // Force Capture
@@ -53,7 +56,7 @@ namespace Veriflow.Desktop.Views
             if (sender is Slider slider)
             {
                 slider.ReleaseMouseCapture();
-                e.Handled = true;
+                // Do not mark as handled, allows bubble up for Click/DoubleClick state
             }
         }
 
