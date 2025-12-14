@@ -43,7 +43,10 @@ namespace Veriflow.Desktop.ViewModels
         [NotifyCanExecuteChangedFor(nameof(StopCommand))]
         [NotifyCanExecuteChangedFor(nameof(SendFileToTranscodeCommand))]
         [NotifyCanExecuteChangedFor(nameof(UnloadMediaCommand))]
+        [NotifyPropertyChangedFor(nameof(HasMedia))]
         private bool _isAudioLoaded;
+
+        public bool HasMedia => IsAudioLoaded;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayCommand))]

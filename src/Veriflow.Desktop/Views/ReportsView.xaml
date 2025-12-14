@@ -788,9 +788,25 @@
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ReportItems.Count}" Value="0">
+                                        <!-- Video Hint -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding ReportTitle}" Value="CAMERA REPORT"/>
+                                                <Condition Binding="{Binding VideoReportItems.Count}" Value="0"/>
+                                            </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
+                                            <Setter Property="Text" Value="DROP VIDEO MEDIA FILE HERE"/>
+                                        </MultiDataTrigger>
+
+                                        <!-- Audio Hint -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding ReportTitle}" Value="SOUND REPORT"/>
+                                                <Condition Binding="{Binding AudioReportItems.Count}" Value="0"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Text" Value="DROP AUDIO MEDIA FILE HERE"/>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>

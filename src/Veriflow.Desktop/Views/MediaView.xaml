@@ -181,6 +181,29 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+
+                <!-- Drag & Drop Hint -->
+                <TextBlock Grid.Row="1" 
+                           VerticalAlignment="Center" HorizontalAlignment="Center" 
+                           Foreground="#555" FontSize="18" FontWeight="Bold"
+                           IsHitTestVisible="False">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="DROP VIDEO MEDIA FILE HERE"/>
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <!-- Visibility Trigger -->
+                                <DataTrigger Binding="{Binding FileList.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <!-- Text Logic -->
+                                <DataTrigger Binding="{Binding IsVideoMode}" Value="False">
+                                    <Setter Property="Text" Value="DROP AUDIO MEDIA FILE HERE"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
             </Grid>
         </Border>
 

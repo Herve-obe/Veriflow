@@ -182,6 +182,30 @@
             <!-- Player View (Implicit Template) -->
             <ContentControl Grid.Row="0" Content="{Binding}"/>
 
+            <!-- Drag & Drop Hint (Moved below ContentControl for Z-Order) -->
+            <TextBlock Grid.Row="0"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Foreground="#555" FontSize="18" FontWeight="Bold"
+                       IsHitTestVisible="False"
+                       Panel.ZIndex="100">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value="DROP VIDEO MEDIA FILE HERE"/>
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <!-- Visibility Trigger (Common to both VMs) -->
+                            <DataTrigger Binding="{Binding HasMedia}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            <!-- Text Logic -->
+                            <DataTrigger Binding="{Binding ShowVolumeControls}" Value="False">
+                                <Setter Property="Text" Value="DROP AUDIO MEDIA FILE HERE"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
             <!-- Transport Controls (Centered relative to Player) -->
             <Border Grid.Row="1" Background="Transparent" Padding="5">
                 <Grid>

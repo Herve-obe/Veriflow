@@ -96,7 +96,10 @@ namespace Veriflow.Desktop.ViewModels
         private MediaPlayer? _player; // Expose to View for Binding
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasMedia))]
         private string _filePath = "No file loaded";
+
+        public bool HasMedia => !string.IsNullOrEmpty(FilePath) && FilePath != "No file loaded";
 
         [ObservableProperty]
         private string _fileName = "";
