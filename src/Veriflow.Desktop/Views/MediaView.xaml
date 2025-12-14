@@ -200,16 +200,16 @@
                             Style="{StaticResource BlueActionButtonStyle}"/>
                     
                     <Button Command="{Binding DataContext.AddToReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="ADD TO REPORT" Height="26" ToolTip="Add listed files to current report" Margin="0,0,0,5"
+                            Content="ADD TO REPORT" Height="26" ToolTip="Add listed files to current report" Margin="0,0,0,20"
                             Style="{StaticResource BlueActionButtonStyle}"
                             IsEnabled="{Binding DataContext.HasActiveReport, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
 
                     <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="OPEN FILE IN PLAYER" Height="26" ToolTip="Open selected file in Player" Margin="0,0,0,5"
+                            Content="OPEN FILE IN PLAYER" Height="26" ToolTip="Open selected file in Player" Margin="0,0,0,20"
                             Style="{StaticResource BlueActionButtonStyle}"/>
                     
                     <Button Command="{Binding DataContext.SendToSecureCopyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="SEND TO SECURE COPY" Height="26" ToolTip="Send selected folder to Secure Copy" Margin="0,0,0,5"
+                            Content="SEND TO SECURE COPY" Height="26" ToolTip="Send selected folder to Secure Copy" Margin="0,0,0,20"
                             Style="{StaticResource BlueActionButtonStyle}"/>
 
                     <Button Command="{Binding DataContext.SendFileToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"

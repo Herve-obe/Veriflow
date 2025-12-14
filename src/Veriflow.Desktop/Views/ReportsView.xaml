@@ -456,6 +456,7 @@
                         <DataGrid ItemsSource="{Binding VideoReportItems}" 
                                   AutoGenerateColumns="False" 
                                   CanUserSortColumns="True"
+                                  CanUserReorderColumns="False"
                                   Background="Transparent" 
                                   BorderThickness="0" 
                                   GridLinesVisibility="None"
@@ -487,8 +488,8 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <!-- SCENE / TAKE -->
-                                <DataGridTemplateColumn Header="SCENE / TAKE" Width="140" IsReadOnly="False">
+                                <!-- SCENE / TAKE (Reduced) -->
+                                <DataGridTemplateColumn Header="SCENE / TAKE" Width="100" IsReadOnly="False">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Margin="6,0,0,0">
@@ -501,9 +502,9 @@
                                     <DataGridTemplateColumn.CellEditingTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBox Text="{Binding Scene, UpdateSourceTrigger=LostFocus}" Width="50" Background="#222" Foreground="White" BorderThickness="0" ToolTip="Scene"/>
+                                                <TextBox Text="{Binding Scene, UpdateSourceTrigger=LostFocus}" Width="40" Background="#222" Foreground="White" BorderThickness="0" ToolTip="Scene"/>
                                                 <TextBlock Text="/" Foreground="#888" Margin="4,0" VerticalAlignment="Center"/>
-                                                <TextBox Text="{Binding Take, UpdateSourceTrigger=LostFocus}" Width="40" Background="#222" Foreground="White" BorderThickness="0" ToolTip="Take"/>
+                                                <TextBox Text="{Binding Take, UpdateSourceTrigger=LostFocus}" Width="30" Background="#222" Foreground="White" BorderThickness="0" ToolTip="Take"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellEditingTemplate>
@@ -518,8 +519,8 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <!-- DURATION -->
-                                <DataGridTemplateColumn Header="DURATION" Width="90" SortMemberPath="Duration" IsReadOnly="True">
+                                <!-- DURATION (Increased) -->
+                                <DataGridTemplateColumn Header="DURATION" Width="110" SortMemberPath="Duration" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Duration}" FontFamily="Consolas" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
@@ -527,8 +528,8 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <!-- FPS -->
-                                <DataGridTemplateColumn Header="FPS" Width="60" SortMemberPath="Fps" IsReadOnly="True">
+                                <!-- FPS (Increased) -->
+                                <DataGridTemplateColumn Header="FPS" Width="70" SortMemberPath="Fps" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Fps}" Foreground="#AAA" Margin="6,0,0,0" VerticalAlignment="Center"/>
@@ -558,8 +559,8 @@
                                     </DataGridTemplateColumn.CellEditingTemplate>
                                 </DataGridTemplateColumn>
 
-                                <!-- CODEC / RES -->
-                                <DataGridTemplateColumn Header="CODEC / RES" Width="150" IsReadOnly="True">
+                                <!-- CODEC / RES (Reduced) -->
+                                <DataGridTemplateColumn Header="CODEC / RES" Width="130" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="6,0,0,0">
@@ -601,6 +602,7 @@
                         <DataGrid ItemsSource="{Binding AudioReportItems}" 
                                   AutoGenerateColumns="False" 
                                   CanUserSortColumns="True"
+                                  CanUserReorderColumns="False"
                                   Background="Transparent" 
                                   BorderThickness="0" 
                                   GridLinesVisibility="None"
@@ -669,8 +671,8 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
 
-                                <!-- DURATION -->
-                                <DataGridTemplateColumn Header="DURATION" Width="80" SortMemberPath="Duration" IsReadOnly="True">
+                                <!-- DURATION (Increased) -->
+                                <DataGridTemplateColumn Header="DURATION" Width="100" SortMemberPath="Duration" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Duration}" FontFamily="Consolas" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>

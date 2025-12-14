@@ -561,7 +561,7 @@
                             Style="{StaticResource BlueActionButtonStyle}"/>
                     
                     <Button Command="{Binding UnloadMediaCommand}"
-                            Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,5"
+                            Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,20"
                             Style="{StaticResource BlueActionButtonStyle}"/>
 
                     <Button Command="{Binding SendFileToTranscodeCommand}"

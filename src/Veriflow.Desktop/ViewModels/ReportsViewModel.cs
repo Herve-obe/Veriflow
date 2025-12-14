@@ -309,15 +309,26 @@ namespace Veriflow.Desktop.ViewModels
 
              var dlg = new Microsoft.Win32.SaveFileDialog
              {
-                 FileName = $"{(string.IsNullOrWhiteSpace(Header.ProjectName) ? "Report" : Header.ProjectName)}_Report",
+                 FileName = CurrentReportType == ReportType.Video ? "camera_report" : "sound_report",
                  DefaultExt = ".pdf",
                  Filter = "PDF Documents (.pdf)|*.pdf"
              };
 
              if (dlg.ShowDialog() == true)
              {
-                 bool isVideo = CurrentReportType == ReportType.Video;
-                 _pdfService.GeneratePdf(dlg.FileName, Header, CurrentReportItems, isVideo);
+                 try
+                 {
+                     bool isVideo = CurrentReportType == ReportType.Video;
+                     _pdfService.GeneratePdf(dlg.FileName, Header, CurrentReportItems, isVideo);
+                 }
+                 catch (System.IO.IOException)
+                 {
+                     MessageBox.Show($"The file '{dlg.FileName}' is currently open in another application.\n\nPlease close the file and try again.", "File Access Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                 }
+                 catch (System.Exception ex)
+                 {
+                     MessageBox.Show($"An error occurred while saving the report:\n{ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                 }
              }
         }
     }

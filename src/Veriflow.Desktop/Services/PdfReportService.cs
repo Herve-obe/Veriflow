@@ -48,7 +48,7 @@ namespace Veriflow.Desktop.Services
                     page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.Arial));
 
                     page.Header().Element(compose => ComposeHeader(compose, header, isVideo, totalSizeStr));
-                    page.Content().Element(compose => ComposeContent(compose, items));
+                    page.Content().Element(compose => ComposeContent(compose, items, isVideo));
                     page.Footer().Element(ComposeFooter);
                 });
             })
@@ -117,11 +117,15 @@ namespace Veriflow.Desktop.Services
                         
                         if (isVideo)
                         {
+                             c.Item().Text(t => { t.Span("Director: ").SemiBold(); t.Span(header.Director); });
+                             c.Item().Text(t => { t.Span("DOP: ").SemiBold(); t.Span(header.Dop); });
                              c.Item().Text(t => { t.Span("Operator: ").SemiBold(); t.Span(header.OperatorName); });
                         }
                         else
                         {
                              c.Item().Text(t => { t.Span("Location: ").SemiBold(); t.Span(header.Location); });
+                             c.Item().Text(t => { t.Span("Sound Mixer: ").SemiBold(); t.Span(header.SoundMixer); });
+                             c.Item().Text(t => { t.Span("Boom Op: ").SemiBold(); t.Span(header.BoomOperator); });
                         }
                     });
 
@@ -130,16 +134,12 @@ namespace Veriflow.Desktop.Services
                     {
                         if (isVideo)
                         {
-                            c.Item().Text(t => { t.Span("Director: ").SemiBold(); t.Span(header.Director); });
-                            c.Item().Text(t => { t.Span("DOP: ").SemiBold(); t.Span(header.Dop); });
+                            c.Item().Text(t => { t.Span("Data Manager: ").SemiBold(); t.Span(header.DataManager); });
                             c.Item().Text(t => { t.Span("Cam ID: ").SemiBold(); t.Span(header.CameraId); });
                             c.Item().Text(t => { t.Span("Roll: ").SemiBold(); t.Span(header.ReelName); });
-                            c.Item().Text(t => { t.Span("Data Manager: ").SemiBold(); t.Span(header.DataManager); });
                         }
                         else
                         {
-                            c.Item().Text(t => { t.Span("Sound Mixer: ").SemiBold(); t.Span(header.SoundMixer); });
-                            c.Item().Text(t => { t.Span("Boom Op: ").SemiBold(); t.Span(header.BoomOperator); });
                             c.Item().Text(t => { t.Span("Timecode Rate: ").SemiBold(); t.Span(header.TimecodeRate); });
                             c.Item().Text(t => { t.Span("Bit Depth: ").SemiBold(); t.Span(header.BitDepth); });
                             c.Item().Text(t => { t.Span("Sample Rate: ").SemiBold(); t.Span(header.SampleRate); });
@@ -154,18 +154,35 @@ namespace Veriflow.Desktop.Services
             });
         }
 
-        private void ComposeContent(IContainer container, IEnumerable<ReportItem> items)
+        private void ComposeContent(IContainer container, IEnumerable<ReportItem> items, bool isVideo)
         {
-            container.PaddingTop(10).Table(table =>
+            var itemList = items.ToList();
+
+            if (isVideo)
+            {
+                ComposeVideoTable(container, itemList);
+            }
+            else
+            {
+                ComposeAudioTable(container, itemList);
+            }
+        }
+
+        private void ComposeVideoTable(IContainer container, List<ReportItem> itemList)
+        {
+             container.PaddingTop(10).Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.RelativeColumn(3); // Filename
-                    columns.RelativeColumn(1); // Scene
-                    columns.RelativeColumn(1); // Take
-                    columns.ConstantColumn(85); // Start TC
-                    columns.ConstantColumn(85); // Duration
-                    columns.RelativeColumn(3); // Notes
+                    columns.RelativeColumn(1.5f); // Filename (Reduced)
+                    columns.RelativeColumn(0.8f); // Scene
+                    columns.RelativeColumn(0.6f); // Take
+                    columns.ConstantColumn(85);   // Start TC
+                    columns.ConstantColumn(85);   // Duration
+                    columns.ConstantColumn(35);   // FPS
+                    columns.ConstantColumn(70);   // ISO / WB
+                    columns.RelativeColumn(1.5f); // Codec / RES
+                    columns.RelativeColumn(2f);   // Notes
                 });
 
                 // Header
@@ -176,64 +193,210 @@ namespace Veriflow.Desktop.Services
                     header.Cell().Element(CellStyle).Text("Take");
                     header.Cell().Element(CellStyle).Text("Start TC");
                     header.Cell().Element(CellStyle).Text("Duration");
+                    header.Cell().Element(CellStyle).Text("FPS");
+                    header.Cell().Element(CellStyle).Text("ISO / WB");
+                    header.Cell().Element(CellStyle).Text("Codec / Res");
                     header.Cell().Element(CellStyle).Text("Notes");
-
-                    static IContainer CellStyle(IContainer container)
-                    {
-                        return container.Background("#333333").Padding(6).DefaultTextStyle(x => x.SemiBold().FontColor(Colors.White).FontSize(10));
-                    }
                 });
 
                 // Content
-                var itemList = items.ToList();
                 for (int i = 0; i < itemList.Count; i++)
                 {
                     var item = itemList[i];
                     var bgColor = i % 2 == 0 ? "#F5F5F5" : "#FFFFFF";
-                    var isBold = item.IsCircled; 
                     
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => 
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Filename).FontSize(8);
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Scene ?? "");
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Take ?? "");
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew);
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Duration ?? "").FontFamily(Fonts.CourierNew);
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Fps ?? "");
+                    
+                    // ISO / WB Logic
+                    string iso = string.IsNullOrWhiteSpace(item.Iso) || item.Iso == "N/A" ? "" : item.Iso;
+                    string wb = string.IsNullOrWhiteSpace(item.WhiteBalance) || item.WhiteBalance == "N/A" ? "" : item.WhiteBalance;
+                    string isoWbDisplay = "";
+                    if (!string.IsNullOrEmpty(iso) && !string.IsNullOrEmpty(wb)) isoWbDisplay = $"{iso} / {wb}";
+                    else if (!string.IsNullOrEmpty(iso)) isoWbDisplay = iso;
+                    else if (!string.IsNullOrEmpty(wb)) isoWbDisplay = wb;
+                    
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(isoWbDisplay);
+                    
+                    // Codec / Res Logic (2 lines)
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Column(col => 
                     {
-                        var span = t.Span(item.Filename);
-                        if (isBold) span.Bold();
+                        col.Item().Text(item.Codec ?? "").FontSize(8);
+                        col.Item().Text(item.Resolution ?? "").FontSize(7).FontColor(Colors.Grey.Darken2);
                     });
 
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => 
-                    {
-                        var span = t.Span(item.Scene ?? "");
-                        if (isBold) span.Bold();
-                    });
-
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => 
-                    {
-                        var span = t.Span(item.Take ?? "");
-                        if (isBold) span.Bold();
-                    });
-
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => 
-                    {
-                        var span = t.Span(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew);
-                        if (isBold) span.Bold();
-                    });
-
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => 
-                    {
-                        var span = t.Span(item.Duration ?? "").FontFamily(Fonts.CourierNew);
-                        if (isBold) span.Bold();
-                    });
-
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => 
-                    {
-                        var span = t.Span(item.ItemNotes ?? "");
-                        if (isBold) span.Bold();
-                    });
-                }
-
-                static IContainer BodyCellStyle(IContainer container, string backgroundColor)
-                {
-                    return container.Background(backgroundColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(6).AlignMiddle();
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.ItemNotes ?? "");
                 }
             });
+        }
+
+        private void ComposeAudioTable(IContainer container, List<ReportItem> itemList)
+        {
+            // Interleaved Paging Logic:
+            // A1, A2, B1, B2...
+            // Chunk items to fit on one page (approx 18 rows).
+            // For each chunk, allow Part 1 to render (Page 1), then PageBreak, then Part 2 (Page 2).
+            
+            int itemsPerPage = 18; // Estimated safe limit for A4 Landscape
+            var chunks = itemList.Chunk(itemsPerPage).ToList();
+
+            container.Column(column => 
+            {
+                foreach (var chunkArr in chunks)
+                {
+                    var chunk = chunkArr.ToList();
+                    
+                    // Part 1: Basic Info
+                    column.Item().PaddingTop(10).Element(c => ComposeAudioTablePart1(c, chunk));
+                    
+                    // Force Page Break to show Tracks for THIS chunk on the NEXT page
+                    column.Item().PageBreak();
+
+                    // Part 2: Tracks Info
+                    column.Item().Element(c => ComposeAudioTablePart2(c, chunk));
+
+                    // If not the last chunk, add another Page Break to start the next chunk cleanly
+                    if (chunkArr != chunks.Last())
+                    {
+                        column.Item().PageBreak();
+                    }
+                }
+            });
+        }
+
+        private void ComposeAudioTablePart1(IContainer container, List<ReportItem> itemList)
+        {
+             container.Table(table =>
+            {
+                table.ColumnsDefinition(columns =>
+                {
+                    columns.RelativeColumn(3); // Filename
+                    columns.RelativeColumn(1); // Scene
+                    columns.RelativeColumn(1); // Take
+                    columns.ConstantColumn(85);   // Start TC
+                    columns.ConstantColumn(85);   // Duration
+                    columns.RelativeColumn(2); // Notes (Added)
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Element(CellStyle).Text("Filename");
+                    header.Cell().Element(CellStyle).Text("Scene");
+                    header.Cell().Element(CellStyle).Text("Take");
+                    header.Cell().Element(CellStyle).Text("Start TC");
+                    header.Cell().Element(CellStyle).Text("Duration");
+                    header.Cell().Element(CellStyle).Text("Notes");
+                });
+
+                for (int i = 0; i < itemList.Count; i++)
+                {
+                    var item = itemList[i];
+                    var bgColor = i % 2 == 0 ? "#F5F5F5" : "#FFFFFF";
+                    bool isCircled = item.IsCircled;
+
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Filename).FontSize(9); if (isCircled) s.SemiBold(); });
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Scene ?? ""); if (isCircled) s.SemiBold(); });
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Take ?? ""); if (isCircled) s.SemiBold(); });
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Duration ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.ItemNotes ?? ""); if (isCircled) s.SemiBold(); });
+                }
+            });
+        }
+
+        private void ComposeAudioTablePart2(IContainer container, List<ReportItem> itemList)
+        {
+            // Calculate Max Tracks
+            int maxTracks = 0;
+            foreach (var item in itemList)
+            {
+                if (!string.IsNullOrEmpty(item.Tracks))
+                {
+                    int count = item.Tracks.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length;
+                     if (count > maxTracks) maxTracks = count;
+                }
+            }
+
+            container.Table(table =>
+            {
+                table.ColumnsDefinition(columns =>
+                {
+                    columns.RelativeColumn(2.5f); // Filename (Repetition reference)
+                    // Dynamic Tracks
+                    for (int t = 0; t < maxTracks; t++)
+                    {
+                        columns.RelativeColumn(1f);
+                    }
+                    columns.ConstantColumn(40);   // Circle
+                    columns.RelativeColumn(2f);   // Notes
+                });
+
+                table.Header(header =>
+                {
+                   header.Cell().Element(CellStyle).Text("Filename");
+                    for (int t = 0; t < maxTracks; t++)
+                    {
+                        header.Cell().Element(CellStyle).Text($"T{t + 1}");
+                    }
+                    header.Cell().Element(CellStyle).Text("Cirl");
+                    header.Cell().Element(CellStyle).Text("Notes");
+                });
+
+                for (int i = 0; i < itemList.Count; i++)
+                {
+                    var item = itemList[i];
+                    var bgColor = i % 2 == 0 ? "#F5F5F5" : "#FFFFFF";
+                    bool isCircled = item.IsCircled;
+
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Filename).FontSize(9); if (isCircled) s.SemiBold(); });
+
+                    // Tracks
+                    var trackNames = new List<string>();
+                    if (!string.IsNullOrEmpty(item.Tracks))
+                    {
+                        var parts = item.Tracks.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var part in parts)
+                        {
+                            var split = part.Split(':');
+                            if (split.Length > 1) trackNames.Add(split[1]);
+                            else trackNames.Add(part);
+                        }
+                    }
+
+                    for (int t = 0; t < maxTracks; t++)
+                    {
+                        string tName = t < trackNames.Count ? trackNames[t] : "";
+                        table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(txt => 
+                        {
+                            var s = txt.Span(tName).FontSize(7); // Smaller font for tracks
+                            if (isCircled) s.SemiBold();
+                        });
+                    }
+                    
+                    // Circle
+                     table.Cell().Element(c => BodyCellStyle(c, bgColor)).AlignMiddle().AlignCenter().Text(t => 
+                    {
+                        if (item.IsCircled) t.Span("X").Bold().FontColor(Colors.Red.Medium);
+                    });
+
+                    // Notes
+                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.ItemNotes ?? ""); if (isCircled) s.SemiBold(); });
+                }
+            });
+        }
+
+        private static IContainer CellStyle(IContainer container)
+        {
+            return container.Background("#333333").Padding(6).DefaultTextStyle(x => x.SemiBold().FontColor(Colors.White).FontSize(9));
+        }
+
+        private static IContainer BodyCellStyle(IContainer container, string backgroundColor)
+        {
+            return container.Background(backgroundColor).BorderBottom(1).BorderColor(Colors.Grey.Lighten3).Padding(4).AlignMiddle(); // Reduced padding
         }
 
         private void ComposeFooter(IContainer container)

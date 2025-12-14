@@ -104,11 +104,7 @@ namespace Veriflow.Desktop.Models
                      Fps = vMeta.FrameRate ?? "--";
                      Resolution = vMeta.Resolution ?? "--";
                      StartTimeCode = vMeta.StartTimecode ?? "00:00:00:00";
-                     Codec = media.Format; // Per instruction: Codec -> Defaults to OriginalMedia.Format
-                     // Note: If media.Format holds Resolution as per VM logic, this might be weird, but I follow instruction "Defaults to OriginalMedia.Format".
-                     // However, if MediaViewModel stores "1920x1080" in Format, then Codec becomes "1920x1080". 
-                     // Safe check: if media.Format looks like resolution, maybe use vMeta.Codec? 
-                     // I will stick to the instruction: "Defaults to OriginalMedia.Format". If users says otherwise later I fix.
+                     Codec = !string.IsNullOrEmpty(vMeta.Codec) ? vMeta.Codec : media.Format;
                      // Wait, actually user says "Codec (string) -> Defaults to OriginalMedia.Format." 
                  }
                  else
@@ -119,8 +115,8 @@ namespace Veriflow.Desktop.Models
                      Codec = media.Format ?? "Unknown";
                  }
                  
-                 Iso = "N/A";
-                 WhiteBalance = "N/A";
+                 Iso = "";
+                 WhiteBalance = "";
                  ThumbnailPath = media.ThumbnailPath;
             }
             else

@@ -131,13 +131,17 @@ namespace Veriflow.Desktop.ViewModels
                _reportsViewModel.CreateReport(items, type);
                // Update with specific context
                _mediaViewModel.SetReportStatus(isVideo, true);
-               // Stay on page
+               
+               // Confirmation Popup
+               string msg = isVideo ? "Camera Report created successfully." : "Sound Report created successfully.";
+               Helpers.ProMessageBox.Show(msg, "Report Created");
             };
 
             _mediaViewModel.RequestAddToReport += (items) =>
             {
                _reportsViewModel.AddToReport(items);
-               NavigateTo(PageType.Reports);
+               // Confirmation Popup instead of Navigation
+               Helpers.ProMessageBox.Show("Media added to report successfully.", "Media Added");
             };
 
             // Player Integration

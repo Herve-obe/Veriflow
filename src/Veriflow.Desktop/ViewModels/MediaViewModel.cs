@@ -115,7 +115,9 @@ namespace Veriflow.Desktop.ViewModels
         private bool CanSendToSecureCopy() => !string.IsNullOrWhiteSpace(CurrentPath) && Directory.Exists(CurrentPath);
         private bool CanSendToTranscode() => !string.IsNullOrWhiteSpace(CurrentPath) && Directory.Exists(CurrentPath) && FileList.Any();
 
-        [RelayCommand]
+        private bool CanCreateReport() => FileList.Any();
+
+        [RelayCommand(CanExecute = nameof(CanCreateReport))]
         private async Task CreateReport()
         {
             if (FileList.Any())
@@ -271,7 +273,11 @@ namespace Veriflow.Desktop.ViewModels
             };
             _driveWatcher.Start();
 
-            FileList.CollectionChanged += (s, e) => SendToTranscodeCommand.NotifyCanExecuteChanged();
+            FileList.CollectionChanged += (s, e) => 
+            {
+                SendToTranscodeCommand.NotifyCanExecuteChanged();
+                CreateReportCommand.NotifyCanExecuteChanged();
+            };
         }
 
         private void RefreshDrives()
