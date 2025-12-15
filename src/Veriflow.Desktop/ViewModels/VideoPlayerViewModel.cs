@@ -175,7 +175,8 @@ namespace Veriflow.Desktop.ViewModels
         // Timer for updating UI slider/time
         private readonly DispatcherTimer _uiTimer;
         private bool _isUserSeeking; // Prevent timer updates while dragging slider
-
+        private bool _isFromTimer; // Distinguish timer updates from user inputs
+        
         public VideoPlayerViewModel()
         {
             if (!DesignMode.IsDesignMode)
@@ -221,7 +222,9 @@ namespace Veriflow.Desktop.ViewModels
 
                 if (length > 0)
                 {
+                    _isFromTimer = true;
                     PlaybackPercent = interpolatedTime.TotalMilliseconds / length;
+                    _isFromTimer = false;
                 }
                 
                 CurrentTimeDisplay = FormatTimecode(interpolatedTime);
@@ -325,12 +328,22 @@ namespace Veriflow.Desktop.ViewModels
 
                 if (libVLC != null && _mediaPlayer != null)
                 {
+                    // Use :start-paused to ensure we render frame 0 but don't auto-start
+                    // This is robust against race conditions.
                     var media = new Media(libVLC, path, FromType.FromPath);
+                    media.AddOption(":start-paused");
                     await media.Parse(MediaParseOptions.ParseLocal);
                     _mediaPlayer.Media = media;
                     
                     // OPTIMIZATION: Set Loaded TRUE immediately so UI shows player
                     IsVideoLoaded = true;
+
+                    // Activate the engine (will respect :start-paused)
+                    _mediaPlayer.Play();
+                    
+                    // Update State to reflect "Paused at Start"
+                    IsPlaying = false;
+                    IsPaused = true;
 
                     // Trigger initial duration update if possible
                     if (media.Duration > 0)
@@ -454,13 +467,16 @@ namespace Veriflow.Desktop.ViewModels
 
             if (_mediaPlayer != null)
             {
-                _mediaPlayer.Stop();
+                // REDEFINED STOP: Pause and Seek to 0
+                // This keeps the engine active so we can still see the image or seek
+                if (_mediaPlayer.IsPlaying) _mediaPlayer.Pause();
+                _mediaPlayer.Time = 0;
             }
             
             _uiTimer.Stop();
             _stopwatch.Reset();
             IsPlaying = false;
-            IsPaused = false;
+            IsPaused = true; // We are effectively paused at start
             PlaybackPercent = 0;
             PlaybackPercent = 0;
             CurrentTimeDisplay = "00:00:00:00";
@@ -495,17 +511,22 @@ namespace Veriflow.Desktop.ViewModels
 
         partial void OnPlaybackPercentChanged(double value)
         {
-            if (_isUserSeeking && _mediaPlayer != null && IsVideoLoaded)
+            // SEEK LOGIC:
+            // Only seek if the change comes from the User (Click or Drag), NOT from the Timer.
+            // We ignore _isUserSeeking here to allow "Click to Seek" (where IsUserSeeking remains false).
+            if (!_isFromTimer && _mediaPlayer != null && IsVideoLoaded)
             {
                 var length = _mediaPlayer.Length;
                 if (length > 0)
                 {
                     var seekTime = (long)(value * length);
-                    if (Math.Abs(_mediaPlayer.Time - seekTime) > 500) // Debounce slightly
-                    {
-                         _mediaPlayer.Time = seekTime;
-                         CurrentTimeDisplay = FormatTimecode(TimeSpan.FromMilliseconds(seekTime));
-                    }
+                    
+                    // Direct Seek (Precision depends on codec/VLC, usually decent)
+                    // Removing 500ms debounce allows frame-by-frame scrubbing and precise clicking.
+                    _mediaPlayer.Time = seekTime;
+                    
+                    // Immediate UI update for responsiveness
+                    CurrentTimeDisplay = FormatTimecode(TimeSpan.FromMilliseconds(seekTime));
                 }
             }
         }

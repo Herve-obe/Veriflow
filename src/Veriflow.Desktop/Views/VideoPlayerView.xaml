@@ -181,6 +181,7 @@
                   Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Slider Value="{Binding PlaybackPercent}" Maximum="1.0" LargeChange="0.1" 
                         Focusable="False" VerticalAlignment="Center" 
+                        IsMoveToPointEnabled="True"
                         Style="{StaticResource RoundFilledSliderStyle}"
                         Tag="Scrubber">
                    <i:Interaction.Triggers>
