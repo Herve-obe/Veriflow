@@ -13,12 +13,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-        <Style x:Key="HeaderStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="#888888"/>
-            <Setter Property="Margin" Value="10,5"/>
-        </Style>
+
 
         <Style x:Key="TransparentButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -99,7 +94,7 @@
         </Border>
 
         <!-- COL 2: BROWSER -->
-        <Border Grid.Column="1" Background="#121212" AllowDrop="True">
+        <Border Grid.Column="1" Background="#121212" AllowDrop="True" Margin="20">
              <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Drop">
                     <i:InvokeCommandAction Command="{Binding DropMediaCommand}" PassEventArgsToCommand="True"/>
@@ -111,7 +106,13 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="MEDIA" Style="{StaticResource HeaderStyle}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <Path Data="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,3V13H11V3"
+                          Fill="{DynamicResource Brush.Accent}"
+                          Height="20" Width="20" Stretch="Uniform"
+                          VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="MEDIA" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                </StackPanel>
 
                 <ListBox Grid.Row="1" ItemsSource="{Binding FileList}" 
                          SelectedItem="{Binding SelectedMedia}"

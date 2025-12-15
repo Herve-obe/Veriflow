@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 using Veriflow.Desktop.Models;
@@ -583,9 +584,125 @@ namespace Veriflow.Desktop.ViewModels
 
 
 
+        // --- FRAME ACCURATE NAVIGATION ---
+        
+        private DispatcherTimer? _jogTimer;
+        private DispatcherTimer? _delayTimer;
+        private int _frameStepDirection; // 0=None, 1=Fwd, -1=Back
+        
+        [RelayCommand]
+        private void KeyDown(KeyEventArgs e)
+        {
+            // Ignore OS key repeat to maintain our own timer-based cadence
+            if (e.IsRepeat)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Right)
+            {
+                StartJog(1);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Left)
+            {
+                StartJog(-1);
+                e.Handled = true;
+            }
+        }
+
+        [RelayCommand]
+        private void KeyUp(KeyEventArgs e)
+        {
+            if (e.Key == Key.Right || e.Key == Key.Left)
+            {
+                StopJog();
+                e.Handled = true;
+            }
+        }
+
+        private void StartJog(int direction)
+        {
+             _frameStepDirection = direction;
+             
+             // 1. Immediate step (Short Press)
+             PerformFrameStep();
+
+             // 2. Start Latency Timer (Wait for Hold)
+             if (_delayTimer == null)
+             {
+                 _delayTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
+                 _delayTimer.Tick += (s, args) => 
+                 {
+                     _delayTimer.Stop();
+                     StartContinuousJog();
+                 };
+             }
+             _delayTimer.Start();
+        }
+
+        private void StartContinuousJog()
+        {
+             if (_jogTimer == null)
+             {
+                 // Fast JOG Rate (e.g. 30ms = ~33fps speed)
+                 _jogTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
+                 _jogTimer.Tick += (s, args) => PerformFrameStep();
+             }
+             _jogTimer.Start();
+        }
+
+        private void StopJog()
+        {
+            _delayTimer?.Stop();
+            _jogTimer?.Stop();
+            _frameStepDirection = 0;
+        }
+
+        private void PerformFrameStep()
+        {
+            if (_mediaPlayer != null && IsVideoLoaded && _frameStepDirection != 0)
+            {
+                // Calculate Frame Duration in MS (1000 / FPS)
+                double msPerFrame = 1000.0 / _fps;
+                long step = (long)Math.Round(msPerFrame);
+                
+                // Safety: Minimum step 1ms
+                if (step < 1) step = 1;
+
+                long targetTime = _mediaPlayer.Time + (step * _frameStepDirection);
+                
+                // Clamp
+                if (targetTime < 0) targetTime = 0;
+                if (targetTime > _mediaPlayer.Length) targetTime = _mediaPlayer.Length;
+
+                _mediaPlayer.Time = targetTime;
+                
+                // Update UI immediately for responsiveness
+                CurrentTimeDisplay = FormatTimecode(TimeSpan.FromMilliseconds(targetTime));
+            }
+        }
+
+        // --- COMMAND WRAPPERS FOR DIRECT BINDING IF NEEDED ---
+        [RelayCommand]
+        private void NextFrame() => SingleFrameStep(1);
+
+        [RelayCommand]
+        private void PreviousFrame() => SingleFrameStep(-1);
+
+        private void SingleFrameStep(int direction)
+        {
+            _frameStepDirection = direction;
+            PerformFrameStep();
+            _frameStepDirection = 0;
+        }
+
         public void Dispose()
         {
             _uiTimer.Stop();
+            _delayTimer?.Stop();
+            _jogTimer?.Stop();
             _mediaPlayer?.Dispose();
             // _libVLC should NOT be disposed here as it is shared
         }

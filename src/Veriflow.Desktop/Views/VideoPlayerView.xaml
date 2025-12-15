@@ -17,12 +17,24 @@
         <i:EventTrigger EventName="Drop">
             <i:InvokeCommandAction Command="{Binding DropFileCommand}" PassEventArgsToCommand="True"/>
         </i:EventTrigger>
+        <i:EventTrigger EventName="PreviewKeyDown">
+             <i:InvokeCommandAction Command="{Binding KeyDownCommand}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="PreviewKeyUp">
+             <i:InvokeCommandAction Command="{Binding KeyUpCommand}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
     </i:Interaction.Triggers>
     <UserControl.InputBindings>
         <KeyBinding Key="Space" Command="{Binding TogglePlayPauseCommand}"/>
         <KeyBinding Key="Return" Command="{Binding StopCommand}"/>
-        <KeyBinding Key="Left" Command="{Binding RewindCommand}"/>
-        <KeyBinding Key="Right" Command="{Binding ForwardCommand}"/>
+        
+        <!-- Standard Video Navigation -->
+        <KeyBinding Key="Left" Command="{Binding PreviousFrameCommand}"/> <!-- Single Step Fallback -->
+        <KeyBinding Key="Right" Command="{Binding NextFrameCommand}"/>    <!-- Single Step Fallback -->
+        
+        <!-- Large Jumps -->
+        <KeyBinding Key="Left" Modifiers="Shift" Command="{Binding RewindCommand}"/>
+        <KeyBinding Key="Right" Modifiers="Shift" Command="{Binding ForwardCommand}"/>
     </UserControl.InputBindings>
 
     <UserControl.Resources>
