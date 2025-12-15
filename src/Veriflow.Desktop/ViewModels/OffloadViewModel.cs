@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -86,6 +87,7 @@ namespace Veriflow.Desktop.ViewModels
         public OffloadViewModel()
         {
             _secureCopyService = new SecureCopyService();
+            InitializeExplorer();
         }
 
         // --- COMMANDS ---
@@ -445,6 +447,46 @@ namespace Veriflow.Desktop.ViewModels
             return (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(dialog.FolderName)) ? dialog.FolderName : null;
         }
 
+
+        // --- EXPLORER INTEGRATION ---
+        [ObservableProperty]
+        private ObservableCollection<DriveViewModel> _drives = new();
+
+        private void InitializeExplorer()
+        {
+            RefreshDrives();
+            // Optional: Add timer if needed, skipping for brevity/robustness balance in this prompt
+        }
+
+        private void RefreshDrives()
+        {
+             var safeDriveList = new List<DriveViewModel>();
+            try
+            {
+                foreach (var drive in DriveInfo.GetDrives())
+                {
+                   if (drive.IsReady) safeDriveList.Add(new DriveViewModel(drive, LoadDirectoryFromExplorer));
+                }
+            }
+            catch {}
+
+            if (Application.Current.Dispatcher.CheckAccess()) UpdateDrivesCollection(safeDriveList);
+            else Application.Current.Dispatcher.Invoke(() => UpdateDrivesCollection(safeDriveList));
+        }
+
+        private void UpdateDrivesCollection(List<DriveViewModel> newDrives)
+        {
+            Drives.Clear();
+            foreach (var d in newDrives) Drives.Add(d);
+        }
+
+        private void LoadDirectoryFromExplorer(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                SourcePath = path;
+            }
+        }
 
     }
 }

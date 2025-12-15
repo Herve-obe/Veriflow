@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Veriflow.Desktop.Views"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:shared="clr-namespace:Veriflow.Desktop.Views.Shared"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="800">
              
@@ -12,296 +13,311 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
 
-    <!-- NATIVE OPTICAL LAYOUT (1/Auto/2/Auto) -->
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- HEADER -->
-            <RowDefinition Height="1*"/>   <!-- TOP SPACE -->
-            <RowDefinition Height="Auto"/> <!-- FORM -->
-            <RowDefinition Height="2*"/>   <!-- BOTTOM SPACE -->
-            <RowDefinition Height="Auto"/> <!-- FOOTER -->
-        </Grid.RowDefinitions>
 
-        <!-- HEADER -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-             <Path Data="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,5A3,3 0 1,1 9,8A3,3 0 0,1 12,5M17.13,17C15.92,18.85 14.11,20.24 12,20.92C9.89,20.24 8.08,18.85 6.87,17C6.53,16.5 6.24,16 6,15.47C6,13.82 8.71,12.47 12,12.47C15.29,12.47 18,13.82 18,15.47C17.76,16 17.47,16.5 17.13,17Z"
-                   Fill="{DynamicResource Brush.Accent}"
-                   Height="20" Width="20" Stretch="Uniform"
-                   VerticalAlignment="Center" Margin="0,0,10,0"/>
-            <TextBlock Text="SECURE COPY" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
-        </StackPanel>
+    <!-- MAIN SPLIT LAYOUT -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/> <!-- Explorer -->
+            <ColumnDefinition Width="*"/>   <!-- Form -->
+        </Grid.ColumnDefinitions>
 
-        <!-- FORM CONTENT -->
-        <StackPanel Grid.Row="2" HorizontalAlignment="Center" MaxWidth="1000" Width="800">
-            
-            <!-- SOURCE -->
-            <Grid Margin="0,0,0,25">
+        <!-- LEFT: EXPLORER -->
+        <shared:ExplorerView Grid.Column="0"/>
+
+        <!-- RIGHT: EXISTING FORM -->
+        <Border Grid.Column="1" Background="{DynamicResource Brush.Background}" Margin="20">
+            <!-- ORIGINAL GRID CONTENT -->
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/> <!-- HEADER -->
+                    <RowDefinition Height="1*"/>   <!-- TOP SPACE -->
+                    <RowDefinition Height="Auto"/> <!-- FORM -->
+                    <RowDefinition Height="2*"/>   <!-- BOTTOM SPACE -->
+                    <RowDefinition Height="Auto"/> <!-- FOOTER -->
                 </Grid.RowDefinitions>
-                
-                <DockPanel LastChildFill="False" Margin="0,0,0,5">
-                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                        <!-- SD Card Icon (Vector) -->
-                        <Path Data="M18,8L12,2H4A2,2 0 0,0 2,4V20A2,2 0 0,0 4,22H20A2,2 0 0,0 22,20V8H18M13,9H11V4H13V9M9,9H7V4H9V9"
-                              Fill="{DynamicResource Brush.Accent}"
-                              Height="24" Width="24" Stretch="Uniform"
-                              VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBlock Text="MEDIA SOURCE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+
+                <!-- HEADER -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                     <Path Data="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,5A3,3 0 1,1 9,8A3,3 0 0,1 12,5M17.13,17C15.92,18.85 14.11,20.24 12,20.92C9.89,20.24 8.08,18.85 6.87,17C6.53,16.5 6.24,16 6,15.47C6,13.82 8.71,12.47 12,12.47C15.29,12.47 18,13.82 18,15.47C17.76,16 17.47,16.5 17.13,17Z"
+                           Fill="{DynamicResource Brush.Accent}"
+                           Height="20" Width="20" Stretch="Uniform"
+                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBlock Text="SECURE COPY" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- FORM CONTENT -->
+                <StackPanel Grid.Row="2" HorizontalAlignment="Stretch" MaxWidth="1200" Margin="40,0">
+                    
+                    <!-- SOURCE -->
+                    <Grid Margin="0,0,0,25">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <DockPanel LastChildFill="False" Margin="0,0,0,5">
+                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                                <!-- SD Card Icon (Vector) -->
+                                <Path Data="M18,8L12,2H4A2,2 0 0,0 2,4V20A2,2 0 0,0 4,22H20A2,2 0 0,0 22,20V8H18M13,9H11V4H13V9M9,9H7V4H9V9"
+                                      Fill="{DynamicResource Brush.Accent}"
+                                      Height="24" Width="24" Stretch="Uniform"
+                                      VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock Text="MEDIA SOURCE" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            
+                            <!-- Global Reset Button -->
+                            <Button DockPanel.Dock="Right" 
+                                    Command="{Binding ResetAllCommand}"
+                                    Content="RESET ALL" 
+                                    FontSize="10" 
+                                    FontWeight="Bold"
+                                    Background="Transparent" 
+                                    BorderThickness="0" 
+                                    Foreground="#FF4545" 
+                                    Cursor="Hand"
+                                    Padding="4,0"
+                                    VerticalAlignment="Center"/>
+                        </DockPanel>
+                        
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <Grid Grid.Column="0" Margin="0,0,5,0">
+                                <TextBox x:Name="SourceBox" Text="{Binding SourcePath, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True">
+                                     <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="PreviewDragOver">
+                                            <b:InvokeCommandAction Command="{Binding DragOverCommand}" PassEventArgsToCommand="True"/>
+                                        </b:EventTrigger>
+                                        <b:EventTrigger EventName="PreviewDrop">
+                                            <b:InvokeCommandAction Command="{Binding DropSourceCommand}" PassEventArgsToCommand="True"/>
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
+                                </TextBox>
+                                
+                                <!-- Clear Button Source -->
+                                <Button Command="{Binding ClearSourceCommand}"
+                                        Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
+                                        Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Text.Length, ElementName=SourceBox}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Text, ElementName=SourceBox}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                </Button>
+                            </Grid>
+                            
+                            <Button Grid.Column="1" Command="{Binding PickSourceCommand}" Content="OPEN" 
+                                    Background="{DynamicResource Brush.Accent}" Foreground="White" FontWeight="Bold"
+                                    Style="{StaticResource ActionButtonStyle}"/>
+                        </Grid>
+                    </Grid>
+
+                    <!-- DESTINATIONS -->
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                             <!-- Hard Drive Icon (Vector) -->
+                            <Path Data="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M12,18A2,2 0 0,0 14,16A2,2 0 0,0 12,14A2,2 0 0,0 10,16A2,2 0 0,0 12,18M6,4V10H18V4H6Z"
+                                  Fill="{DynamicResource Brush.Accent}"
+                                  Height="24" Width="24" Stretch="Uniform"
+                                  VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <TextBlock Text="DESTINATION" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Dest A -->
+                        <Grid Margin="0,0,0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Text="MAIN DESTINATION (A)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
+                            
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Grid Grid.Column="0" Margin="0,0,5,0">
+                                    <TextBox x:Name="Dest1Box" Text="{Binding Destination1Path, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True">
+                                         <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="PreviewDragOver">
+                                                <b:InvokeCommandAction Command="{Binding DragOverCommand}" PassEventArgsToCommand="True"/>
+                                            </b:EventTrigger>
+                                            <b:EventTrigger EventName="PreviewDrop">
+                                                <b:InvokeCommandAction Command="{Binding DropDest1Command}" PassEventArgsToCommand="True"/>
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
+                                    </TextBox>
+
+                                    <!-- Clear Button Dest 1 -->
+                                    <Button Command="{Binding ClearDest1Command}"
+                                            Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
+                                            Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text.Length, ElementName=Dest1Box}" Value="0">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=Dest1Box}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                    </Button>
+                                </Grid>
+
+                                <Button Grid.Column="1" Command="{Binding PickDest1Command}" Content="OPEN" 
+                                        Background="{DynamicResource Brush.Accent}" Foreground="White" FontWeight="Bold"
+                                        Style="{StaticResource ActionButtonStyle}"/>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Dest B -->
+                        <Grid>
+                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Text="SECONDARY DESTINATION (B)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
+                            
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Grid Grid.Column="0" Margin="0,0,5,0">
+                                    <TextBox x:Name="Dest2Box" Text="{Binding Destination2Path, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True">
+                                         <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="PreviewDragOver">
+                                                <b:InvokeCommandAction Command="{Binding DragOverCommand}" PassEventArgsToCommand="True"/>
+                                            </b:EventTrigger>
+                                            <b:EventTrigger EventName="PreviewDrop">
+                                                <b:InvokeCommandAction Command="{Binding DropDest2Command}" PassEventArgsToCommand="True"/>
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
+                                    </TextBox>
+
+                                    <!-- Clear Button Dest 2 -->
+                                    <Button Command="{Binding ClearDest2Command}"
+                                            Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
+                                            Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Text.Length, ElementName=Dest2Box}" Value="0">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Text, ElementName=Dest2Box}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                    </Button>
+                                </Grid>
+
+                                <Button Grid.Column="1" Command="{Binding PickDest2Command}" Content="OPEN" 
+                                        Background="{DynamicResource Brush.Accent}" Foreground="White" FontWeight="Bold"
+                                        Style="{StaticResource ActionButtonStyle}"/>
+                            </Grid>
+                        </Grid>
                     </StackPanel>
-                    
-                    <!-- Global Reset Button -->
-                    <Button DockPanel.Dock="Right" 
-                            Command="{Binding ResetAllCommand}"
-                            Content="RESET ALL" 
-                            FontSize="10" 
-                            FontWeight="Bold"
-                            Background="Transparent" 
-                            BorderThickness="0" 
-                            Foreground="#FF4545" 
-                            Cursor="Hand"
-                            Padding="4,0"
-                            VerticalAlignment="Center"/>
-                </DockPanel>
-                
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <Grid Grid.Column="0" Margin="0,0,5,0">
-                        <TextBox x:Name="SourceBox" Text="{Binding SourcePath, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True">
-                             <b:Interaction.Triggers>
-                                <b:EventTrigger EventName="PreviewDragOver">
-                                    <b:InvokeCommandAction Command="{Binding DragOverCommand}" PassEventArgsToCommand="True"/>
-                                </b:EventTrigger>
-                                <b:EventTrigger EventName="PreviewDrop">
-                                    <b:InvokeCommandAction Command="{Binding DropSourceCommand}" PassEventArgsToCommand="True"/>
-                                </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                        </TextBox>
-                        
-                        <!-- Clear Button Source -->
-                        <Button Command="{Binding ClearSourceCommand}"
-                                Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
-                                Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border Background="{TemplateBinding Background}">
-                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text.Length, ElementName=SourceBox}" Value="0">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Text, ElementName=SourceBox}" Value="{x:Null}">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                        </Button>
-                    </Grid>
-                    
-                    <Button Grid.Column="1" Command="{Binding PickSourceCommand}" Content="OPEN" 
-                            Background="{DynamicResource Brush.Accent}" Foreground="White" FontWeight="Bold"
-                            Style="{StaticResource ActionButtonStyle}"/>
-                </Grid>
-            </Grid>
-
-            <!-- DESTINATIONS -->
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                     <!-- Hard Drive Icon (Vector) -->
-                    <Path Data="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M12,18A2,2 0 0,0 14,16A2,2 0 0,0 12,14A2,2 0 0,0 10,16A2,2 0 0,0 12,18M6,4V10H18V4H6Z"
-                          Fill="{DynamicResource Brush.Accent}"
-                          Height="24" Width="24" Stretch="Uniform"
-                          VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <TextBlock Text="DESTINATION" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Dest A -->
-                <Grid Margin="0,0,0,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    
-                    <TextBlock Text="MAIN DESTINATION (A)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
-                    
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        
-                        <Grid Grid.Column="0" Margin="0,0,5,0">
-                            <TextBox x:Name="Dest1Box" Text="{Binding Destination1Path, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True">
-                                 <b:Interaction.Triggers>
-                                    <b:EventTrigger EventName="PreviewDragOver">
-                                        <b:InvokeCommandAction Command="{Binding DragOverCommand}" PassEventArgsToCommand="True"/>
-                                    </b:EventTrigger>
-                                    <b:EventTrigger EventName="PreviewDrop">
-                                        <b:InvokeCommandAction Command="{Binding DropDest1Command}" PassEventArgsToCommand="True"/>
-                                    </b:EventTrigger>
-                                </b:Interaction.Triggers>
-                            </TextBox>
-
-                            <!-- Clear Button Dest 1 -->
-                            <Button Command="{Binding ClearDest1Command}"
-                                    Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
-                                    Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text.Length, ElementName=Dest1Box}" Value="0">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Text, ElementName=Dest1Box}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                            </Button>
-                        </Grid>
-
-                        <Button Grid.Column="1" Command="{Binding PickDest1Command}" Content="OPEN" 
-                                Background="{DynamicResource Brush.Accent}" Foreground="White" FontWeight="Bold"
-                                Style="{StaticResource ActionButtonStyle}"/>
-                    </Grid>
-                </Grid>
-
-                <!-- Dest B -->
-                <Grid>
-                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    
-                    <TextBlock Text="SECONDARY DESTINATION (B)" Margin="0,0,0,3" Style="{StaticResource LabelStyle}" Opacity="0.5"/>
-                    
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        
-                        <Grid Grid.Column="0" Margin="0,0,5,0">
-                            <TextBox x:Name="Dest2Box" Text="{Binding Destination2Path, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True">
-                                 <b:Interaction.Triggers>
-                                    <b:EventTrigger EventName="PreviewDragOver">
-                                        <b:InvokeCommandAction Command="{Binding DragOverCommand}" PassEventArgsToCommand="True"/>
-                                    </b:EventTrigger>
-                                    <b:EventTrigger EventName="PreviewDrop">
-                                        <b:InvokeCommandAction Command="{Binding DropDest2Command}" PassEventArgsToCommand="True"/>
-                                    </b:EventTrigger>
-                                </b:Interaction.Triggers>
-                            </TextBox>
-
-                            <!-- Clear Button Dest 2 -->
-                            <Button Command="{Binding ClearDest2Command}"
-                                    Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
-                                    Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="Button">
-                                                        <Border Background="{TemplateBinding Background}">
-                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Text.Length, ElementName=Dest2Box}" Value="0">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding Text, ElementName=Dest2Box}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                            </Button>
-                        </Grid>
-
-                        <Button Grid.Column="1" Command="{Binding PickDest2Command}" Content="OPEN" 
-                                Background="{DynamicResource Brush.Accent}" Foreground="White" FontWeight="Bold"
-                                Style="{StaticResource ActionButtonStyle}"/>
-                    </Grid>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-
-        <!-- FOOTER ACTIONS -->
-        <StackPanel Grid.Row="4" VerticalAlignment="Bottom" Margin="0,0,0,30">
-            <Button Command="{Binding ToggleCopyCommand}" 
-                    Margin="0,0,0,15"
-                    HorizontalAlignment="Center" Width="400">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                        <Setter Property="Content" Value="START COPY"/>
-                        <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsEnabled" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource Brush.Accent}"/>
+                <!-- FOOTER ACTIONS -->
+                <StackPanel Grid.Row="4" VerticalAlignment="Bottom" Margin="0,0,0,30">
+                    <Button Command="{Binding ToggleCopyCommand}" 
+                            Margin="0,0,0,15"
+                            HorizontalAlignment="Center" Width="400">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Content" Value="START COPY"/>
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
                                 <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                            <DataTrigger Binding="{Binding IsBusy}" Value="True">
-                                <Setter Property="Content" Value="STOP COPY"/>
-                                <Setter Property="Background" Value="#8B0000"/>
-                                <Setter Property="BorderBrush" Value="#8B0000"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button> 
-            
-            <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="4" Background="#222222" Foreground="{DynamicResource Brush.Accent}" BorderThickness="0" IsIndeterminate="False"/>
-            
-            <Grid Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding CurrentHashDisplay}" TextTrimming="CharacterEllipsis" FontSize="{StaticResource Font.Size.Body}" FontWeight="Bold" Foreground="{StaticResource Brush.Text}" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding LogText}" Margin="10,0,0,0" FontSize="{StaticResource Font.Size.Body}" FontWeight="Bold" Foreground="{StaticResource Brush.Text}" VerticalAlignment="Center"/>
-                </StackPanel>
-                
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                     <TextBlock Text="ETA: " FontWeight="Bold" FontSize="{StaticResource Font.Size.Body}" Foreground="{StaticResource Brush.Text}" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                     <TextBlock Text="{Binding TimeRemainingDisplay}" FontWeight="Bold" FontSize="{StaticResource Font.Size.Body}" Foreground="{StaticResource Brush.Text}" VerticalAlignment="Center"/>
-                </StackPanel>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource Brush.Accent}"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                        <Setter Property="Content" Value="STOP COPY"/>
+                                        <Setter Property="Background" Value="#8B0000"/>
+                                        <Setter Property="BorderBrush" Value="#8B0000"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button> 
+                    
+                    <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="4" Background="#222222" Foreground="{DynamicResource Brush.Accent}" BorderThickness="0" IsIndeterminate="False"/>
+                    
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding CurrentHashDisplay}" TextTrimming="CharacterEllipsis" FontSize="{StaticResource Font.Size.Body}" FontWeight="Bold" Foreground="{StaticResource Brush.Text}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding LogText}" Margin="10,0,0,0" FontSize="{StaticResource Font.Size.Body}" FontWeight="Bold" Foreground="{StaticResource Brush.Text}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                             <TextBlock Text="ETA: " FontWeight="Bold" FontSize="{StaticResource Font.Size.Body}" Foreground="{StaticResource Brush.Text}" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                             <TextBlock Text="{Binding TimeRemainingDisplay}" FontWeight="Bold" FontSize="{StaticResource Font.Size.Body}" Foreground="{StaticResource Brush.Text}" VerticalAlignment="Center"/>
+                        </StackPanel>
 
-                <TextBlock Grid.Column="2" Text="{Binding CurrentSpeedDisplay}" 
-                           FontWeight="Bold"
-                           HorizontalAlignment="Right" VerticalAlignment="Center"
-                           FontSize="{StaticResource Font.Size.Body}" Foreground="{StaticResource Brush.Text}"/>
+                        <TextBlock Grid.Column="2" Text="{Binding CurrentSpeedDisplay}" 
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   FontSize="{StaticResource Font.Size.Body}" Foreground="{StaticResource Brush.Text}"/>
+                    </Grid>
+                </StackPanel>
             </Grid>
-        </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

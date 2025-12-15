@@ -75,6 +75,7 @@ namespace Veriflow.Desktop.ViewModels
 
             // Default
             SetMode(AppMode.Video);
+            NavigateTo(PageType.Offload); // Set start page to SECURE COPY (Offload)
 
             // Navigation Wiring
             _mediaViewModel.RequestOpenInPlayer += async (path) =>
