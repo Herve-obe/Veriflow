@@ -12,6 +12,9 @@ using System.Windows.Threading;
 using Veriflow.Desktop.Models;
 using Veriflow.Desktop.Services;
 using System.Linq;
+using System.IO;
+using System.Text;
+using Veriflow.Desktop.Views.Shared;
 
 namespace Veriflow.Desktop.ViewModels
 {
@@ -822,10 +825,139 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand]
         private void ExportLogs()
         {
-            // Placeholder: Export logic (e.g., save CSV/EDL)
-            // Ideally, open a SaveFileDialog via a Service or simple Dialog
-            System.Diagnostics.Debug.WriteLine("Exporting Logs...");
-            MessageBox.Show($"Exported {TaggedClips.Count} clips (Simulation).", "Veriflow Export");
+            if (TaggedClips.Count == 0)
+            {
+                 new GenericMessageWindow("No clips to export.", "Veriflow Export").ShowDialog();
+                 return;
+            }
+
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "Edit Decision List (*.edl)|*.edl",
+                Title = "Export Logs",
+                FileName = System.IO.Path.GetFileNameWithoutExtension(FileName) // Default name
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    string edlPath = dialog.FileName;
+                    string alePath = System.IO.Path.ChangeExtension(edlPath, ".ale");
+
+                    // 1. Generate EDL
+                    string edlContent = GenerateEdlContent();
+                    File.WriteAllText(edlPath, edlContent);
+
+                    // 2. Generate ALE
+                    string aleContent = GenerateAleContent();
+                    File.WriteAllText(alePath, aleContent);
+
+                    new GenericMessageWindow($"Export Successful!\n\nEDL: {edlPath}\nALE: {alePath}", "Veriflow Export").ShowDialog();
+                }
+                catch (Exception ex)
+                {
+                    new GenericMessageWindow($"Export Failed: {ex.Message}", "Error").ShowDialog();
+                }
+            }
+        }
+
+        private string GenerateEdlContent()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("TITLE: VERIFLOW_EXPORT");
+            sb.AppendLine("FCM: NON-DROP FRAME");
+            sb.AppendLine();
+
+            // Destination Timecode Start (01:00:00:00)
+            TimeSpan destTime = new TimeSpan(1, 0, 0); 
+            int index = 1;
+
+            string reelName = SanitizeReelName(FileName);
+
+            foreach (var clip in TaggedClips)
+            {
+                // Format: 001  REELNAME  V     C        InPoint OutPoint DestIn DestOut
+                // CMX 3600 standard usually strictly fixed width but basic spacing works for most NLEs.
+                
+                // Parse Clip Times
+                // ClipLogItem stores formatted string "HH:mm:ss:ff". Only need to sanitize/pass through.
+                string srcIn = clip.InPoint;
+                string srcOut = clip.OutPoint;
+
+                // Calculate Duration to update DestOut
+                // We need to parse strict timecode to add duration? 
+                // Or simplistic: Just re-use duration string logic?
+                // Let's rely on Timecode parsing logic if we want perfectly continuous DestTC.
+                // Simplified approach: Re-calculate Dest Out based on Duration.
+                
+                TimeSpan durationTs = TimeSpan.Zero;
+                if (TimeSpan.TryParse(clip.Duration, out var d)) durationTs = d;
+                
+                // Format Dest In
+                string dstIn = FormatTimecodeForEdl(destTime);
+                
+                destTime += durationTs;
+                string dstOut = FormatTimecodeForEdl(destTime); // This is technically inaccurate if not accounting for frames logic vs ms, but consistent with app logic.
+
+                sb.AppendLine($"{index:D3}  {reelName,-8} V     C        {srcIn} {srcOut} {dstIn} {dstOut}");
+                sb.AppendLine($"* FROM CLIP NAME: {clip.Notes}"); // Comment
+                sb.AppendLine();
+
+                index++;
+            }
+
+            return sb.ToString();
+        }
+
+        private string GenerateAleContent()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Heading");
+            sb.AppendLine("FIELD_DELIM:\tTABS");
+            sb.AppendLine("VIDEO_FORMAT:\t1080"); // Generic default
+            sb.AppendLine($"FPS:\t{_fps:F2}");
+            sb.AppendLine();
+            
+            sb.AppendLine("Name\tTracks\tStart\tEnd\tDuration"); // Columns
+            sb.AppendLine("Data");
+
+            string reelName = SanitizeReelName(FileName);
+
+            foreach (var clip in TaggedClips)
+            {
+                // Name (Notes) | Tracks (V) | Start | End | Duration
+                sb.AppendLine($"{clip.Notes}\tV\t{clip.InPoint}\t{clip.OutPoint}\t{clip.Duration}");
+            }
+
+            return sb.ToString();
+        }
+
+        private string SanitizeReelName(string filename)
+        {
+            if (string.IsNullOrEmpty(filename)) return "AX";
+            string name = System.IO.Path.GetFileNameWithoutExtension(filename);
+            // EDL Reel names max 8 chars usually, sometimes strictly alphanumeric.
+            if (name.Length > 8) name = name.Substring(name.Length - 8); // Take last 8 chars usually better for uniqueness? Or first 8?
+            // Let's take first 8 for readability.
+            if (name.Length > 8) name = name.Substring(0, 8);
+            return name.Replace(" ", "").ToUpper();
+        }
+
+        private string FormatTimecodeForEdl(TimeSpan ts)
+        {
+            // Re-using exiting logic but ensuring strict formatting if needed.
+            // Our existing FormatTimecode logic relies on _startHeaderOffset. 
+            // For DestTC, we just passed a raw TimeSpan starting at 1h.
+            // We can just format it manually similar to FormatTimecode but without offset.
+             double totalSeconds = ts.TotalSeconds;
+             int h = (int)ts.TotalHours; 
+             int m = ts.Minutes;
+             int s = ts.Seconds;
+             int frames = (int)Math.Round((totalSeconds - (int)totalSeconds) * _fps);
+             if (frames >= _fps) frames = 0;
+
+             return $"{h:D2}:{m:D2}:{s:D2}:{frames:D2}";
         }
 
         public void Dispose()

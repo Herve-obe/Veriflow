@@ -6,7 +6,27 @@
              xmlns:local="clr-namespace:Veriflow.Desktop.Views"
              xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Focusable="True"
+             MouseDown="UserControl_MouseDown">
+    <UserControl.InputBindings>
+        <KeyBinding Key="Space" Command="{Binding TogglePlayPauseCommand}"/>
+        <KeyBinding Key="Return" Command="{Binding StopCommand}"/>
+        
+        <!-- Standard Video Navigation -->
+        <KeyBinding Key="Left" Command="{Binding PreviousFrameCommand}"/> 
+        <KeyBinding Key="Right" Command="{Binding NextFrameCommand}"/>    
+        
+        <!-- Large Jumps -->
+        <KeyBinding Key="Left" Modifiers="Shift" Command="{Binding RewindCommand}"/>
+        <KeyBinding Key="Right" Modifiers="Shift" Command="{Binding ForwardCommand}"/>
+        
+        <!-- Logging Shortcuts -->
+        <KeyBinding Key="I" Command="{Binding SetInCommand}"/>
+        <KeyBinding Key="O" Command="{Binding SetOutCommand}"/>
+        <KeyBinding Key="T" Command="{Binding TagClipCommand}"/>
+    </UserControl.InputBindings>
+
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         

@@ -11,6 +11,19 @@ namespace Veriflow.Desktop.Views
             InitializeComponent();
         }
 
+        // Ensure the UserControl takes focus when clicked (fixes shortcut issues)
+        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Only take focus if not clicking a focusable child (like a TextBox)
+            // But since KeyBindings are on this dedicated UC, forcing focus here is usually safe 
+            // as long as we don't steal from specific input fields.
+            // Check original source?
+            if (!(e.OriginalSource is TextBox || e.OriginalSource is PasswordBox))
+            {
+                 Focus();
+            }
+        }
+
         // --- SLIDER INTERACTION LOGIC (Migrated from TransportControls) ---
 
         private void Slider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
