@@ -154,7 +154,8 @@
                 </StackPanel>
                 
                 <!-- Logging Controls (Right Aligned) -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel.Resources>
                          <Style TargetType="Button" BasedOn="{StaticResource BlueActionButtonStyle}">
                              <Setter Property="Height" Value="24"/>

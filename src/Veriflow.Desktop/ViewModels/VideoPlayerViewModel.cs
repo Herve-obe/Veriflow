@@ -424,7 +424,8 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(CanPlay))]
         private void Play()
         {
-            if (_mediaPlayer != null)
+            // Safety Check: Ensure Checked Loaded
+            if (_mediaPlayer != null && IsVideoLoaded)
             {
                 _mediaPlayer.Play();
                 _mediaPlayer.Mute = IsMuted;
@@ -436,10 +437,10 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanStop))] // Disable if not loaded
         private void Pause()
         {
-            if (_mediaPlayer != null && _mediaPlayer.IsPlaying)
+            if (_mediaPlayer != null && _mediaPlayer.IsPlaying && IsVideoLoaded)
             {
                 _mediaPlayer.Pause();
                 _mediaPlayer.Pause();
@@ -450,9 +451,13 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        [RelayCommand]
+
+
+        [RelayCommand(CanExecute = nameof(CanStop))] // Verified: Checks IsVideoLoaded. works for Toggle logic.
         private void TogglePlayPause()
         {
+            if (!IsVideoLoaded) return;
+            
             if (IsPlaying) Pause();
             else Play();
         }
@@ -476,7 +481,10 @@ namespace Veriflow.Desktop.ViewModels
             _uiTimer.Stop();
             _stopwatch.Reset();
             IsPlaying = false;
-            IsPaused = true; // We are effectively paused at start
+            // VISUAL FIX: "Stop" means "Reset to Start". 
+            // Although engine is paused, we don't want the "Pause" button to look active/toggled.
+            // Setting IsPaused = false ensures the UI looks stopped/ready.
+            IsPaused = false; 
             PlaybackPercent = 0;
             PlaybackPercent = 0;
             CurrentTimeDisplay = "00:00:00:00";
