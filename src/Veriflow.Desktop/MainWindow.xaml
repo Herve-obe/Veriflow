@@ -20,8 +20,8 @@
     <Window.Resources>
         <!-- A/V SEGMENTED SWITCH (Local Style) -->
         <Style x:Key="SegmentedToggleStyle" TargetType="RadioButton">
-            <Setter Property="Background" Value="#252525"/>
-            <Setter Property="Foreground" Value="#888888"/>
+            <Setter Property="Background" Value="{StaticResource Brush.Panel.Header}"/>
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="Padding" Value="15,0"/>
@@ -42,7 +42,7 @@
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#333333"/>
+                                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
                                 <Setter Property="Cursor" Value="Hand"/>
                             </Trigger>
                         </ControlTemplate.Triggers>

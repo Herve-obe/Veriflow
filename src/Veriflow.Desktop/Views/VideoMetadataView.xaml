@@ -23,15 +23,15 @@
             <StackPanel Grid.Row="0" Margin="0,0,0,41">
                 <Button Command="{Binding OpenFileCommand}"
                         Content="OPEN FILE" Height="26" ToolTip="Import Video File" Margin="0,0,0,5"
-                        Style="{StaticResource BlueActionButtonStyle}" Focusable="False"/>
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
                 
                 <Button Command="{Binding UnloadMediaCommand}"
                         Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,20"
-                        Style="{StaticResource BlueActionButtonStyle}" Focusable="False"/>
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
 
                 <Button Command="{Binding SendFileToTranscodeCommand}"
                         Content="SEND TO TRANSCODE" Height="26" ToolTip="Send current file to Transcode Page"
-                        Style="{StaticResource BlueActionButtonStyle}" Focusable="False"/>
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
             </StackPanel>
 
             <!-- VIDEO METADATA SCROLLVIEWER -->
@@ -203,11 +203,11 @@
             <StackPanel Grid.Row="2" Margin="0,10,0,0">
                 <Button Command="{Binding UpdateReportCommand}"
                         Content="UPDATE REPORT NOTES" Height="26" ToolTip="Update Report Note" Margin="0,0,0,5"
-                        Style="{StaticResource BlueActionButtonStyle}" Focusable="False"/>
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
                 
                 <Button Command="{Binding ExportLogsCommand}"
                         Content="EXPORT LOGS (EDL/ALE)" Height="26" ToolTip="Export Tagged Clips"
-                        Style="{StaticResource BlueActionButtonStyle}" Background="#2E7D32" BorderBrush="#2E7D32" Focusable="False"/>
+                        Style="{StaticResource ContextualActionButtonStyle}" Background="#2E7D32" BorderBrush="#2E7D32" Focusable="False"/>
             </StackPanel>
         </Grid>
     </Border>

@@ -59,13 +59,13 @@
                     
                     <!-- Import Button: Square, Blue, No Icon -->
                     <!-- Import Button: Square, Blue, No Icon -->
-                    <Button Grid.Column="0" Command="{Binding ImportVideoCommand}" Content="IMPORT VIDEO" Width="125" Style="{StaticResource BlueActionButtonStyle}"/>
+                    <Button Grid.Column="0" Command="{Binding ImportVideoCommand}" Content="IMPORT VIDEO" Width="125" Style="{StaticResource ContextualActionButtonStyle}"/>
                     
                     <!-- Clear List Button: Square, Logic Fixed -->
                     <!-- Clear List Button: Square, Logic Fixed -->
                     <Button Grid.Column="2" Command="{Binding ClearVideoPoolCommand}" Content="CLEAR LIST" Width="125">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource BlueActionButtonStyle}">
+                            <Style TargetType="Button" BasedOn="{StaticResource ContextualActionButtonStyle}">
                                 <Style.Triggers>
                                     <!-- Default: Count=0 -> Disabled (Gray) -->
                                     <DataTrigger Binding="{Binding VideoPool.Count}" Value="0">
@@ -78,7 +78,7 @@
                 </Grid>
 
                 <!-- Drop Zone & List -->
-                <Border Grid.Row="2" Background="#1A1A1A" BorderBrush="#333333" BorderThickness="1" CornerRadius="4" AllowDrop="True">
+                <Border Grid.Row="2" Background="{StaticResource Brush.Panel.Darker}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="4" AllowDrop="True">
                      <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Drop">
                             <i:InvokeCommandAction Command="{Binding DropVideoCommand}" PassEventArgsToCommand="True"/>
@@ -89,7 +89,7 @@
                         <!-- Empty State Hint -->
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" 
                                     Visibility="{Binding VideoPool.Count, Converter={x:Static local:Converters.ZeroToVisibleConverter}}">
-                             <TextBlock Text="DROP VIDEO MEDIA FILES HERE" Foreground="#555555" FontWeight="Bold" HorizontalAlignment="Center"/>
+                             <TextBlock Text="DROP VIDEO MEDIA FILES HERE" Foreground="{StaticResource Brush.Text.Disabled}" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <ListBox ItemsSource="{Binding VideoPool}" Background="Transparent" BorderThickness="0" 
@@ -109,10 +109,10 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#2A2A2A"/>
+                                                        <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.Panel.Lighter}"/>
                                                     </Trigger>
                                                     <Trigger Property="IsSelected" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#333333"/>
+                                                        <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.Control}"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -129,10 +129,10 @@
                                         </Grid.ColumnDefinitions>
                                         
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Filename}" Foreground="#DDDDDD" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Filename}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="12" TextTrimming="CharacterEllipsis"/>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding StartTimecode}" Foreground="#888888" FontSize="10" FontFamily="Consolas" Margin="0,0,8,0"/>
-                                                <TextBlock Text="{Binding Duration}" Foreground="#666666" FontSize="10"/>
+                                                <TextBlock Text="{Binding StartTimecode}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="10" FontFamily="Consolas" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding Duration}" Foreground="{StaticResource Brush.Text.Tertiary}" FontSize="10"/>
                                             </StackPanel>
                                         </StackPanel>
 
@@ -149,7 +149,7 @@
                                                             <ControlTemplate TargetType="Button">
                                                                 <Border Background="Transparent">
                                                                      <Path Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" 
-                                                                           Fill="#666666" Height="10" Width="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                           Fill="{StaticResource Brush.Text.Tertiary}" Height="10" Width="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
                                                                 <ControlTemplate.Triggers>
                                                                     <Trigger Property="IsMouseOver" Value="True">
@@ -197,13 +197,13 @@
 
                      <!-- Import Button: Square, Blue, No Icon -->
                     <!-- Import Button: Square, Blue, No Icon -->
-                    <Button Grid.Column="0" Command="{Binding ImportAudioCommand}" Content="IMPORT AUDIO" Width="125" Style="{StaticResource BlueActionButtonStyle}"/>
+                    <Button Grid.Column="0" Command="{Binding ImportAudioCommand}" Content="IMPORT AUDIO" Width="125" Style="{StaticResource ContextualActionButtonStyle}"/>
                     
                     <!-- Clear List Button: Square, Logic Fixed -->
                     <!-- Clear List Button: Square, Logic Fixed -->
                     <Button Grid.Column="2" Command="{Binding ClearAudioPoolCommand}" Content="CLEAR LIST" Width="125">
                          <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource BlueActionButtonStyle}">
+                            <Style TargetType="Button" BasedOn="{StaticResource ContextualActionButtonStyle}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding AudioPool.Count}" Value="0">
                                         <Setter Property="IsEnabled" Value="False"/>
@@ -214,7 +214,7 @@
                     </Button>
                 </Grid>
                 
-                <Border Grid.Row="2" Background="#1A1A1A" BorderBrush="#333333" BorderThickness="1" CornerRadius="4" AllowDrop="True">
+                <Border Grid.Row="2" Background="{StaticResource Brush.Panel.Darker}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1" CornerRadius="4" AllowDrop="True">
                      <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Drop">
                             <i:InvokeCommandAction Command="{Binding DropAudioCommand}" PassEventArgsToCommand="True"/>
@@ -225,7 +225,7 @@
                         <!-- Empty State Hint -->
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" 
                                     Visibility="{Binding AudioPool.Count, Converter={x:Static local:Converters.ZeroToVisibleConverter}}">
-                             <TextBlock Text="DROP AUDIO MEDIA FILES HERE" Foreground="#555555" FontWeight="Bold" HorizontalAlignment="Center"/>
+                             <TextBlock Text="DROP AUDIO MEDIA FILES HERE" Foreground="{StaticResource Brush.Text.Disabled}" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
 
                         <ListBox ItemsSource="{Binding AudioPool}" Background="Transparent" BorderThickness="0" 
@@ -245,10 +245,10 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#2A2A2A"/>
+                                                        <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.Panel.Lighter}"/>
                                                     </Trigger>
                                                     <Trigger Property="IsSelected" Value="True">
-                                                        <Setter TargetName="Bd" Property="Background" Value="#333333"/>
+                                                        <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.Control}"/>
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -265,10 +265,10 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Filename}" Foreground="#DDDDDD" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Filename}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="12" TextTrimming="CharacterEllipsis"/>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding StartTimecode}" Foreground="#888888" FontSize="10" FontFamily="Consolas" Margin="0,0,8,0"/>
-                                                <TextBlock Text="{Binding Duration}" Foreground="#666666" FontSize="10"/>
+                                                <TextBlock Text="{Binding StartTimecode}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="10" FontFamily="Consolas" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding Duration}" Foreground="{StaticResource Brush.Text.Tertiary}" FontSize="10"/>
                                             </StackPanel>
                                         </StackPanel>
                                         
@@ -285,7 +285,7 @@
                                                             <ControlTemplate TargetType="Button">
                                                                 <Border Background="Transparent">
                                                                      <Path Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" 
-                                                                           Fill="#666666" Height="10" Width="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                           Fill="{StaticResource Brush.Text.Tertiary}" Height="10" Width="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
                                                                 <ControlTemplate.Triggers>
                                                                     <Trigger Property="IsMouseOver" Value="True">
@@ -325,9 +325,9 @@
                      Actually, Matches takes full height. -->
 
                 <DataGrid Grid.Row="1" ItemsSource="{Binding Matches}" AutoGenerateColumns="False" 
-                          Background="#1A1A1A" RowBackground="Transparent" 
-                          BorderThickness="1" BorderBrush="#333333"
-                          GridLinesVisibility="None" HorizontalGridLinesBrush="#333333"
+                          Background="{StaticResource Brush.Panel.Darker}" RowBackground="Transparent" 
+                          BorderThickness="1" BorderBrush="{StaticResource Brush.Border}"
+                          GridLinesVisibility="None" HorizontalGridLinesBrush="{StaticResource Brush.Border}"
                           HeadersVisibility="Column" ColumnHeaderHeight="30"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
@@ -344,12 +344,12 @@
                         <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
 
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="#222222"/>
-                            <Setter Property="Foreground" Value="#888888"/>
+                            <Setter Property="Background" Value="{StaticResource Brush.Panel.Header}"/>
+                            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}"/>
                             <Setter Property="Padding" Value="10,0"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <Setter Property="BorderBrush" Value="#444444"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource Brush.Control.Hover}"/>
                             <Setter Property="Height" Value="30"/>
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -372,9 +372,9 @@
                                                 <!-- Sort Indicators (Always present, visibility toggled) -->
                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="6,0,0,0">
                                                     <!-- Up Arrow -->
-                                                    <Path x:Name="SortUp" Data="M 0 4 L 3.5 0 L 7 4 Z" Fill="#444444" Margin="0,0,0,2" Visibility="Visible"/>
+                                                    <Path x:Name="SortUp" Data="M 0 4 L 3.5 0 L 7 4 Z" Fill="{StaticResource Brush.Control.Hover}" Margin="0,0,0,2" Visibility="Visible"/>
                                                     <!-- Down Arrow -->
-                                                    <Path x:Name="SortDown" Data="M 0 0 L 3.5 4 L 7 0 Z" Fill="#444444" Visibility="Visible"/>
+                                                    <Path x:Name="SortDown" Data="M 0 0 L 3.5 4 L 7 0 Z" Fill="{StaticResource Brush.Control.Hover}" Visibility="Visible"/>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -435,10 +435,10 @@
                              <Setter Property="BorderThickness" Value="0"/>
                              <Style.Triggers>
                                  <Trigger Property="IsMouseOver" Value="True">
-                                     <Setter Property="Background" Value="#383838"/> <!-- Lighter Hover -->
+                                     <Setter Property="Background" Value="{StaticResource Brush.Panel.Hover}"/> <!-- Lighter Hover -->
                                  </Trigger>
                                  <Trigger Property="IsSelected" Value="True">
-                                     <Setter Property="Background" Value="#505050"/> <!-- Matches HighlightBrushKey -->
+                                     <Setter Property="Background" Value="{StaticResource Brush.Panel.Selected}"/> <!-- Matches HighlightBrushKey -->
                                      <Setter Property="Foreground" Value="White"/>
                                  </Trigger>
                              </Style.Triggers>
@@ -498,7 +498,7 @@
                                                         <ControlTemplate TargetType="Button">
                                                             <Border Background="Transparent">
                                                                 <Path Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" 
-                                                                        Fill="#666666" Height="10" Width="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                        Fill="{StaticResource Brush.Text.Tertiary}" Height="10" Width="10" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                             </Border>
                                                             <ControlTemplate.Triggers>
                                                                 <Trigger Property="IsMouseOver" Value="True">
@@ -528,7 +528,7 @@
         </Grid>
 
         <!-- FOOTER: BATCH EXPORT -->
-        <Border Grid.Row="2" Background="#111111" Margin="0,20,0,0" Padding="15" CornerRadius="5">
+        <Border Grid.Row="2" Background="{StaticResource Brush.Text.Dark}" Margin="0,20,0,0" Padding="15" CornerRadius="5">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -549,14 +549,14 @@
                              <ColumnDefinition Width="*"/>
                              <ColumnDefinition Width="35"/>
                          </Grid.ColumnDefinitions>
-                         <TextBox Text="{Binding ExportDestination}" IsReadOnly="True" Background="#222222" BorderThickness="0" Foreground="White" Padding="8,6" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
+                         <TextBox Text="{Binding ExportDestination}" IsReadOnly="True" Background="{StaticResource Brush.Panel.Header}" BorderThickness="0" Foreground="White" Padding="8,6" VerticalAlignment="Stretch" VerticalContentAlignment="Center"/>
                          <Button Grid.Column="1" Command="{Binding SelectExportFolderCommand}" Content="..." Margin="5,0,0,0" Style="{StaticResource ActionButtonStyle}" Height="30" VerticalAlignment="Stretch"/>
                      </Grid>
                 </Grid>
 
                 <Button Grid.Column="2" Command="{Binding ClearAllCommand}" Content="CLEAR ALL" Width="120" VerticalAlignment="Bottom" Margin="0,0,0,1">
                      <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource BlueActionButtonStyle}">
+                            <Style TargetType="Button" BasedOn="{StaticResource ContextualActionButtonStyle}">
                                 <Style.Triggers>
                                     <!-- Logic: Disable only if ALL lists are empty -->
                                     <MultiDataTrigger>
@@ -572,18 +572,18 @@
                         </Button.Style>
                 </Button>
                 
-                <Button Grid.Column="4" Command="{Binding ExportBatchCommand}" Content="EXPORT ALL SYNCED" Height="26" Padding="20,0" Style="{StaticResource BlueActionButtonStyle}" VerticalAlignment="Bottom" Margin="0,0,0,1"/>
+                <Button Grid.Column="4" Command="{Binding ExportBatchCommand}" Content="EXPORT ALL SYNCED" Height="26" Padding="20,0" Style="{StaticResource ContextualActionButtonStyle}" VerticalAlignment="Bottom" Margin="0,0,0,1"/>
             </Grid>
         </Border>
         
         <!-- PROGRESS OVERLAY -->
         <Grid Grid.RowSpan="3" Background="#AA000000" Visibility="{Binding IsBusy, Converter={x:Static local:Converters.BooleanToVisibilityConverter}}">
-             <Border Background="#252525" CornerRadius="10" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="400">
+             <Border Background="{StaticResource Brush.Panel.Header}" CornerRadius="10" Padding="30" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="400">
                  <StackPanel>
                      <TextBlock Text="PROCESSING" Foreground="{DynamicResource Brush.Accent}" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
                      
-                     <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="10" Background="#333333" Foreground="{DynamicResource Brush.Accent}" BorderThickness="0"/>
-                     <TextBlock Text="{Binding BusyMessage}" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,15,0,0"/>
+                     <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="10" Background="{StaticResource Brush.Control}" Foreground="{DynamicResource Brush.Accent}" BorderThickness="0"/>
+                     <TextBlock Text="{Binding BusyMessage}" Foreground="{StaticResource Brush.Text.Secondary}" HorizontalAlignment="Center" Margin="0,15,0,0"/>
                  </StackPanel>
              </Border>
         </Grid>

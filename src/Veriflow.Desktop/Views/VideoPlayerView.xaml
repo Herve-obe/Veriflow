@@ -157,7 +157,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"
                             Visibility="{Binding IsVideoLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel.Resources>
-                         <Style TargetType="Button" BasedOn="{StaticResource BlueActionButtonStyle}">
+                         <Style TargetType="Button" BasedOn="{StaticResource ContextualActionButtonStyle}">
                              <Setter Property="Height" Value="24"/>
                              <Setter Property="Margin" Value="5,0"/>
                              <Setter Property="FontSize" Value="11"/>

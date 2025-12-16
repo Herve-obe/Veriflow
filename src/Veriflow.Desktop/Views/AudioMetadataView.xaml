@@ -23,15 +23,15 @@
             <StackPanel Grid.Row="0" Margin="0,0,0,41">
                 <Button Command="{Binding LoadFileCommand}"
                         Content="OPEN FILE" Height="26" ToolTip="Import Audio File" Margin="0,0,0,5"
-                        Style="{StaticResource BlueActionButtonStyle}"/>
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
                 
                 <Button Command="{Binding UnloadMediaCommand}"
                         Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,20"
-                        Style="{StaticResource BlueActionButtonStyle}"/>
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
 
                 <Button Command="{Binding SendFileToTranscodeCommand}"
                         Content="SEND TO TRANSCODE" Height="26" ToolTip="Send current file to Transcode Page"
-                        Style="{StaticResource BlueActionButtonStyle}"/>
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
             </StackPanel>
 
             <ScrollViewer Grid.Row="1" Focusable="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -197,7 +197,7 @@
             <!-- BOTTOM ACTIONS -->
             <Button Grid.Row="2" Command="{Binding ModifyInReportCommand}"
                     Content="UPDATE REPORT NOTES" Height="26" ToolTip="Navigate to Reports Page with this item" Margin="0,10,0,0"
-                    Style="{StaticResource BlueActionButtonStyle}"/>
+                    Style="{StaticResource ContextualActionButtonStyle}"/>
         </Grid>
     </Border>
 

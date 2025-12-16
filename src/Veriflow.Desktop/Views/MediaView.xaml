@@ -38,15 +38,15 @@
         <HierarchicalDataTemplate x:Key="FolderTemplate" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal" Margin="0,2">
                 <Path Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z" 
-                      Fill="#FFC107" Height="14" Width="14" Stretch="Uniform" Margin="0,0,5,0"/>
-                <TextBlock Text="{Binding Name}" Foreground="#DDDDDD" FontSize="13" Margin="5,0,0,0"/>
+                      Fill="{StaticResource Brush.Icon.Folder}" Height="14" Width="14" Stretch="Uniform" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Name}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="13" Margin="5,0,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>
 
         <HierarchicalDataTemplate x:Key="DriveTemplate" ItemsSource="{Binding Folders}" ItemTemplate="{StaticResource FolderTemplate}">
             <StackPanel Orientation="Horizontal" Margin="0,2">
                 <Path Data="M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2Z" 
-                      Fill="#90A4AE" Height="14" Width="14" Stretch="Uniform" Margin="0,0,5,0"/>
+                      Fill="{StaticResource Brush.Icon.Drive}" Height="14" Width="14" Stretch="Uniform" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" Margin="5,0,0,0"/>
             </StackPanel>
         </HierarchicalDataTemplate>
@@ -61,7 +61,7 @@
         </Grid.ColumnDefinitions>
         
         <!-- COL 1: EXPLORER -->
-        <Border Grid.Column="0" BorderBrush="#333333" BorderThickness="0,0,1,0" Background="#1E1E1E" AllowDrop="True">
+        <Border Grid.Column="0" BorderBrush="{StaticResource Brush.Control}" BorderThickness="0,0,1,0" Background="{StaticResource Brush.Panel}" AllowDrop="True">
              <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Drop">
                     <i:InvokeCommandAction Command="{Binding DropExplorerCommand}" PassEventArgsToCommand="True"/>
@@ -73,7 +73,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 
-                <TextBlock Text="EXPLORER" FontSize="14" FontWeight="SemiBold" Foreground="#888888" Margin="10,5"/>
+                <TextBlock Text="EXPLORER" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource Brush.Text.Secondary}" Margin="10,5"/>
                 
                 <TreeView Grid.Row="1" ItemsSource="{Binding Drives}" Background="Transparent" BorderThickness="0" Margin="5"
                           ItemTemplate="{StaticResource DriveTemplate}">
@@ -85,7 +85,7 @@
                                  Base style has Foreground={StaticResource Brush.Text} (Whiteish). 
                                  Original local style had #CCCCCC. I will keep local overrides if they are desired, 
                                  or remove them if they conflict. User said "Keep the existing setters". -->
-                            <Setter Property="Foreground" Value="#CCCCCC"/>
+                            <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
                             <Setter Property="FontSize" Value="13"/>
                         </Style>
                     </TreeView.ItemContainerStyle>
@@ -94,7 +94,7 @@
         </Border>
 
         <!-- COL 2: BROWSER -->
-        <Border Grid.Column="1" Background="#121212" AllowDrop="True" Margin="20">
+        <Border Grid.Column="1" Background="{StaticResource Brush.Background}" AllowDrop="True" Margin="20">
              <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Drop">
                     <i:InvokeCommandAction Command="{Binding DropMediaCommand}" PassEventArgsToCommand="True"/>
@@ -137,7 +137,7 @@
                                     <!-- 1. Generic File Icon (Placeholder) -->
                                     <!-- Always visible, sits behind Image -->
                                     <Path Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V13H13V18H15M11,18V13H9V18H11M7,18V13H5V18H7" 
-                                          Fill="#555555" Stretch="Uniform" Margin="20"/>
+                                          Fill="{StaticResource Brush.Border.Light}" Stretch="Uniform" Margin="20"/>
 
                                     <!-- 2. Video Thumbnail (Async Loaded) -->
                                     <!-- Sits on top. Transparent if Source is null. Covers Path if Source is set. -->
@@ -145,7 +145,7 @@
                                            RenderOptions.BitmapScalingMode="LowQuality"/>
 
                                     <!-- 3. Hover/Playing Overlay -->
-                                    <Grid x:Name="Overlay" Background="#AA000000" Visibility="Hidden">
+                                    <Grid x:Name="Overlay" Background="{StaticResource Brush.Overlay.Dark}" Visibility="Hidden">
                                          <Button Command="{Binding DataContext.PreviewFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                  CommandParameter="{Binding}"
                                                  Style="{StaticResource Style.Transport.Base}"
@@ -155,7 +155,7 @@
                                                  <!-- Play Icon (Default) -->
                                                  <Path x:Name="PlayIcon" Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="White" Stretch="Uniform" Margin="10" Visibility="Visible"/>
                                                  <!-- Stop Icon (Hidden) -->
-                                                 <Path x:Name="StopIcon" Data="M6,6H18V18H6V6Z" Fill="#FF5252" Stretch="Uniform" Margin="12" Visibility="Collapsed"/>
+                                                 <Path x:Name="StopIcon" Data="M6,6H18V18H6V6Z" Fill="{StaticResource Brush.Transport.Stop}" Stretch="Uniform" Margin="12" Visibility="Collapsed"/>
                                              </Grid>
                                          </Button>
                                     </Grid>
@@ -163,7 +163,7 @@
 
                                 <!-- Filename -->
                                 <TextBlock Grid.Row="1" Text="{Binding Name}" TextTrimming="CharacterEllipsis" 
-                                           Foreground="#DDDDDD" FontSize="11" HorizontalAlignment="Center" Margin="0,5,0,0" ToolTip="{Binding Name}"/>
+                                           Foreground="{StaticResource Brush.Text.Bright}" FontSize="11" HorizontalAlignment="Center" Margin="0,5,0,0" ToolTip="{Binding Name}"/>
                             
                             </Grid>
                             <DataTemplate.Triggers>
@@ -186,7 +186,7 @@
                 <!-- Drag & Drop Hint -->
                 <TextBlock Grid.Row="1" 
                            VerticalAlignment="Center" HorizontalAlignment="Center" 
-                           Foreground="#555" FontSize="18" FontWeight="Bold"
+                           Foreground="{StaticResource Brush.Text.Disabled}" FontSize="18" FontWeight="Bold"
                            IsHitTestVisible="False">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
@@ -221,28 +221,28 @@
                 <StackPanel Grid.Row="0" Margin="0,0,0,10">
                     <Button Command="{Binding DataContext.CreateReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="CREATE REPORT" Height="26" ToolTip="Start a new report with listed files" Margin="0,0,0,5"
-                            Style="{StaticResource BlueActionButtonStyle}"/>
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
                     
                     <Button Command="{Binding DataContext.AddToReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="ADD TO REPORT" Height="26" ToolTip="Add listed files to current report" Margin="0,0,0,20"
-                            Style="{StaticResource BlueActionButtonStyle}"
+                            Style="{StaticResource ContextualActionButtonStyle}"
                             IsEnabled="{Binding DataContext.HasActiveReport, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
 
                     <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="OPEN FILE IN PLAYER" Height="26" ToolTip="Open selected file in Player" Margin="0,0,0,20"
-                            Style="{StaticResource BlueActionButtonStyle}"/>
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
                     
                     <Button Command="{Binding DataContext.SendToSecureCopyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="SEND TO SECURE COPY" Height="26" ToolTip="Send selected folder to Secure Copy" Margin="0,0,0,20"
-                            Style="{StaticResource BlueActionButtonStyle}"/>
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
 
                     <Button Command="{Binding DataContext.SendFileToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="SEND FILE TO TRANSCODE" Height="26" ToolTip="Send selected file to Transcode" Margin="0,0,0,5"
-                            Style="{StaticResource BlueActionButtonStyle}"/>
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
 
                     <Button Command="{Binding DataContext.SendToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="SEND FOLDER TO TRANSCODE" Height="26" ToolTip="Send all files in folder to Transcode" Margin="0,0,0,5"
-                            Style="{StaticResource BlueActionButtonStyle}"/>
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
 
 
                 </StackPanel>
@@ -282,25 +282,25 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     
-                                    <TextBlock Text="Name:" Foreground="#888888"/>
+                                    <TextBlock Text="Name:" Foreground="{StaticResource Brush.Text.Secondary}"/>
                                     <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.FullPath}" TextWrapping="Wrap" Foreground="White" ToolTip="{Binding CurrentMetadata.FullPath}"/>
                                     
-                                    <TextBlock Grid.Row="1" Text="Project:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Text="Project:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.Project}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="2" Text="Scene:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Text="Scene:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.Scene}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="3" Text="Take:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Text="Take:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.Take}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="4" Text="Tape:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="4" Text="Tape:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.Tape}" Foreground="White" Margin="0,2,0,0"/>
                                     
-                                    <TextBlock Grid.Row="5" Text="Date:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="5" Text="Date:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentMetadata.CreationDate}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="6" Text="Size:" Foreground="#888888" Margin="0,5,0,0"/>
+                                    <TextBlock Grid.Row="6" Text="Size:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,5,0,0"/>
                                     <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentMetadata.FileSize}" Foreground="White" Margin="0,5,0,0"/>
                                 </Grid>
                             </Expander>
@@ -323,28 +323,28 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Text="Sample Rate:" Foreground="#888888"/>
+                                    <TextBlock Text="Sample Rate:" Foreground="{StaticResource Brush.Text.Secondary}"/>
                                     <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.SampleRateString}" Foreground="White"/>
 
-                                    <TextBlock Grid.Row="1" Text="Bit Depth:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Text="Bit Depth:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.BitDepthString}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="2" Text="Frame Rate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Text="Frame Rate:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.FrameRate}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="3" Text="Start TC:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Text="Start TC:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentMetadata.TimecodeStart}" FontFamily="Consolas" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="4" Text="Length:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="4" Text="Length:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentMetadata.Duration}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="5" Text="User Bits:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="5" Text="User Bits:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentMetadata.UBits}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
                                     
-                                    <TextBlock Grid.Row="6" Text="Bitrate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="6" Text="Bitrate:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentMetadata.Bitrate}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="7" Text="Bitrate Mode:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="7" Text="Bitrate Mode:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentMetadata.BitrateMode}" Foreground="White" Margin="0,2,0,0"/>
                                 </Grid>
                             </Expander>
@@ -362,13 +362,13 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Text="Container:" Foreground="#888888"/>
+                                <TextBlock Text="Container:" Foreground="{StaticResource Brush.Text.Secondary}"/>
                                 <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.ContainerFormat}" Foreground="White"/>
 
-                                <TextBlock Grid.Row="1" Text="Codec:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="1" Text="Codec:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.CodecName}" Foreground="White" Margin="0,2,0,0"/>
 
-                                <TextBlock Grid.Row="2" Text="Channels:" Foreground="#888888" Margin="0,2,0,0"/>
+                                <TextBlock Grid.Row="2" Text="Channels:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.ChannelCountString}" Foreground="White" Margin="0,2,0,0"/>
                             </Grid>
                         </Expander>
@@ -389,9 +389,9 @@
                                     <DataGrid.Resources>
                                         <Style TargetType="DataGridColumnHeader">
                                             <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="Foreground" Value="#888888"/>
+                                            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}"/>
                                             <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                            <Setter Property="BorderBrush" Value="#444444"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource Brush.Control.Hover}"/>
                                             <Setter Property="Padding" Value="5,2"/>
                                         </Style>
                                         <Style TargetType="DataGridCell">
@@ -450,16 +450,16 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     
-                                    <TextBlock Text="Name:" Foreground="#888888"/>
+                                    <TextBlock Text="Name:" Foreground="{StaticResource Brush.Text.Secondary}"/>
                                     <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.Filename}" TextTrimming="CharacterEllipsis" Foreground="White"/>
                                     
-                                    <TextBlock Grid.Row="1" Text="Container:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Text="Container:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Container}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="2" Text="Size:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Text="Size:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Size}" Foreground="White" Margin="0,2,0,0"/>
                                     
-                                    <TextBlock Grid.Row="3" Text="Duration:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Text="Duration:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Duration}" FontFamily="Consolas" Foreground="White" Margin="0,2,0,0"/>
                                 </Grid>
                             </Expander>
@@ -484,34 +484,34 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Text="Codec:" Foreground="#888888"/>
+                                    <TextBlock Text="Codec:" Foreground="{StaticResource Brush.Text.Secondary}"/>
                                     <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.Codec}" TextWrapping="Wrap" Foreground="White"/>
 
-                                    <TextBlock Grid.Row="1" Text="Resolution:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Text="Resolution:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Resolution}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="2" Text="Aspect Ratio:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Text="Aspect Ratio:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.AspectRatio}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="3" Text="Frame Rate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="3" Text="Frame Rate:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentVideoMetadata.FrameRate}" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="4" Text="Bit Depth:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="4" Text="Bit Depth:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentVideoMetadata.BitDepth}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="5" Text="Chroma:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="5" Text="Chroma:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ChromaSubsampling}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="6" Text="Color Space:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="6" Text="Color Space:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ColorSpace}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="7" Text="Scan Type:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="7" Text="Scan Type:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding CurrentVideoMetadata.ScanType}" Foreground="White" Margin="0,2,0,0"/>
 
-                                    <TextBlock Grid.Row="8" Text="GOP Struct:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="8" Text="GOP Struct:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding CurrentVideoMetadata.GopStructure}" Foreground="White" Margin="0,2,0,0"/>
                                     
-                                    <TextBlock Grid.Row="9" Text="Bitrate:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="9" Text="Bitrate:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding CurrentVideoMetadata.Bitrate}" Foreground="White" Margin="0,2,0,0"/>
                                 </Grid>
                             </Expander>
@@ -529,13 +529,13 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Text="Audio Format:" Foreground="#888888"/>
+                                    <TextBlock Text="Audio Format:" Foreground="{StaticResource Brush.Text.Secondary}"/>
                                     <TextBlock Grid.Column="1" Text="{Binding CurrentVideoMetadata.AudioFormat}" Foreground="White"/>
 
-                                    <TextBlock Grid.Row="1" Text="Channels:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="1" Text="Channels:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentVideoMetadata.AudioChannels}" Foreground="White" Margin="0,2,0,0"/>
                                     
-                                    <TextBlock Grid.Row="2" Text="Start TC:" Foreground="#888888" Margin="0,2,0,0"/>
+                                    <TextBlock Grid.Row="2" Text="Start TC:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
                                     <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentVideoMetadata.StartTimecode}" FontFamily="Consolas" Foreground="White" FontWeight="Bold" Margin="0,2,0,0"/>
                                 </Grid>
 
@@ -546,7 +546,7 @@
 
                 <Button Grid.Row="2" Command="{Binding DataContext.EditMetadataCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                         Content="EDIT METADATA" Height="26" ToolTip="Edit metadata for selected media" Margin="0,10,0,0"
-                        Style="{StaticResource BlueActionButtonStyle}"/>
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
             </Grid>
         </Border>
     </Grid>

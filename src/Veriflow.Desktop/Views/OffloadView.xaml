@@ -73,7 +73,7 @@
                                     FontWeight="Bold"
                                     Background="Transparent" 
                                     BorderThickness="0" 
-                                    Foreground="#FF4545" 
+                                    Foreground="{StaticResource Brush.Error}" 
                                     Cursor="Hand"
                                     Padding="4,0"
                                     VerticalAlignment="Center"/>
@@ -99,7 +99,7 @@
                                 
                                 <!-- Clear Button Source -->
                                 <Button Command="{Binding ClearSourceCommand}"
-                                        Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
+                                        Content="✕" FontSize="10" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
                                         Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
                                         <Button.Style>
                                             <Style TargetType="Button">
@@ -171,7 +171,7 @@
 
                                     <!-- Clear Button Dest 1 -->
                                     <Button Command="{Binding ClearDest1Command}"
-                                            Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
+                                            Content="✕" FontSize="10" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
                                             Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
                                             <Button.Style>
                                                 <Style TargetType="Button">
@@ -232,7 +232,7 @@
 
                                     <!-- Clear Button Dest 2 -->
                                     <Button Command="{Binding ClearDest2Command}"
-                                            Content="✕" FontSize="10" Foreground="#888" Background="Transparent" BorderThickness="0"
+                                            Content="✕" FontSize="10" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
                                             Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
                                             <Button.Style>
                                                 <Style TargetType="Button">
@@ -284,15 +284,15 @@
                                     </Trigger>
                                     <DataTrigger Binding="{Binding IsBusy}" Value="True">
                                         <Setter Property="Content" Value="STOP COPY"/>
-                                        <Setter Property="Background" Value="#8B0000"/>
-                                        <Setter Property="BorderBrush" Value="#8B0000"/>
+                                        <Setter Property="Background" Value="{StaticResource Brush.Error.Dark}"/>
+                                        <Setter Property="BorderBrush" Value="{StaticResource Brush.Error.Dark}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Button.Style>
                     </Button> 
                     
-                    <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="4" Background="#222222" Foreground="{DynamicResource Brush.Accent}" BorderThickness="0" IsIndeterminate="False"/>
+                    <ProgressBar Value="{Binding ProgressValue}" Maximum="100" Height="4" Background="{StaticResource Brush.Panel.Header}" Foreground="{DynamicResource Brush.Accent}" BorderThickness="0" IsIndeterminate="False"/>
                     
                     <Grid Margin="0,10,0,0">
                         <Grid.ColumnDefinitions>

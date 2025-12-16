@@ -68,6 +68,25 @@
     <SolidColorBrush x:Key="Brush.Panel.Light" Color="#2E2E2E"/>
     <SolidColorBrush x:Key="Brush.Text.Bright" Color="#DDDDDD"/>
     <SolidColorBrush x:Key="Brush.Meter.fill" Color="#00FF00"/>
+    
+    <!-- EXTENDED PALETTE (for hardcoded values found in views) -->
+    <SolidColorBrush x:Key="Brush.Panel.Darker" Color="#1A1A1A"/>
+    <SolidColorBrush x:Key="Brush.Panel.Lighter" Color="#2A2A2A"/>
+    <SolidColorBrush x:Key="Brush.Panel.Header" Color="#222222"/>
+    <SolidColorBrush x:Key="Brush.Panel.Hover" Color="#383838"/>
+    <SolidColorBrush x:Key="Brush.Panel.Selected" Color="#505050"/>
+    <SolidColorBrush x:Key="Brush.Border.Light" Color="#555555"/>
+    <SolidColorBrush x:Key="Brush.Border.Lighter" Color="#666666"/>
+    <SolidColorBrush x:Key="Brush.Text.Tertiary" Color="#666666"/>
+    <SolidColorBrush x:Key="Brush.Text.Disabled" Color="#555555"/>
+    <SolidColorBrush x:Key="Brush.Input.Dark" Color="#151515"/>
+    <SolidColorBrush x:Key="Brush.Overlay.Dark" Color="#AA000000"/>
+    <SolidColorBrush x:Key="Brush.Overlay.Medium" Color="#44FFFFFF"/>
+    <SolidColorBrush x:Key="Brush.Overlay.Light" Color="#88FFFFFF"/>
+    <SolidColorBrush x:Key="Brush.Icon.Folder" Color="#FFC107"/>
+    <SolidColorBrush x:Key="Brush.Icon.Drive" Color="#90A4AE"/>
+    <SolidColorBrush x:Key="Brush.Error" Color="#FF4545"/>
+    <SolidColorBrush x:Key="Brush.Error.Dark" Color="#8B0000"/>
 
     <!-- GLOBAL WINDOW STYLE -->
     <Style TargetType="{x:Type Window}">
@@ -288,33 +307,104 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border x:Name="border" Background="#333333" BorderBrush="#555555" BorderThickness="1">
-                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!-- Enabled = Red -->
                         <Trigger Property="IsEnabled" Value="True">
-                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio}"/>
-                             <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Audio}"/>
-                             <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Audio}"/>
+                            <Setter Property="Foreground" Value="White"/>
                         </Trigger>
-                        <!-- Disabled = Gray -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#C62828"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="#C62828"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio.Pressed}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Audio.Pressed}"/>
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                             <Setter TargetName="border" Property="Background" Value="#222222"/>
-                             <Setter TargetName="border" Property="BorderBrush" Value="#333333"/>
-                             <Setter Property="Foreground" Value="#666666"/>
-                        </Trigger>
-                         <!-- Hover (only when enabled) -->
-                         <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsEnabled" Value="True"/>
-                                <Condition Property="IsMouseOver" Value="True"/>
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="border" Property="Background" Value="{StaticResource Brush.Control.Hover}"/>
+                            <Setter TargetName="border" Property="Background" Value="#333333"/>
                             <Setter TargetName="border" Property="BorderBrush" Value="#555555"/>
-                        </MultiTrigger>
-                         <Trigger Property="IsPressed" Value="True">
-                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio.Pressed}"/>
-                         </Trigger>
+                            <Setter Property="Foreground" Value="#666666"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- CONTEXTUAL ACTION BUTTON (Dynamic: Blue for Video, Red for Audio) -->
+    <Style x:Key="ContextualActionButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="FontSize" Value="{StaticResource Font.Size.Body}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border" Background="#333333" BorderBrush="#555555" BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!-- Default Enabled State = Blue (Video Mode) -->
+                        <Trigger Property="IsEnabled" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Video}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Video}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        
+                        <!-- Audio Mode Override -->
+                        <DataTrigger Binding="{Binding DataContext.IsVideoActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Audio}"/>
+                        </DataTrigger>
+                        
+                        <!-- Hover State - Video Mode -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                <Condition Binding="{Binding DataContext.IsVideoActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="#1565C0"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="#1565C0"/>
+                        </MultiDataTrigger>
+                        
+                        <!-- Hover State - Audio Mode -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                <Condition Binding="{Binding DataContext.IsVideoActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="#C62828"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="#C62828"/>
+                        </MultiDataTrigger>
+                        
+                        <!-- Pressed State - Video Mode -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                <Condition Binding="{Binding DataContext.IsVideoActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="True"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="#0D47A1"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="#0D47A1"/>
+                        </MultiDataTrigger>
+                        
+                        <!-- Pressed State - Audio Mode -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                <Condition Binding="{Binding DataContext.IsVideoActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False"/>
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent.Audio.Pressed}"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush.Accent.Audio.Pressed}"/>
+                        </MultiDataTrigger>
+                        
+                        <!-- Disabled State -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="border" Property="Background" Value="#333333"/>
+                            <Setter TargetName="border" Property="BorderBrush" Value="#555555"/>
+                            <Setter Property="Foreground" Value="#666666"/>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

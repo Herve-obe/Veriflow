@@ -147,7 +147,7 @@
                                     <Thumb x:Name="Thumb">
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
-                                                <Ellipse Width="12" Height="12" Fill="#FFFFFF" Stroke="{DynamicResource Brush.Text.Dark}" StrokeThickness="1"/>
+                                                <Ellipse Width="12" Height="12" Fill="White" Stroke="{DynamicResource Brush.Text.Dark}" StrokeThickness="1"/>
                                             </ControlTemplate>
                                         </Thumb.Template>
                                     </Thumb>

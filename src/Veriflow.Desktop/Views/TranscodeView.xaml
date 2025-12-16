@@ -22,8 +22,8 @@
                     <Border x:Name="Border" 
                             Grid.ColumnSpan="2"
                             CornerRadius="2"
-                            Background="#333333"
-                            BorderBrush="#555"
+                            Background="{StaticResource Brush.Control}"
+                            BorderBrush="{StaticResource Brush.Border.Light}"
                             BorderThickness="1" />
                     <Path x:Name="Arrow"
                           Grid.Column="1"     
@@ -34,7 +34,7 @@
                 </Grid>
                 <ControlTemplate.Triggers>
                     <Trigger Property="IsMouseOver" Value="true">
-                        <Setter TargetName="Border" Property="Background" Value="#444" />
+                        <Setter TargetName="Border" Property="Background" Value="{StaticResource Brush.Control.Hover}" />
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
@@ -45,11 +45,11 @@
 
             <!-- Dark DataGrid Header Style (Replaces GridViewColumnHeader) -->
             <Style TargetType="DataGridColumnHeader">
-                <Setter Property="Background" Value="#333333"/>
+                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="Padding" Value="6,8"/>
                 <Setter Property="BorderThickness" Value="0,0,1,0"/>
-                <Setter Property="BorderBrush" Value="#444"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Brush.Control.Hover}"/>
                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
                 <Setter Property="FontWeight" Value="Bold"/>
                 <Setter Property="Height" Value="35"/>
@@ -114,7 +114,7 @@
                 </Setter>
                 <Style.Triggers>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="#444"/>
+                        <Setter Property="Background" Value="{StaticResource Brush.Control.Hover}"/>
                         <Setter Property="Foreground" Value="White"/>
                     </Trigger>
                 </Style.Triggers>
@@ -127,19 +127,19 @@
                 <Setter Property="Foreground" Value="White"/>
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#2A2A2A"/>
+                        <Setter Property="Background" Value="{StaticResource Brush.Panel.Lighter}"/>
                     </Trigger>
                     <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="#444"/>
+                        <Setter Property="Background" Value="{StaticResource Brush.Control.Hover}"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
 
             <!-- Dark ComboBox Style -->
             <Style TargetType="ComboBox">
-                <Setter Property="Background" Value="#333333"/>
+                <Setter Property="Background" Value="{StaticResource Brush.Control}"/>
                 <Setter Property="Foreground" Value="White"/>
-                <Setter Property="BorderBrush" Value="#555"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Brush.Border.Light}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Padding" Value="10,6"/>
                 <Setter Property="Height" Value="32"/>
@@ -182,9 +182,9 @@
                                           MinWidth="{TemplateBinding ActualWidth}"
                                           MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                         <Border x:Name="DropDownBorder"
-                                                Background="#333333"
-                                                BorderThickness="1"
-                                                BorderBrush="#555"/>
+                                        Background="{StaticResource Brush.Control}"
+                                        BorderThickness="1"
+                                        BorderBrush="{StaticResource Brush.Border.Light}"/>
                                         <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                         </ScrollViewer>
@@ -229,11 +229,11 @@
                     <TextBlock Text="FILE LIST" Style="{StaticResource LabelStyle}" VerticalAlignment="Center" Opacity="0.5"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Content="ADD FILE(S)" Command="{Binding AddFilesCommand}" 
-                                Style="{StaticResource BlueActionButtonStyle}" 
+                                Style="{StaticResource ContextualActionButtonStyle}" 
                                 Width="120" Height="26" FontSize="11" 
                                 Margin="0,0,10,0"/>
                         <Button Content="CLEAR LIST" Command="{Binding ClearListCommand}" 
-                                Style="{StaticResource BlueActionButtonStyle}" 
+                                Style="{StaticResource ContextualActionButtonStyle}" 
                                 Width="100" Height="26" FontSize="11"/>
                     </StackPanel>
                 </Grid>
@@ -266,7 +266,7 @@
                                 <DataGridTemplateColumn Header="STATUS" Width="120" SortMemberPath="Status">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Status}" Foreground="#AAA" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Status}" Foreground="{StaticResource Brush.Text.Secondary}" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -525,7 +525,7 @@
                      </Grid.ColumnDefinitions>
                      <TextBox Text="{Binding DestinationFolder, TargetNullValue='Source Location'}" 
                               IsReadOnly="True" Height="30" VerticalContentAlignment="Center" 
-                              Background="#151515" BorderThickness="0" Foreground="#AAA"/>
+                               Background="{StaticResource Brush.Input.Dark}" BorderThickness="0" Foreground="{StaticResource Brush.Text.Secondary}"/>
                      <Button Grid.Column="1" Content="..." Width="40" Command="{Binding PickDestinationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="5,0,0,0"/>
                  </Grid>
 
@@ -547,7 +547,7 @@
                              </Style>
                          </TextBlock.Style>
                      </TextBlock>
-                     <ProgressBar Value="{Binding TotalProgressValue}" Height="10" Background="#222" BorderThickness="0" Foreground="{DynamicResource Brush.Accent}" Margin="0,0,0,20">
+                     <ProgressBar Value="{Binding TotalProgressValue}" Height="10" Background="{StaticResource Brush.Panel.Header}" BorderThickness="0" Foreground="{DynamicResource Brush.Accent}" Margin="0,0,0,20">
                          <ProgressBar.Style>
                              <Style TargetType="ProgressBar">
                                  <Style.Triggers>
@@ -567,7 +567,7 @@
                              Content="START TRANSCODE" 
                              Command="{Binding StartTranscodeCommand}"
                              Height="26"
-                             Style="{StaticResource BlueActionButtonStyle}">
+                             Style="{StaticResource ContextualActionButtonStyle}">
                      </Button>
                  </StackPanel>
 
