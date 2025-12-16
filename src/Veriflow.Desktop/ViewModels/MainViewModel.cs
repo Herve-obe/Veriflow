@@ -11,7 +11,7 @@ namespace Veriflow.Desktop.ViewModels
 
 
     public enum AppMode { Audio, Video }
-    public enum PageType { Media, Player, Sync, Offload, Transcode, Reports }
+    public enum PageType { Media, Player, Sync, SecureCopy, Transcode, Reports }
 
     public partial class MainViewModel : ObservableObject
     {
@@ -38,7 +38,7 @@ namespace Veriflow.Desktop.ViewModels
         private PageType _currentPageType = PageType.Media;
 
         // ViewModels
-        private readonly OffloadViewModel _offloadViewModel = new();
+        private readonly SecureCopyViewModel _secureCopyViewModel = new();
         private readonly PlayerViewModel _playerViewModel = new(); 
         private readonly AudioViewModel _audioViewModel = new();
         private readonly VideoPlayerViewModel _videoPlayerViewModel = new();
@@ -51,7 +51,7 @@ namespace Veriflow.Desktop.ViewModels
         public ICommand ShowMediaCommand { get; }
         public ICommand ShowTranscodeCommand { get; }
         public ICommand ShowSyncCommand { get; }
-        public ICommand ShowOffloadCommand { get; }
+        public ICommand ShowSecureCopyCommand { get; }
         public ICommand ShowReportsCommand { get; }
         public ICommand SwitchToAudioCommand { get; }
         public ICommand SwitchToVideoCommand { get; }
@@ -65,7 +65,7 @@ namespace Veriflow.Desktop.ViewModels
             ShowMediaCommand = new RelayCommand(() => NavigateTo(PageType.Media));
             ShowTranscodeCommand = new RelayCommand(() => NavigateTo(PageType.Transcode));
             ShowSyncCommand = new RelayCommand(() => NavigateTo(PageType.Sync));
-            ShowOffloadCommand = new RelayCommand(() => NavigateTo(PageType.Offload));
+            ShowSecureCopyCommand = new RelayCommand(() => NavigateTo(PageType.SecureCopy));
             ShowReportsCommand = new RelayCommand(() => NavigateTo(PageType.Reports));
 
             SwitchToAudioCommand = new RelayCommand(() => SetMode(AppMode.Audio));
@@ -75,7 +75,7 @@ namespace Veriflow.Desktop.ViewModels
 
             // Default
             SetMode(AppMode.Video);
-            NavigateTo(PageType.Offload); // Set start page to SECURE COPY (Offload)
+            NavigateTo(PageType.SecureCopy); // Set start page to SECURE COPY
 
             // Navigation Wiring
             _mediaViewModel.RequestOpenInPlayer += async (path) =>
@@ -100,8 +100,8 @@ namespace Veriflow.Desktop.ViewModels
 
             _mediaViewModel.RequestOffloadSource += (path) =>
             {
-                _offloadViewModel.SourcePath = path;
-                NavigateTo(PageType.Offload);
+                _secureCopyViewModel.SourcePath = path;
+                NavigateTo(PageType.SecureCopy);
             };
 
             _mediaViewModel.RequestTranscode += (files) =>
@@ -290,8 +290,8 @@ namespace Veriflow.Desktop.ViewModels
                     else
                         CurrentView = _videoPlayerViewModel;
                     break;
-                case PageType.Offload:
-                    CurrentView = _offloadViewModel;
+                case PageType.SecureCopy:
+                    CurrentView = _secureCopyViewModel;
                     break;
                 case PageType.Transcode:
                     CurrentView = _transcodeViewModel;
@@ -313,7 +313,7 @@ namespace Veriflow.Desktop.ViewModels
             OnPropertyChanged(nameof(IsPlayerActive));
             OnPropertyChanged(nameof(IsTranscodeActive));
             OnPropertyChanged(nameof(IsSyncActive));
-            OnPropertyChanged(nameof(IsOffloadActive));
+            OnPropertyChanged(nameof(IsSecureCopyActive));
             OnPropertyChanged(nameof(IsReportsActive));
             OnPropertyChanged(nameof(IsAudioActive));
             OnPropertyChanged(nameof(IsVideoActive));
@@ -322,7 +322,7 @@ namespace Veriflow.Desktop.ViewModels
         public bool IsMediaActive => CurrentPageType == PageType.Media;
         public bool IsPlayerActive => CurrentPageType == PageType.Player;
         public bool IsTranscodeActive => CurrentPageType == PageType.Transcode;
-        public bool IsOffloadActive => CurrentPageType == PageType.Offload;
+        public bool IsSecureCopyActive => CurrentPageType == PageType.SecureCopy;
         public bool IsSyncActive => CurrentPageType == PageType.Sync;
         public bool IsReportsActive => CurrentPageType == PageType.Reports;
 

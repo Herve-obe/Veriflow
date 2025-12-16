@@ -13,7 +13,7 @@ using Veriflow.Desktop.Services;
 
 namespace Veriflow.Desktop.ViewModels
 {
-    public partial class OffloadViewModel : ObservableObject
+    public partial class SecureCopyViewModel : ObservableObject
     {
         // --- SERVICES & TOKENS ---
         private readonly SecureCopyService _secureCopyService;
@@ -84,7 +84,7 @@ namespace Veriflow.Desktop.ViewModels
         private string? _destination2Path;
 
         // --- CONSTRUCTOR ---
-        public OffloadViewModel()
+        public SecureCopyViewModel()
         {
             _secureCopyService = new SecureCopyService();
             InitializeExplorer();

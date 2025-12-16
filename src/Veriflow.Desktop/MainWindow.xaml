@@ -64,8 +64,8 @@
         <DataTemplate DataType="{x:Type vm:VideoPlayerViewModel}">
             <local:PlayerView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:OffloadViewModel}">
-            <local:OffloadView/>
+        <DataTemplate DataType="{x:Type vm:SecureCopyViewModel}">
+            <local:SecureCopyView/>
         </DataTemplate>
          <DataTemplate DataType="{x:Type vm:TranscodeViewModel}">
             <local:TranscodeView/>
@@ -115,7 +115,7 @@
                 <MenuItem Header="Go to Media" InputGestureText="Ctrl+1" Command="{Binding ShowMediaCommand}" />
                 <MenuItem Header="Go to Player" InputGestureText="Ctrl+2" Command="{Binding ShowPlayerCommand}" />
                 <MenuItem Header="Go to Sync" InputGestureText="Ctrl+3" Command="{Binding ShowSyncCommand}" />
-                <MenuItem Header="Go to Secure Copy" InputGestureText="Ctrl+4" Command="{Binding ShowOffloadCommand}" />
+                <MenuItem Header="Go to Secure Copy" InputGestureText="Ctrl+4" Command="{Binding ShowSecureCopyCommand}" />
                 <MenuItem Header="Go to Transcode" InputGestureText="Ctrl+5" Command="{Binding ShowTranscodeCommand}" />
                 <MenuItem Header="Go to Report" InputGestureText="Ctrl+6" Command="{Binding ShowReportsCommand}" />
             </MenuItem>
@@ -169,8 +169,8 @@
 
                     <!-- SECURE COPY -->
                     <RadioButton Content="SECURE COPY" 
-                                 Command="{Binding ShowOffloadCommand}" 
-                                 IsChecked="{Binding IsOffloadActive, Mode=OneWay}"
+                                 Command="{Binding ShowSecureCopyCommand}" 
+                                 IsChecked="{Binding IsSecureCopyActive, Mode=OneWay}"
                                  Style="{StaticResource NavButtonStyle}">
                          <RadioButton.Tag>
                              <Path Data="M12,1L3,5V11C3,16.55 6.9,21.74 12,23C17.1,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" 

@@ -14,8 +14,8 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- View Models DataTemplates -->
-            <DataTemplate DataType="{x:Type vm:OffloadViewModel}">
-                <views:OffloadView />
+            <DataTemplate DataType="{x:Type vm:SecureCopyViewModel}">
+                <views:SecureCopyView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:TranscodeViewModel}">
                 <views:TranscodeView />
