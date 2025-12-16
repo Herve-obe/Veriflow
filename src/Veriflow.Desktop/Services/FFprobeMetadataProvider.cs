@@ -38,13 +38,7 @@ namespace Veriflow.Desktop.Services
                 PopulateFromRiffChunks(filePath, metadata);
             }
 
-            // DEBUG LOGGING VALUES
-            try
-            {
-                 string logPath = @"C:\Users\herve\.gemini\antigravity\brain\44daf55c-ba39-40b9-9103-b6d3b3013f90\metadata_values.txt";
-                 string log = $"[{DateTime.Now}] Extracted for {metadata.Filename}:\nCodec: {metadata.CodecName}\nBitrate: {metadata.Bitrate}\nContainer: {metadata.ContainerFormat}\nSize: {metadata.FileSize}\nChannels: {metadata.ChannelLayout}\nEncoder: {metadata.EncodingLibrary}\n--------------------------------\n";
-                 File.AppendAllText(logPath, log);
-            } catch {}
+
 
             return metadata;
         }
@@ -90,12 +84,7 @@ namespace Veriflow.Desktop.Services
             {
                 string ffprobePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffprobe.exe");
                 
-                // DEBUG LOGGING PATH
-                try 
-                {
-                    string logPath = @"C:\Users\herve\.gemini\antigravity\brain\44daf55c-ba39-40b9-9103-b6d3b3013f90\ffprobe_path.txt";
-                    File.AppendAllText(logPath, $"[{DateTime.Now}] BaseDir: {AppDomain.CurrentDomain.BaseDirectory}\nCheck Path: {ffprobePath}\nExists: {File.Exists(ffprobePath)}\n");
-                } catch { }
+
 
                 if (!File.Exists(ffprobePath)) return;
 
@@ -117,14 +106,7 @@ namespace Veriflow.Desktop.Services
                 string json = await process.StandardOutput.ReadToEndAsync();
                 await process.WaitForExitAsync();
 
-                // DEBUG LOGGING
-                try 
-                {
-                    string logPath = @"C:\Users\herve\.gemini\antigravity\brain\44daf55c-ba39-40b9-9103-b6d3b3013f90\ffprobe_debug.txt";
-                    string log = $"[{DateTime.Now}] Parsed: {filePath}\nArgs: {args}\nExitCode: {process.ExitCode}\nJSON Len: {json.Length}\nJSON: {json}\n--------------------------------\n";
-                    File.AppendAllText(logPath, log);
-                }
-                catch {}
+
 
                 if (process.ExitCode == 0 && !string.IsNullOrWhiteSpace(json))
                 {
@@ -134,11 +116,7 @@ namespace Veriflow.Desktop.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"FFprobe Error: {ex.Message}");
-                try 
-                {
-                    string logPath = @"C:\Users\herve\.gemini\antigravity\brain\44daf55c-ba39-40b9-9103-b6d3b3013f90\ffprobe_debug.txt";
-                    File.AppendAllText(logPath, $"EXCEPTION: {ex}\n");
-                } catch {}
+
             }
         }
 

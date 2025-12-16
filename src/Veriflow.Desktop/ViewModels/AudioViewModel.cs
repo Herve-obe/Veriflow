@@ -582,7 +582,27 @@ namespace Veriflow.Desktop.ViewModels
 
         public void Dispose()
         {
+            // Stop timer
+            _playbackTimer?.Stop();
+            _stopwatch?.Stop();
+            
+            // Unsubscribe from timer event
+            if (_playbackTimer != null)
+            {
+                _playbackTimer.Tick -= OnTimerTick;
+            }
+            
+            // Unsubscribe from output device event
+            if (_outputDevice != null)
+            {
+                _outputDevice.Stopped -= OnPlaybackStopped;
+            }
+            
+            // Clean up audio resources
             CleanUpAudio();
+            
+            // Suppress finalization
+            GC.SuppressFinalize(this);
         }
         public event Action<IEnumerable<string>>? RequestTranscode;
         public event Action<string>? RequestModifyReport;

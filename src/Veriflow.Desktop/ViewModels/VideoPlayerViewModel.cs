@@ -962,11 +962,37 @@ namespace Veriflow.Desktop.ViewModels
 
         public void Dispose()
         {
-            _uiTimer.Stop();
+            // Stop all timers
+            _uiTimer?.Stop();
             _delayTimer?.Stop();
             _jogTimer?.Stop();
-            _mediaPlayer?.Dispose();
-            // _libVLC should NOT be disposed here as it is shared
+            
+            // Unsubscribe from MediaPlayer events to prevent memory leaks
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.LengthChanged -= OnLengthChanged;
+                _mediaPlayer.EndReached -= OnEndReached;
+                _mediaPlayer.EncounteredError -= OnError;
+                
+                // Dispose media and player
+                _mediaPlayer.Media?.Dispose();
+                _mediaPlayer.Dispose();
+            }
+            
+            // Unsubscribe from timer events
+            if (_uiTimer != null)
+            {
+                _uiTimer.Tick -= OnUiTick;
+            }
+            
+            // Note: _delayTimer and _jogTimer use anonymous lambdas, 
+            // so we can't unsubscribe them individually.
+            // Stopping and nulling them is sufficient as they're local to this instance.
+            
+            // _libVLC should NOT be disposed here as it is shared via VideoEngineService
+            
+            // Suppress finalization
+            GC.SuppressFinalize(this);
         }
     }
 
