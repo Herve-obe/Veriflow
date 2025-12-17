@@ -45,7 +45,7 @@
             <local:VideoPlayerView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:AudioPlayerViewModel}">
-            <local:AudioView/>
+            <local:AudioPlayerView/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PlayerViewModel}">
             <local:AudioPlayerView/>

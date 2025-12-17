@@ -221,15 +221,14 @@
 
     </UserControl.Resources>
 
-    <Grid AllowDrop="True" Background="Transparent">
+    <Grid AllowDrop="True" Background="Transparent" Margin="20">
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="Drop">
                 <i:InvokeCommandAction Command="{Binding DropFileCommand}" PassEventArgsToCommand="True" />
             </i:EventTrigger>
         </i:Interaction.Triggers>
 
-        <!-- CONSOLE ONLY -->
-        <Grid Margin="20">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/> <!-- Header -->
                 <RowDefinition Height="Auto"/> <!-- Transport (Reserved/Hidden here) -->
@@ -465,6 +464,5 @@
                     </Grid>
                 </Grid>
             </ScrollViewer>
-        </Grid>
     </Grid>
 </UserControl>
