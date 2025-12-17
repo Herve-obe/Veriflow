@@ -40,7 +40,7 @@ namespace Veriflow.Desktop.ViewModels
         // ViewModels
         private readonly SecureCopyViewModel _secureCopyViewModel = new();
         private readonly PlayerViewModel _playerViewModel = new(); 
-        private readonly AudioViewModel _audioViewModel = new();
+        private readonly AudioPlayerViewModel _audioViewModel = new();
         private readonly VideoPlayerViewModel _videoPlayerViewModel = new();
         private readonly TranscodeViewModel _transcodeViewModel = new();
         private readonly MediaViewModel _mediaViewModel = new();

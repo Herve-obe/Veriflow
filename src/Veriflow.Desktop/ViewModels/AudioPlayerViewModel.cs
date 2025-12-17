@@ -18,7 +18,7 @@ using Veriflow.Desktop.Models;
 
 namespace Veriflow.Desktop.ViewModels
 {
-    public partial class AudioViewModel : ObservableObject, IDisposable
+    public partial class AudioPlayerViewModel : ObservableObject, IDisposable
     {
         private ISoundOut? _outputDevice;
         private IWaveSource? _inputStream;
@@ -72,7 +72,7 @@ namespace Veriflow.Desktop.ViewModels
 
         public ObservableCollection<TrackViewModel> Tracks { get; } = new();
 
-        public AudioViewModel()
+        public AudioPlayerViewModel()
         {
             _playbackTimer = new DispatcherTimer
             {
