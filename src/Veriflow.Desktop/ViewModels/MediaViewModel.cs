@@ -16,6 +16,13 @@ using Veriflow.Desktop.Helpers;
 
 namespace Veriflow.Desktop.ViewModels
 {
+    public enum MediaViewMode
+    {
+        Grid,      // Icon view with thumbnails
+        List,      // Detailed table view
+        Filmstrip  // List + large preview
+    }
+
     public partial class MediaViewModel : ObservableObject
     {
         private readonly AudioPreviewService _audioService = new();
@@ -51,6 +58,9 @@ namespace Veriflow.Desktop.ViewModels
 
         [ObservableProperty]
         private bool _isVideoMode;
+
+        [ObservableProperty]
+        private MediaViewMode _currentViewMode = MediaViewMode.Grid; // Default to Grid view
 
         public void SetAppMode(AppMode mode)
         {

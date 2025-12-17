@@ -12,6 +12,48 @@
     
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        
+        <!-- Add Converters for View Mode Switching -->
+        <local:EnumToBoolConverter x:Key="EnumToBoolConverter" xmlns:local="clr-namespace:Veriflow.Desktop.Converters"/>
+        <local:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" xmlns:local="clr-namespace:Veriflow.Desktop.Converters"/>
+
+        <!-- View Mode Toggle Button Style -->
+        <Style x:Key="ViewModeToggleStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4"
+                                Padding="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Brush.Control.Hover}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Brush.Text.Bright}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush.Accent}"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource Brush.Control.Pressed}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
 
 
@@ -106,19 +148,64 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <Path Data="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,3V13H11V3"
-                          Fill="{DynamicResource Brush.Accent}"
-                          Height="20" Width="20" Stretch="Uniform"
-                          VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <TextBlock Text="MEDIA" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
-                </StackPanel>
+                <!-- Header with Title and View Mode Toggle Buttons -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Title -->
+                    <StackPanel Orientation="Horizontal">
+                        <Path Data="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,3V13H11V3"
+                              Fill="{DynamicResource Brush.Accent}"
+                              Height="20" Width="20" Stretch="Uniform"
+                              VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBlock Text="MEDIA" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <!-- View Mode Toggle Buttons -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <!-- Grid Mode Button -->
+                        <RadioButton GroupName="ViewMode" 
+                                     IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Grid}"
+                                     ToolTip="Grid View"
+                                     Style="{StaticResource ViewModeToggleStyle}">
+                            <Path Data="M4,4H8V8H4V4M10,4H14V8H10V4M16,4H20V8H16V4M4,10H8V14H4V10M10,10H14V14H10V10M16,10H20V14H16V10M4,16H8V20H4V16M10,16H14V20H10V16M16,16H20V20H16V16Z" 
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType=RadioButton}, Path=Foreground}"
+                                  Stretch="Uniform" Width="16" Height="16"/>
+                        </RadioButton>
+                        
+                        <!-- List Mode Button -->
+                        <RadioButton GroupName="ViewMode" 
+                                     IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=List}"
+                                     ToolTip="List View"
+                                     Style="{StaticResource ViewModeToggleStyle}">
+                            <Path Data="M3,4H21V6H3V4M3,11H21V13H3V11M3,18H21V20H3V18Z" 
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType=RadioButton}, Path=Foreground}"
+                                  Stretch="Uniform" Width="16" Height="16"/>
+                        </RadioButton>
+                        
+                        <!-- Filmstrip Mode Button -->
+                        <RadioButton GroupName="ViewMode" 
+                                     IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Filmstrip}"
+                                     ToolTip="Filmstrip View"
+                                     Style="{StaticResource ViewModeToggleStyle}">
+                            <Path Data="M18,9H16V7H18M18,13H16V11H18M18,17H16V15H18M8,9H6V7H8M8,13H6V11H8M8,17H6V15H8M18,3V5H16V3H8V5H6V3H4V21H6V19H8V21H16V19H18V21H20V3H18Z" 
+                                  Fill="{Binding RelativeSource={RelativeSource AncestorType=RadioButton}, Path=Foreground}"
+                                  Stretch="Uniform" Width="16" Height="16"/>
+                        </RadioButton>
+                    </StackPanel>
+                </Grid>
 
+                <!-- MODE 1: GRID VIEW (Icon Grid) -->
                 <ListBox Grid.Row="1" ItemsSource="{Binding FileList}" 
                          SelectedItem="{Binding SelectedMedia}"
                          Background="Transparent" BorderThickness="0" 
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Visibility="{Binding CurrentViewMode, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Grid}">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel Orientation="Horizontal"/>
@@ -134,17 +221,15 @@
 
                                 <!-- Icon/Thumbnail Area -->
                                 <Grid Grid.Row="0">
-                                    <!-- 1. Generic File Icon (Placeholder) -->
-                                    <!-- Always visible, sits behind Image -->
+                                    <!-- Generic File Icon (Placeholder) -->
                                     <Path Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V13H13V18H15M11,18V13H9V18H11M7,18V13H5V18H7" 
                                           Fill="{StaticResource Brush.Border.Light}" Stretch="Uniform" Margin="20"/>
 
-                                    <!-- 2. Video Thumbnail (Async Loaded) -->
-                                    <!-- Sits on top. Transparent if Source is null. Covers Path if Source is set. -->
+                                    <!-- Video Thumbnail (Async Loaded) -->
                                     <Image Source="{Binding ThumbnailPath}" Stretch="UniformToFill" Margin="10" 
                                            RenderOptions.BitmapScalingMode="LowQuality"/>
 
-                                    <!-- 3. Hover/Playing Overlay -->
+                                    <!-- Hover/Playing Overlay -->
                                     <Grid x:Name="Overlay" Background="{StaticResource Brush.Overlay.Dark}" Visibility="Hidden">
                                          <Button Command="{Binding DataContext.PreviewFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
                                                  CommandParameter="{Binding}"
@@ -183,11 +268,130 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <!-- Drag & Drop Hint -->
+                <!-- MODE 2: LIST VIEW (DataGrid) -->
+                <DataGrid Grid.Row="1" ItemsSource="{Binding FileList}"
+                          SelectedItem="{Binding SelectedMedia}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          RowBackground="Transparent"
+                          Foreground="White"
+                          Visibility="{Binding CurrentViewMode, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=List}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
+                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="*"/>
+                        <DataGridTextColumn Header="Format" Binding="{Binding Format}" Width="*"/>
+                        <DataGridTextColumn Header="Size" Binding="{Binding Length}" Width="*"/>
+                        <DataGridTextColumn Header="Date" Binding="{Binding CreationTime, StringFormat='{}{0:yyyy-MM-dd}'}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- MODE 3: FILMSTRIP VIEW (List + Preview) -->
+                <Grid Grid.Row="1" Visibility="{Binding CurrentViewMode, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter=Filmstrip}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Left: Compact File List -->
+                    <ListBox Grid.Column="0" ItemsSource="{Binding FileList}" 
+                             SelectedItem="{Binding SelectedMedia}"
+                             Background="Transparent" BorderThickness="0,0,1,0"
+                             BorderBrush="{StaticResource Brush.Border}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="5,2" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- Small Thumbnail -->
+                                    <Border Grid.Column="0" Width="32" Height="32" Background="{StaticResource Brush.Panel.Darker}">
+                                        <Grid>
+                                            <Path Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V13H13V18H15M11,18V13H9V18H11M7,18V13H5V18H7" 
+                                                  Fill="{StaticResource Brush.Border.Light}" Stretch="Uniform" Margin="6"/>
+                                            <Image Source="{Binding ThumbnailPath}" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Border>
+                                    
+                                    <!-- File Info -->
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" 
+                                                   Foreground="{StaticResource Brush.Text.Bright}" FontSize="12"/>
+                                        <TextBlock Text="{Binding Duration}" 
+                                                   Foreground="{StaticResource Brush.Text.Secondary}" FontSize="10"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                    <!-- Right: Large Preview + Metadata -->
+                    <Grid Grid.Column="1" Margin="10" DataContext="{Binding SelectedMedia}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Large Preview -->
+                        <Border Grid.Row="0" Background="{StaticResource Brush.Panel.Darker}" 
+                                BorderBrush="{StaticResource Brush.Border}" BorderThickness="1">
+                            <Grid>
+                                <!-- Placeholder Icon -->
+                                <Path Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V13H13V18H15M11,18V13H9V18H11M7,18V13H5V18H7" 
+                                      Fill="{StaticResource Brush.Border.Light}" Stretch="Uniform" Margin="80"/>
+                                <!-- Large Thumbnail -->
+                                <Image Source="{Binding ThumbnailPath}" Stretch="Uniform"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Metadata Summary -->
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold" 
+                                           Foreground="White" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Text="Duration:" Foreground="{StaticResource Brush.Text.Secondary}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Duration}" Foreground="White"/>
+                                    
+                                    <TextBlock Grid.Row="1" Text="Format:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,5,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Format}" Foreground="White" Margin="0,5,0,0"/>
+                                    
+                                    <TextBlock Grid.Row="2" Text="Size:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,5,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Length}" Foreground="White" Margin="0,5,0,0"/>
+                                    
+                                    <TextBlock Grid.Row="3" Text="Date:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,5,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CreationTime, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Foreground="White" Margin="0,5,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+
+                <!-- Drag & Drop Hint (Common to all modes) -->
                 <TextBlock Grid.Row="1" 
                            VerticalAlignment="Center" HorizontalAlignment="Center" 
                            Foreground="{StaticResource Brush.Text.Disabled}" FontSize="18" FontWeight="Bold"
-                           IsHitTestVisible="False">
+                           IsHitTestVisible="False"
+                           Panel.ZIndex="100">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Text" Value="DROP VIDEO MEDIA FILE HERE"/>
