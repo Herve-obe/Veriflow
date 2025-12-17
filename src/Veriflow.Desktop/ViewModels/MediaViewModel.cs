@@ -453,6 +453,13 @@ namespace Veriflow.Desktop.ViewModels
                              _previewWindow = new VideoPreviewWindow();
                              _previewWindow.DataContext = this; // Bind to VM for Player property
                              _previewWindow.Closed += (s, e) => StopPreview(); // Handle manual close
+                             
+                             // Set Owner for resource inheritance (enables theme application)
+                             if (System.Windows.Application.Current.MainWindow != null)
+                             {
+                                 _previewWindow.Owner = System.Windows.Application.Current.MainWindow;
+                             }
+                             
                              _previewWindow.Show();
                          }
                          

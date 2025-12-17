@@ -6,10 +6,9 @@
         WindowStyle="ToolWindow"
         ResizeMode="CanResize"
         Topmost="True"
-        Background="#1E1E1E"
         ShowInTaskbar="False">
     
-    <Grid Background="#252525">
+    <Grid>
         <vlc:VideoView MediaPlayer="{Binding PreviewPlayer}"/>
     </Grid>
 </Window>
