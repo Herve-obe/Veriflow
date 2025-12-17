@@ -76,7 +76,7 @@ namespace Veriflow.Desktop.ViewModels
         {
             _playbackTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(10)
+                Interval = TimeSpan.FromMilliseconds(16) // 60fps - essential for ultra-smooth timecode/frame display
             };
             _playbackTimer.Tick += OnTimerTick;
         }

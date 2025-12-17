@@ -197,7 +197,7 @@ namespace Veriflow.Desktop.ViewModels
                 }
             }
 
-            _uiTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) }; // 100fps update for maximum fluidity
+            _uiTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) }; // 60fps - optimal for smooth UI, matches display refresh rate
             _uiTimer.Tick += OnUiTick;
         }
 

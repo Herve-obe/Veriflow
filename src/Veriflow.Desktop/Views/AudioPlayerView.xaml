@@ -325,10 +325,12 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Tracks ItemsControl (Spans all 3 cols to sync row heights) -->
-                    <ItemsControl Grid.ColumnSpan="3" ItemsSource="{Binding Tracks}" Background="Transparent" BorderThickness="0" Focusable="False">
+                    <ItemsControl Grid.ColumnSpan="3" ItemsSource="{Binding Tracks}" Background="Transparent" BorderThickness="0" Focusable="False"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical"/>
+                                <VirtualizingStackPanel Orientation="Vertical"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>

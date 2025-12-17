@@ -189,6 +189,10 @@
                                   IsReadOnly="True"
                                   AllowDrop="True"
                                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  EnableRowVirtualization="True"
+                                  EnableColumnVirtualization="True"
                                   RowStyle="{StaticResource DataGridRowStyle}">
                              <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="STATUS" Width="120" SortMemberPath="Status">

@@ -332,7 +332,11 @@
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
                           SelectionMode="Single" SelectionUnit="FullRow"
-                          CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserSortColumns="True">
+                          CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserSortColumns="True"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling"
+                          EnableRowVirtualization="True"
+                          EnableColumnVirtualization="True">
                      <DataGrid.Resources>
                         <!-- Apply Minimalist ScrollBar locally to this DataGrid -->
                         <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource MinimalistScrollBar}"/>
