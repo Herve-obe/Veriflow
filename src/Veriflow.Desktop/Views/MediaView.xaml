@@ -8,14 +8,11 @@
              xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1024"
-             Focusable="True"
-             Loaded="UserControl_Loaded"
-             PreviewMouseDown="UserControl_PreviewMouseDown">
+             d:DesignHeight="600" d:DesignWidth="1024">
     
-    <UserControl.InputBindings>
-        <KeyBinding Key="Space" Command="{Binding ToggleFilmstripPlaybackCommand}"/>
-    </UserControl.InputBindings>
+    <!-- Keyboard shortcuts now handled at MainWindow level for persistence -->
+    
+    <!-- Keyboard shortcuts now handled at MainWindow level for persistence -->
     
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>

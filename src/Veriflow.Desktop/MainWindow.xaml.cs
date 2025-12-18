@@ -1,13 +1,6 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Veriflow.Desktop.ViewModels;
 
 namespace Veriflow.Desktop;
 
@@ -19,22 +12,116 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new Veriflow.Desktop.ViewModels.MainViewModel();
+        DataContext = new MainViewModel();
+        
+        // Subscribe to window-level keyboard events for persistent shortcuts
+        PreviewKeyDown += MainWindow_PreviewKeyDown;
     }
 
-    private void Window_KeyDown(object sender, KeyEventArgs e)
+    // ============================================================================
+    // WINDOW-LEVEL KEYBOARD SHORTCUTS (Persistent, Professional-Grade)
+    // ============================================================================
+    private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Space)
+        // Don't intercept if user is typing in a TextBox
+        if (e.OriginalSource is System.Windows.Controls.TextBox || 
+            e.OriginalSource is System.Windows.Controls.PasswordBox)
         {
-            var mainVm = this.DataContext as Veriflow.Desktop.ViewModels.MainViewModel;
-            if (mainVm?.CurrentView is Veriflow.Desktop.ViewModels.PlayerViewModel playerVm)
-            {
-                if (playerVm.TogglePlayPauseCommand.CanExecute(null))
+            return;
+        }
+
+        if (DataContext is not MainViewModel mainVM) return;
+
+        // Route shortcuts based on active page
+        switch (mainVM.CurrentPageType)
+        {
+            case PageType.Media:
+                HandleMediaShortcuts(e, mainVM.MediaViewModel);
+                break;
+
+            case PageType.Player:
+                // Route to Audio or Video player based on mode
+                if (mainVM.CurrentAppMode == AppMode.Audio)
                 {
-                    playerVm.TogglePlayPauseCommand.Execute(null);
+                    HandleAudioPlayerShortcuts(e, mainVM.AudioViewModel);
                 }
+                else
+                {
+                    HandleVideoPlayerShortcuts(e, mainVM.VideoPlayerViewModel);
+                }
+                break;
+
+            // Other pages don't have shortcuts yet
+            default:
+                break;
+        }
+    }
+
+    private void HandleMediaShortcuts(KeyEventArgs e, MediaViewModel vm)
+    {
+        switch (e.Key)
+        {
+            case Key.Space:
+                vm.ToggleFilmstripPlaybackCommand?.Execute(null);
                 e.Handled = true;
-            }
+                break;
+        }
+    }
+
+    private void HandleAudioPlayerShortcuts(KeyEventArgs e, AudioPlayerViewModel vm)
+    {
+        switch (e.Key)
+        {
+            case Key.Space:
+                vm.TogglePlayPauseCommand?.Execute(null);
+                e.Handled = true;
+                break;
+
+            case Key.Enter:
+                vm.StopCommand?.Execute(null);
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private void HandleVideoPlayerShortcuts(KeyEventArgs e, VideoPlayerViewModel vm)
+    {
+        switch (e.Key)
+        {
+            case Key.Space:
+                vm.TogglePlayPauseCommand?.Execute(null);
+                e.Handled = true;
+                break;
+
+            case Key.Enter:
+                vm.StopCommand?.Execute(null);
+                e.Handled = true;
+                break;
+
+            case Key.I:
+                vm.SetInCommand?.Execute(null);
+                e.Handled = true;
+                break;
+
+            case Key.O:
+                vm.SetOutCommand?.Execute(null);
+                e.Handled = true;
+                break;
+
+            case Key.T:
+                vm.TagClipCommand?.Execute(null);
+                e.Handled = true;
+                break;
+
+            case Key.Left:
+                vm.PreviousFrameCommand?.Execute(null);
+                e.Handled = true;
+                break;
+
+            case Key.Right:
+                vm.NextFrameCommand?.Execute(null);
+                e.Handled = true;
+                break;
         }
     }
 

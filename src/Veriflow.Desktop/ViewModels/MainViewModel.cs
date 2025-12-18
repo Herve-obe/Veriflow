@@ -37,15 +37,25 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty]
         private PageType _currentPageType = PageType.Media;
 
-        // ViewModels
-        private readonly SecureCopyViewModel _secureCopyViewModel = new();
-        private readonly PlayerViewModel _playerViewModel = new(); 
-        private readonly AudioPlayerViewModel _audioViewModel = new();
-        private readonly VideoPlayerViewModel _videoPlayerViewModel = new();
-        private readonly TranscodeViewModel _transcodeViewModel = new();
-        private readonly MediaViewModel _mediaViewModel = new();
-        private readonly SyncViewModel _syncViewModel = new();
-        private readonly ReportsViewModel _reportsViewModel = new();
+        // ViewModels - Exposed as public for keyboard routing
+        public SecureCopyViewModel SecureCopyViewModel { get; }
+        public PlayerViewModel PlayerViewModel { get; }
+        public AudioPlayerViewModel AudioViewModel { get; }
+        public VideoPlayerViewModel VideoPlayerViewModel { get; }
+        public TranscodeViewModel TranscodeViewModel { get; }
+        public MediaViewModel MediaViewModel { get; }
+        public SyncViewModel SyncViewModel { get; }
+        public ReportsViewModel ReportsViewModel { get; }
+
+        // Private backing fields
+        private readonly SecureCopyViewModel _secureCopyViewModel;
+        private readonly PlayerViewModel _playerViewModel;
+        private readonly AudioPlayerViewModel _audioViewModel;
+        private readonly VideoPlayerViewModel _videoPlayerViewModel;
+        private readonly TranscodeViewModel _transcodeViewModel;
+        private readonly MediaViewModel _mediaViewModel;
+        private readonly SyncViewModel _syncViewModel;
+        private readonly ReportsViewModel _reportsViewModel;
 
         public ICommand ShowPlayerCommand { get; }
         public ICommand ShowMediaCommand { get; }
@@ -60,6 +70,26 @@ namespace Veriflow.Desktop.ViewModels
 
         public MainViewModel()
         {
+            // Initialize ViewModels
+            _secureCopyViewModel = new();
+            _playerViewModel = new();
+            _audioViewModel = new();
+            _videoPlayerViewModel = new();
+            _transcodeViewModel = new();
+            _mediaViewModel = new();
+            _syncViewModel = new();
+            _reportsViewModel = new();
+
+            // Expose as public properties
+            SecureCopyViewModel = _secureCopyViewModel;
+            PlayerViewModel = _playerViewModel;
+            AudioViewModel = _audioViewModel;
+            VideoPlayerViewModel = _videoPlayerViewModel;
+            TranscodeViewModel = _transcodeViewModel;
+            MediaViewModel = _mediaViewModel;
+            SyncViewModel = _syncViewModel;
+            ReportsViewModel = _reportsViewModel;
+
             // Navigation Commands
             ShowPlayerCommand = new RelayCommand(() => NavigateTo(PageType.Player));
             ShowMediaCommand = new RelayCommand(() => NavigateTo(PageType.Media));
