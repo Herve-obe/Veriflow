@@ -15,6 +15,8 @@ namespace Veriflow.Desktop.Models
         // Video
         public string Codec { get; set; } = ""; // ProRes 422 HQ, DNxHR
         public string Resolution { get; set; } = ""; // 3840x2160
+        public int Width { get; set; }  // Numeric width in pixels
+        public int Height { get; set; } // Numeric height in pixels
         public string AspectRatio { get; set; } = ""; // 16:9
         public string FrameRate { get; set; } = ""; // 24.00 fps
         public string BitDepth { get; set; } = ""; // 10-bit

@@ -450,7 +450,29 @@ namespace Veriflow.Desktop.ViewModels
                          // Manage Window
                          if (_previewWindow == null || !_previewWindow.IsLoaded)
                          {
-                             _previewWindow = new VideoPreviewWindow();
+                             // Load metadata to get video dimensions
+                             int videoWidth = 1920;  // Default 16:9
+                             int videoHeight = 1080;
+                             
+                             if (SelectedMedia != null)
+                             {
+                                 // Ensure metadata is loaded
+                                 if (SelectedMedia.CurrentVideoMetadata.Width == 0 || SelectedMedia.CurrentVideoMetadata.Height == 0)
+                                 {
+                                     // Metadata not loaded yet, trigger load synchronously
+                                     // This is acceptable as it's a one-time operation
+                                     Task.Run(async () => await SelectedMedia.LoadMetadata()).Wait();
+                                 }
+                                 
+                                 // Get dimensions from metadata
+                                 if (SelectedMedia.CurrentVideoMetadata.Width > 0 && SelectedMedia.CurrentVideoMetadata.Height > 0)
+                                 {
+                                     videoWidth = SelectedMedia.CurrentVideoMetadata.Width;
+                                     videoHeight = SelectedMedia.CurrentVideoMetadata.Height;
+                                 }
+                             }
+                             
+                             _previewWindow = new VideoPreviewWindow(videoWidth, videoHeight);
                              _previewWindow.DataContext = this; // Bind to VM for Player property
                              _previewWindow.Closed += (s, e) => StopPreview(); // Handle manual close
                              

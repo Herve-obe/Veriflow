@@ -7,9 +7,14 @@ namespace Veriflow.Desktop.Views
 {
     public partial class VideoPreviewWindow : Window
     {
-        public VideoPreviewWindow()
+        private readonly int _videoWidth;
+        private readonly int _videoHeight;
+
+        public VideoPreviewWindow(int videoWidth = 1920, int videoHeight = 1080)
         {
             InitializeComponent();
+            _videoWidth = videoWidth > 0 ? videoWidth : 1920;
+            _videoHeight = videoHeight > 0 ? videoHeight : 1080;
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -32,20 +37,49 @@ namespace Veriflow.Desktop.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Set default size and center window
-            SetDefaultSize();
-        }
-
-        private void SetDefaultSize()
-        {
-            // Default size for 16:9 video
-            Width = 640 + 2;
-            Height = 360 + 35 + 2;
+            // Calculate window size based on video aspect ratio
+            double aspectRatio = (double)_videoWidth / _videoHeight;
             
-            // Center window
+            // Max constraints to prevent oversized windows
+            double maxWidth = 1280;
+            double maxHeight = 720;
+            
+            // Check screen size and adjust max constraints if needed
+            double screenWidth = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+            
+            // Use 80% of screen size as absolute maximum
+            maxWidth = Math.Min(maxWidth, screenWidth * 0.8);
+            maxHeight = Math.Min(maxHeight, screenHeight * 0.8);
+            
+            double targetWidth = _videoWidth;
+            double targetHeight = _videoHeight;
+            
+            // Scale down if video is too large
+            if (_videoWidth > maxWidth || _videoHeight > maxHeight)
+            {
+                if (aspectRatio > (maxWidth / maxHeight))
+                {
+                    // Width is the limiting factor
+                    targetWidth = maxWidth;
+                    targetHeight = maxWidth / aspectRatio;
+                }
+                else
+                {
+                    // Height is the limiting factor
+                    targetHeight = maxHeight;
+                    targetWidth = maxHeight * aspectRatio;
+                }
+            }
+            
+            // Set window size (add title bar height of 35px + border 2px)
+            Width = targetWidth + 2;
+            Height = targetHeight + 35 + 2;
+            
+            // Center window on screen
             WindowStartupLocation = WindowStartupLocation.Manual;
-            Left = (SystemParameters.PrimaryScreenWidth - Width) / 2;
-            Top = (SystemParameters.PrimaryScreenHeight - Height) / 2;
+            Left = (screenWidth - Width) / 2;
+            Top = (screenHeight - Height) / 2;
         }
     }
 }

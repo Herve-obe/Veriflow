@@ -568,7 +568,12 @@ namespace Veriflow.Desktop.Services
                                 int w = 0, h = 0;
                                 if (s.TryGetProperty("width", out var width)) w = width.GetInt32();
                                 if (s.TryGetProperty("height", out var height)) h = height.GetInt32();
-                                if (w > 0 && h > 0) metadata.Resolution = $"{w}x{h}";
+                                if (w > 0 && h > 0)
+                                {
+                                    metadata.Resolution = $"{w}x{h}";
+                                    metadata.Width = w;
+                                    metadata.Height = h;
+                                }
 
                                 if (s.TryGetProperty("display_aspect_ratio", out var dar)) metadata.AspectRatio = dar.GetString() ?? string.Empty;
                                 
