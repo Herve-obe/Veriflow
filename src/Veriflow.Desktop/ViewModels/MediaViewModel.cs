@@ -310,6 +310,9 @@ namespace Veriflow.Desktop.ViewModels
                 SendToTranscodeCommand.NotifyCanExecuteChanged();
                 CreateReportCommand.NotifyCanExecuteChanged();
             };
+
+            // Initialize PreviewPlayer early to avoid delay on first playback in Filmstrip mode
+            InitializePreviewPlayer();
         }
 
         private void RefreshDrives()
@@ -392,7 +395,17 @@ namespace Veriflow.Desktop.ViewModels
 
                 // Re-evaluate "Add To Report" in case this folder contains duplicates
                 AddToReportCommand.NotifyCanExecuteChanged();
+
+                // Preload metadata in background to display duration immediately
+                _ = PreloadMetadataAsync();
             }
+        }
+
+        private async Task PreloadMetadataAsync()
+        {
+            // Load metadata for all files in parallel (non-blocking)
+            var tasks = FileList.Select(item => item.LoadMetadata()).ToList();
+            await Task.WhenAll(tasks);
         }
 
         partial void OnIsVideoModeChanged(bool value)
@@ -543,19 +556,30 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand]
         private void PlayFilmstrip()
         {
-            if (SelectedMedia == null || !IsVideoMode || CurrentViewMode != MediaViewMode.Filmstrip)
+            if (SelectedMedia == null || CurrentViewMode != MediaViewMode.Filmstrip)
                 return;
 
             try
             {
-                InitializePreviewPlayer();
-                if (PreviewPlayer != null && VideoEngineService.Instance.LibVLC != null)
+                if (IsVideoMode)
                 {
-                    IsVideoPlaying = true;
+                    // Video playback with LibVLC
+                    InitializePreviewPlayer();
+                    if (PreviewPlayer != null && VideoEngineService.Instance.LibVLC != null)
+                    {
+                        IsVideoPlaying = true;
+                        SelectedMedia.IsPlaying = true;
+                        using var media = new Media(VideoEngineService.Instance.LibVLC, SelectedMedia.FullName, FromType.FromPath);
+                        media.AddOption(":avcodec-hw=d3d11va");
+                        PreviewPlayer.Play(media);
+                    }
+                }
+                else
+                {
+                    // Audio playback with AudioPreviewService
+                    _audioService.Play(SelectedMedia.FullName);
+                    IsVideoPlaying = true; // Reusing this property for both audio and video
                     SelectedMedia.IsPlaying = true;
-                    using var media = new Media(VideoEngineService.Instance.LibVLC, SelectedMedia.FullName, FromType.FromPath);
-                    media.AddOption(":avcodec-hw=d3d11va");
-                    PreviewPlayer.Play(media);
                 }
             }
             catch (Exception ex)
@@ -570,7 +594,11 @@ namespace Veriflow.Desktop.ViewModels
             try
             {
                 IsStopPressed = true;
+                
+                // Stop both video and audio
                 PreviewPlayer?.Stop();
+                _audioService.Stop();
+                
                 IsVideoPlaying = false;
                 if (SelectedMedia != null) SelectedMedia.IsPlaying = false;
                 
@@ -744,6 +772,7 @@ namespace Veriflow.Desktop.ViewModels
         public string FullName => File.FullName;
         public DateTime CreationTime => File.CreationTime;
         public long Length => File.Length;
+        public string FileSizeFormatted => $"{(File.Length / 1024.0 / 1024.0):F2} MB";
 
         [ObservableProperty]
         private bool _isPlaying;

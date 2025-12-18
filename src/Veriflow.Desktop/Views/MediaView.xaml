@@ -290,7 +290,7 @@
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
                         <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="*"/>
                         <DataGridTextColumn Header="Format" Binding="{Binding Format}" Width="*"/>
-                        <DataGridTextColumn Header="Size" Binding="{Binding Length}" Width="*"/>
+                        <DataGridTextColumn Header="Size" Binding="{Binding FileSizeFormatted}" Width="*"/>
                         <DataGridTextColumn Header="Date" Binding="{Binding CreationTime, StringFormat='{}{0:yyyy-MM-dd}'}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
@@ -336,6 +336,33 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                    
+                    <!-- Drop Message Overlay (Left Column Only) -->
+                    <TextBlock Grid.Column="0" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{StaticResource Brush.Text.Disabled}" 
+                               FontSize="11" FontWeight="Bold"
+                               IsHitTestVisible="False"
+                               Panel.ZIndex="100"
+                               TextAlignment="Center"
+                               Margin="10">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="DROP VIDEO FILE HERE"/>
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <!-- Visibility Trigger -->
+                                    <DataTrigger Binding="{Binding FileList.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <!-- Text Logic -->
+                                    <DataTrigger Binding="{Binding IsVideoMode}" Value="False">
+                                        <Setter Property="Text" Value="DROP AUDIO FILE HERE"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     
                     <!-- Right: Large Preview + Metadata -->
                     <Grid Grid.Column="1" Margin="10">
@@ -472,7 +499,7 @@
                                     <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding DataContext.SelectedMedia.Format, RelativeSource={RelativeSource AncestorType=UserControl}}" Foreground="White" Margin="0,5,0,0"/>
                                     
                                     <TextBlock Grid.Row="2" Text="Size:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,5,0,0"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DataContext.SelectedMedia.Length, RelativeSource={RelativeSource AncestorType=UserControl}}" Foreground="White" Margin="0,5,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DataContext.SelectedMedia.FileSizeFormatted, RelativeSource={RelativeSource AncestorType=UserControl}}" Foreground="White" Margin="0,5,0,0"/>
                                     
                                     <TextBlock Grid.Row="3" Text="Date:" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,5,0,0"/>
                                     <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding DataContext.SelectedMedia.CreationTime, RelativeSource={RelativeSource AncestorType=UserControl}, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Foreground="White" Margin="0,5,0,0"/>
@@ -482,7 +509,7 @@
                     </Grid>
                 </Grid>
 
-                <!-- Drag & Drop Hint (Common to all modes) -->
+                <!-- Drag & Drop Hint (Common to Grid and List modes, hidden in Filmstrip) -->
                 <TextBlock Grid.Row="1" 
                            VerticalAlignment="Center" HorizontalAlignment="Center" 
                            Foreground="{StaticResource Brush.Text.Disabled}" FontSize="18" FontWeight="Bold"
@@ -496,6 +523,10 @@
                                 <!-- Visibility Trigger -->
                                 <DataTrigger Binding="{Binding FileList.Count}" Value="0">
                                     <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <!-- Hide in Filmstrip mode (message is in left column instead) -->
+                                <DataTrigger Binding="{Binding CurrentViewMode}" Value="Filmstrip">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
                                 <!-- Text Logic -->
                                 <DataTrigger Binding="{Binding IsVideoMode}" Value="False">
