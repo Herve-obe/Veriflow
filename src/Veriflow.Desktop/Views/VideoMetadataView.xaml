@@ -167,7 +167,7 @@
                                 </StackPanel>
                             </Border>
 
-                            <ListBox Grid.Row="1" ItemsSource="{Binding TaggedClips}" BorderThickness="0" Background="Transparent" MaxHeight="200">
+                            <ListBox Grid.Row="1" ItemsSource="{Binding TaggedClips}" BorderThickness="0" Background="Transparent">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Border BorderBrush="#333" BorderThickness="0,0,0,1" Padding="5">
