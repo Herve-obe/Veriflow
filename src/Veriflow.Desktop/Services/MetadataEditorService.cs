@@ -101,5 +101,24 @@ namespace Veriflow.Desktop.Services
                 return false;
             }
         }
+
+        /// <summary>
+        /// Updates UCS (Universal Category System) metadata tags in an audio file
+        /// </summary>
+        public async Task<bool> UpdateUCSMetadataAsync(string filePath, string category, string subCategory, string catId)
+        {
+            var tags = new Dictionary<string, string>();
+            
+            if (!string.IsNullOrWhiteSpace(category))
+                tags["CATEGORY"] = category;
+            
+            if (!string.IsNullOrWhiteSpace(subCategory))
+                tags["SUBCATEGORY"] = subCategory;
+            
+            if (!string.IsNullOrWhiteSpace(catId))
+                tags["CATID"] = catId;
+
+            return await UpdateMetadataAsync(filePath, tags);
+        }
     }
 }

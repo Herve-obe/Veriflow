@@ -202,6 +202,27 @@ namespace Veriflow.Desktop.Services
                      metadata.BitrateMode = "Constant"; 
                 }
 
+                // --- UCS (Universal Category System) from iXML ---
+                // UCS metadata is typically stored in iXML tags: CATEGORY, SUBCATEGORY, CATID
+                // We need to check the 'tags' property within the 'format' object for these.
+                if (root.TryGetProperty("format", out var formatNode) && formatNode.TryGetProperty("tags", out var tagsNode))
+                {
+                    if (tagsNode.TryGetProperty("CATEGORY", out var ucsCategoryElement))
+                    {
+                        metadata.UCSCategory = ucsCategoryElement.GetString() ?? string.Empty;
+                    }
+
+                    if (tagsNode.TryGetProperty("SUBCATEGORY", out var ucsSubCategoryElement))
+                    {
+                        metadata.UCSSubCategory = ucsSubCategoryElement.GetString() ?? string.Empty;
+                    }
+
+                    if (tagsNode.TryGetProperty("CATID", out var ucsCatIDElement))
+                    {
+                        metadata.UCSCatID = ucsCatIDElement.GetString() ?? string.Empty;
+                    }
+                }
+
                 // Initial formatting (Legacy)
                 if (sampleRate > 0)
                 {

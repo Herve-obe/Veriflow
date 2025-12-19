@@ -28,6 +28,7 @@ namespace Veriflow.Desktop.ViewModels
     {
         private readonly AudioPreviewService _audioService = new();
         private readonly MetadataEditorService _metadataEditorService = new();
+        private readonly UCSService _ucsService = new();
 
         [ObservableProperty]
         private ObservableCollection<DriveViewModel> _drives = new();
