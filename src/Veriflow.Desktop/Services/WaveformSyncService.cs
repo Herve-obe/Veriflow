@@ -25,27 +25,29 @@ namespace Veriflow.Desktop.Services
 
         /// <summary>
         /// Finds the time offset between video and audio files using waveform correlation.
+        /// Optimized for speed like DaVinci Resolve.
         /// </summary>
         /// <param name="videoPath">Path to video file</param>
         /// <param name="audioPath">Path to audio file</param>
-        /// <param name="maxDurationSeconds">Maximum duration to analyze (default: 30s for performance)</param>
+        /// <param name="maxDurationSeconds">Maximum duration to analyze (default: 10s for speed)</param>
         /// <param name="progress">Optional progress callback (0.0 to 1.0)</param>
         /// <returns>Offset in seconds (positive = audio ahead, negative = audio behind)</returns>
-        public async Task<double?> FindOffsetAsync(string videoPath, string audioPath, int maxDurationSeconds = 30, IProgress<double>? progress = null)
+        public async Task<double?> FindOffsetAsync(string videoPath, string audioPath, int maxDurationSeconds = 10, IProgress<double>? progress = null)
         {
             try
             {
                 progress?.Report(0.1);
+                Debug.WriteLine($"[WaveformSync] Starting analysis: {Path.GetFileName(videoPath)} + {Path.GetFileName(audioPath)}");
 
-                // Extract audio from video
+                // Extract audio from video (optimized - low quality for speed)
                 string videoAudioPath = await ExtractAudioFromVideoAsync(videoPath, maxDurationSeconds);
-                progress?.Report(0.4);
+                progress?.Report(0.3);
 
                 // Extract audio (normalize to same format)
                 string normalizedAudioPath = await NormalizeAudioAsync(audioPath, maxDurationSeconds);
-                progress?.Report(0.6);
+                progress?.Report(0.5);
 
-                // Perform cross-correlation
+                // Perform cross-correlation (optimized)
                 double? offset = await PerformCrossCorrelationAsync(videoAudioPath, normalizedAudioPath);
                 progress?.Report(0.9);
 
@@ -54,40 +56,58 @@ namespace Veriflow.Desktop.Services
                 CleanupTempFile(normalizedAudioPath);
 
                 progress?.Report(1.0);
+                
+                if (offset.HasValue)
+                {
+                    Debug.WriteLine($"[WaveformSync] SUCCESS: Offset = {offset.Value:F3}s");
+                }
+                else
+                {
+                    Debug.WriteLine($"[WaveformSync] FAILED: No correlation found");
+                }
+                
                 return offset;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[WaveformSync] Error: {ex.Message}");
+                Debug.WriteLine($"[WaveformSync] ERROR: {ex.Message}");
+                Debug.WriteLine($"[WaveformSync] Stack: {ex.StackTrace}");
                 return null;
             }
         }
 
         /// <summary>
-        /// Extracts audio from video file to WAV format (mono, 48kHz, 16-bit)
+        /// Extracts audio from video file to WAV format (mono, 16kHz, 16-bit for speed)
         /// </summary>
         private async Task<string> ExtractAudioFromVideoAsync(string videoPath, int maxDuration)
         {
             string outputPath = Path.Combine(_tempDir, $"video_audio_{Guid.NewGuid()}.wav");
             
-            // FFmpeg: Extract audio, convert to mono 48kHz 16-bit PCM, limit duration
-            string args = $"-i \"{videoPath}\" -vn -acodec pcm_s16le -ar 48000 -ac 1 -t {maxDuration} -y \"{outputPath}\"";
+            // FFmpeg: Extract audio, convert to mono 16kHz 16-bit PCM (lower quality = faster)
+            // -ac 1 = mono, -ar 16000 = 16kHz (vs 48kHz), -t = duration limit
+            string args = $"-i \"{videoPath}\" -vn -acodec pcm_s16le -ar 16000 -ac 1 -t {maxDuration} -y \"{outputPath}\"";
 
+            Debug.WriteLine($"[WaveformSync] Extracting video audio: {Path.GetFileName(videoPath)}");
             await RunFFmpegAsync(args);
+            Debug.WriteLine($"[WaveformSync] Video audio extracted: {outputPath}");
+            
             return outputPath;
         }
 
         /// <summary>
-        /// Normalizes audio file to WAV format (mono, 48kHz, 16-bit)
+        /// Normalizes audio file to WAV format (mono, 16kHz, 16-bit for speed)
         /// </summary>
         private async Task<string> NormalizeAudioAsync(string audioPath, int maxDuration)
         {
             string outputPath = Path.Combine(_tempDir, $"normalized_audio_{Guid.NewGuid()}.wav");
             
-            // FFmpeg: Convert to mono 48kHz 16-bit PCM, limit duration
-            string args = $"-i \"{audioPath}\" -acodec pcm_s16le -ar 48000 -ac 1 -t {maxDuration} -y \"{outputPath}\"";
+            // FFmpeg: Convert to mono 16kHz 16-bit PCM (lower quality = faster)
+            string args = $"-i \"{audioPath}\" -acodec pcm_s16le -ar 16000 -ac 1 -t {maxDuration} -y \"{outputPath}\"";
 
+            Debug.WriteLine($"[WaveformSync] Normalizing audio: {Path.GetFileName(audioPath)}");
             await RunFFmpegAsync(args);
+            Debug.WriteLine($"[WaveformSync] Audio normalized: {outputPath}");
+            
             return outputPath;
         }
 
@@ -159,7 +179,7 @@ namespace Veriflow.Desktop.Services
                     }
 
                     // Convert lag (in samples) to seconds
-                    double sampleRate = 48000; // We normalized to 48kHz
+                    double sampleRate = 16000; // Updated to 16kHz for speed
                     double offsetSeconds = bestLag / sampleRate;
 
                     // Adjust sign based on which file was reference
@@ -168,7 +188,7 @@ namespace Veriflow.Desktop.Services
                         offsetSeconds = -offsetSeconds; // Video was reference, so negate
                     }
 
-                    Debug.WriteLine($"[WaveformSync] Best correlation: {maxCorrelation:F4}, Offset: {offsetSeconds:F3}s");
+                    Debug.WriteLine($"[WaveformSync] Correlation complete: maxCorr={maxCorrelation:F4}, bestLag={bestLag}, offset={offsetSeconds:F3}s");
                     return (double?)offsetSeconds;
                 }
                 catch (Exception ex)

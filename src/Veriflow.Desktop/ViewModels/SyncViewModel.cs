@@ -502,6 +502,8 @@ namespace Veriflow.Desktop.ViewModels
                 {
                     try
                     {
+                        Debug.WriteLine($"[Sync] Starting waveform analysis: {vid.Filename} + {aud.Filename}");
+                        
                         var progress = new Progress<double>(p => 
                         {
                             // Sub-progress for this specific pair
@@ -509,10 +511,12 @@ namespace Veriflow.Desktop.ViewModels
                             ProgressValue = overallProgress;
                         });
 
-                        double? offset = await _waveformService.FindOffsetAsync(vid.FullPath, aud.FullPath, 30, progress);
+                        // Use 10s for speed (like DaVinci Resolve)
+                        double? offset = await _waveformService.FindOffsetAsync(vid.FullPath, aud.FullPath, 10, progress);
 
                         if (offset.HasValue)
                         {
+                            Debug.WriteLine($"[Sync] Waveform match found: offset={offset.Value:F3}s");
                             // Create pair
                             var pair = new SyncPair
                             {
