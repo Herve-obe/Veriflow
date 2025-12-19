@@ -471,16 +471,16 @@
                     <TextBlock Text="FILE LIST" Style="{StaticResource LabelStyle}" VerticalAlignment="Center" Opacity="0.5"/>
                     <!-- Action Buttons -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <!-- View Mode Toggle -->
+                        <!-- View Mode Toggle (Simplified) -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                            <RadioButton Content="📷 REPORT" 
-                                         IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=CameraReport}"
-                                         Style="{StaticResource SegmentedToggleStyle}" 
-                                         GroupName="ViewMode"/>
-                            <RadioButton Content="🎬 EDL" 
-                                         IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=EDLLogging}"
-                                         Style="{StaticResource SegmentedToggleStyle}" 
-                                         GroupName="ViewMode" Margin="5,0,0,0"/>
+                            <Button Content="📷 REPORT" 
+                                    Command="{Binding SwitchToReportViewCommand}"
+                                    Style="{StaticResource ContextualActionButtonStyle}" 
+                                    Width="100" Height="26" FontSize="11" Margin="0,0,5,0"/>
+                            <Button Content="🎬 EDL" 
+                                    Command="{Binding SwitchToEDLViewCommand}"
+                                    Style="{StaticResource ContextualActionButtonStyle}" 
+                                    Width="80" Height="26" FontSize="11"/>
                         </StackPanel>
                         
                         <Button Content="ADD FILE(S)" Command="{Binding AddFilesCommand}" 
