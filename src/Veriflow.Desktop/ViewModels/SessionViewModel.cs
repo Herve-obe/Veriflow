@@ -54,7 +54,7 @@ namespace Veriflow.Desktop.ViewModels
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    SaveSession();
+                    _ = SaveSession(); // Fire and forget - user confirmed save
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
@@ -88,7 +88,7 @@ namespace Veriflow.Desktop.ViewModels
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    SaveSession();
+                    _ = SaveSession(); // Fire and forget - user confirmed save
                 }
                 else if (result == MessageBoxResult.Cancel)
                 {
