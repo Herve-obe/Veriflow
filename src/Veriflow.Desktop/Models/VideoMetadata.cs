@@ -26,6 +26,12 @@ namespace Veriflow.Desktop.Models
         public string Bitrate { get; set; } = ""; // 800 Mbps
         public string GopStructure { get; set; } = ""; // Intra / LongGOP
 
+        // ProRes RAW Detection
+        public bool IsProResRAW { get; set; } = false; // Detected via codec_tag (aprg, aprh)
+        public string ProResRAWMessage => IsProResRAW 
+            ? "ProRes RAW detected. This format requires conversion via DaVinci Resolve or Final Cut Pro before playback/transcode." 
+            : "";
+
         // Timecode
         public string StartTimecode { get; set; } = "";
         public string EndTimecode { get; set; } = "";

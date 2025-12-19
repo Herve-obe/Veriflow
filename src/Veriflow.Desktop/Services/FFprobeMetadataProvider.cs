@@ -583,17 +583,31 @@ namespace Veriflow.Desktop.Services
                             if (typeStr == "video")
                             {
                                 // Video Stream
-                                if (s.TryGetProperty("codec_long_name", out var codec)) metadata.Codec = codec.GetString() ?? string.Empty;
-                                else if (s.TryGetProperty("codec_name", out var cn)) metadata.Codec = cn.GetString() ?? string.Empty;
+                                if (s.TryGetProperty("codec_long_name", out var cln)) metadata.Codec = cln.GetString() ?? string.Empty;
+                                else if (s.TryGetProperty("codec_name", out var cn2)) metadata.Codec = cn2.GetString() ?? string.Empty;
 
-                                int w = 0, h = 0;
-                                if (s.TryGetProperty("width", out var width)) w = width.GetInt32();
-                                if (s.TryGetProperty("height", out var height)) h = height.GetInt32();
-                                if (w > 0 && h > 0)
+                                // ProRes RAW Detection
+                                // Check for codec_tag_string: "aprg" (ProRes RAW) or "aprh" (ProRes RAW HQ)
+                                if (s.TryGetProperty("codec_tag_string", out var codecTag))
                                 {
-                                    metadata.Resolution = $"{w}x{h}";
-                                    metadata.Width = w;
-                                    metadata.Height = h;
+                                    string? tag = codecTag.GetString();
+                                    if (!string.IsNullOrEmpty(tag))
+                                    {
+                                        string tagLower = tag.ToLower();
+                                        if (tagLower == "aprg" || tagLower == "aprh")
+                                        {
+                                            metadata.IsProResRAW = true;
+                                            // Update codec name to be more descriptive
+                                            metadata.Codec = tagLower == "aprg" ? "Apple ProRes RAW" : "Apple ProRes RAW HQ";
+                                        }
+                                    }
+                                }
+                                
+                                if (s.TryGetProperty("width", out var wElement)) metadata.Width = (wElement.ValueKind == JsonValueKind.Number) ? wElement.GetInt32() : int.Parse(wElement.GetString() ?? "0");
+                                if (s.TryGetProperty("height", out var hElement)) metadata.Height = (hElement.ValueKind == JsonValueKind.Number) ? hElement.GetInt32() : int.Parse(hElement.GetString() ?? "0");
+                                if (metadata.Width > 0 && metadata.Height > 0)
+                                {
+                                    metadata.Resolution = $"{metadata.Width}x{metadata.Height}";
                                 }
 
                                 if (s.TryGetProperty("display_aspect_ratio", out var dar)) metadata.AspectRatio = dar.GetString() ?? string.Empty;
