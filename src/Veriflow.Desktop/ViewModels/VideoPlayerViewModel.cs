@@ -143,6 +143,11 @@ namespace Veriflow.Desktop.ViewModels
         // --- PROFESSIONAL LOGGING ---
         public ObservableCollection<ClipLogItem> TaggedClips { get; } = new();
 
+        [ObservableProperty]
+        private ClipLogItem? _editingClip;
+
+        private ClipLogItem? _originalClipData;
+
         private TimeSpan? _currentInPoint;
         private TimeSpan? _currentOutPoint;
 
@@ -158,6 +163,15 @@ namespace Veriflow.Desktop.ViewModels
         private bool _isLoggingPending;
 
         public event Action<IEnumerable<string>>? RequestTranscode;
+
+        // Events for button flash animations
+        public event Action? FlashMarkInButton;
+        public event Action? FlashMarkOutButton;
+        public event Action? FlashTagClipButton;
+
+        // --- FILE NAVIGATION ---
+        private List<string> _siblingFiles = new();
+        private int _currentFileIndex = -1;
 
         
         // --- REPORT NOTE EDITING ---
@@ -297,6 +311,9 @@ namespace Veriflow.Desktop.ViewModels
              
              await LoadMediaContext(path);
              System.Diagnostics.Debug.WriteLine($"LoadVideo: LoadMediaContext completed");
+             
+             // Update sibling files for navigation
+             UpdateSiblingFiles(path);
         }
 
         public void RefreshReportLink()
@@ -749,9 +766,25 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (_mediaPlayer == null || !IsVideoLoaded) return;
             
-            _currentInPoint = TimeSpan.FromMilliseconds(_mediaPlayer.Time);
-            CurrentMarkInDisplay = FormatTimecode(_currentInPoint.Value);
-            IsLoggingPending = true;
+            var currentTime = TimeSpan.FromMilliseconds(_mediaPlayer.Time);
+            var formattedTime = FormatTimecode(currentTime);
+            
+            // If editing a clip, update its Mark IN
+            if (EditingClip != null)
+            {
+                EditingClip.InPoint = formattedTime;
+                RecalculateClipDuration(EditingClip);
+            }
+            else
+            {
+                // Normal mode: set temporary Mark IN for new clip
+                _currentInPoint = currentTime;
+                CurrentMarkInDisplay = formattedTime;
+                IsLoggingPending = true;
+            }
+            
+            // Trigger button flash animation
+            FlashMarkInButton?.Invoke();
         }
 
         [RelayCommand]
@@ -759,9 +792,25 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (_mediaPlayer == null || !IsVideoLoaded) return;
             
-            _currentOutPoint = TimeSpan.FromMilliseconds(_mediaPlayer.Time);
-            CurrentMarkOutDisplay = FormatTimecode(_currentOutPoint.Value);
-            IsLoggingPending = true;
+            var currentTime = TimeSpan.FromMilliseconds(_mediaPlayer.Time);
+            var formattedTime = FormatTimecode(currentTime);
+            
+            // If editing a clip, update its Mark OUT
+            if (EditingClip != null)
+            {
+                EditingClip.OutPoint = formattedTime;
+                RecalculateClipDuration(EditingClip);
+            }
+            else
+            {
+                // Normal mode: set temporary Mark OUT for new clip
+                _currentOutPoint = currentTime;
+                CurrentMarkOutDisplay = formattedTime;
+                IsLoggingPending = true;
+            }
+            
+            // Trigger button flash animation
+            FlashMarkOutButton?.Invoke();
         }
 
         [RelayCommand]
@@ -812,6 +861,9 @@ namespace Veriflow.Desktop.ViewModels
              CurrentMarkInDisplay = "xx:xx:xx:xx";
              CurrentMarkOutDisplay = "yy:yy:yy:yy";
              IsLoggingPending = false;
+             
+             // Trigger button flash animation
+             FlashTagClipButton?.Invoke();
         }
 
 
@@ -935,6 +987,177 @@ namespace Veriflow.Desktop.ViewModels
             // Let's take first 8 for readability.
             if (name.Length > 8) name = name.Substring(0, 8);
             return name.Replace(" ", "").ToUpper();
+        }
+
+        // --- CLIP EDITING COMMANDS ---
+
+        [RelayCommand]
+        private void EnterEditMode(ClipLogItem clip)
+        {
+            if (clip == null) return;
+
+            // Exit current edit mode if any
+            if (EditingClip != null)
+            {
+                EditingClip.IsEditing = false;
+            }
+
+            // Backup original data for cancel
+            _originalClipData = new ClipLogItem
+            {
+                InPoint = clip.InPoint,
+                OutPoint = clip.OutPoint,
+                Duration = clip.Duration,
+                Notes = clip.Notes,
+                TagColor = clip.TagColor
+            };
+
+            // Enter edit mode
+            EditingClip = clip;
+            EditingClip.IsEditing = true;
+        }
+
+        [RelayCommand]
+        private void SaveClipEdit()
+        {
+            if (EditingClip == null) return;
+
+            // Exit edit mode
+            EditingClip.IsEditing = false;
+            EditingClip = null;
+            _originalClipData = null;
+        }
+
+        [RelayCommand]
+        private void CancelClipEdit()
+        {
+            if (EditingClip == null || _originalClipData == null) return;
+
+            // Restore original values
+            EditingClip.InPoint = _originalClipData.InPoint;
+            EditingClip.OutPoint = _originalClipData.OutPoint;
+            EditingClip.Duration = _originalClipData.Duration;
+            EditingClip.Notes = _originalClipData.Notes;
+            EditingClip.TagColor = _originalClipData.TagColor;
+
+            // Exit edit mode
+            EditingClip.IsEditing = false;
+            EditingClip = null;
+            _originalClipData = null;
+        }
+
+        [RelayCommand]
+        private void DeleteClip(ClipLogItem clip)
+        {
+            if (clip == null) return;
+
+            // If deleting the clip being edited, exit edit mode
+            if (EditingClip == clip)
+            {
+                EditingClip = null;
+                _originalClipData = null;
+            }
+
+            TaggedClips.Remove(clip);
+        }
+
+        private void RecalculateClipDuration(ClipLogItem clip)
+        {
+            if (clip == null) return;
+
+            try
+            {
+                var inTime = ParseTimecode(clip.InPoint);
+                var outTime = ParseTimecode(clip.OutPoint);
+
+                if (inTime.HasValue && outTime.HasValue && outTime > inTime)
+                {
+                    var duration = outTime.Value - inTime.Value;
+                    clip.Duration = duration.ToString(@"hh\:mm\:ss");
+                }
+            }
+            catch
+            {
+                // Invalid timecode format, keep current duration
+            }
+        }
+
+        private TimeSpan? ParseTimecode(string timecode)
+        {
+            if (string.IsNullOrWhiteSpace(timecode)) return null;
+
+            // Expected format: HH:MM:SS:FF
+            var parts = timecode.Split(':');
+            if (parts.Length != 4) return null;
+
+            if (int.TryParse(parts[0], out int hours) &&
+                int.TryParse(parts[1], out int minutes) &&
+                int.TryParse(parts[2], out int seconds))
+            {
+                return new TimeSpan(hours, minutes, seconds);
+            }
+
+            return null;
+        }
+
+        // --- FILE NAVIGATION COMMANDS ---
+
+        [RelayCommand(CanExecute = nameof(CanNavigatePrevious))]
+        private async Task NavigatePrevious()
+        {
+            if (_currentFileIndex > 0)
+            {
+                await LoadVideo(_siblingFiles[_currentFileIndex - 1]);
+            }
+        }
+
+        private bool CanNavigatePrevious() => _currentFileIndex > 0;
+
+        [RelayCommand(CanExecute = nameof(CanNavigateNext))]
+        private async Task NavigateNext()
+        {
+            if (_currentFileIndex < _siblingFiles.Count - 1)
+            {
+                await LoadVideo(_siblingFiles[_currentFileIndex + 1]);
+            }
+        }
+
+        private bool CanNavigateNext() => _currentFileIndex >= 0 && _currentFileIndex < _siblingFiles.Count - 1;
+
+        private void UpdateSiblingFiles(string currentPath)
+        {
+            try
+            {
+                var directory = System.IO.Path.GetDirectoryName(currentPath);
+                if (string.IsNullOrEmpty(directory) || !System.IO.Directory.Exists(directory))
+                {
+                    _siblingFiles.Clear();
+                    _currentFileIndex = -1;
+                    NavigatePreviousCommand.NotifyCanExecuteChanged();
+                    NavigateNextCommand.NotifyCanExecuteChanged();
+                    return;
+                }
+
+                // Get all video files in the directory
+                var videoExtensions = new[] { ".mov", ".mp4", ".mxf", ".avi", ".mkv", ".m4v", ".mpg", ".mpeg" };
+                var files = System.IO.Directory.GetFiles(directory)
+                    .Where(f => videoExtensions.Contains(System.IO.Path.GetExtension(f).ToLower()))
+                    .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                _siblingFiles = files;
+                _currentFileIndex = files.FindIndex(f => f.Equals(currentPath, StringComparison.OrdinalIgnoreCase));
+
+                // Update command states
+                NavigatePreviousCommand.NotifyCanExecuteChanged();
+                NavigateNextCommand.NotifyCanExecuteChanged();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateSiblingFiles error: {ex.Message}");
+                _siblingFiles.Clear();
+                _currentFileIndex = -1;
+            }
         }
 
         private string FormatTimecodeForEdl(TimeSpan ts)

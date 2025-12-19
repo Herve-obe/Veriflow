@@ -13,6 +13,48 @@ namespace Veriflow.Desktop.Views
             this.Loaded += OnLoaded;
             this.Unloaded += OnUnloaded;
             this.DataContextChanged += OnDataContextChanged;
+            
+            // Subscribe to button flash events
+            this.DataContextChanged += (s, e) =>
+            {
+                if (e.OldValue is VideoPlayerViewModel oldVm)
+                {
+                    oldVm.FlashMarkInButton -= OnFlashMarkInButton;
+                    oldVm.FlashMarkOutButton -= OnFlashMarkOutButton;
+                    oldVm.FlashTagClipButton -= OnFlashTagClipButton;
+                }
+                
+                if (e.NewValue is VideoPlayerViewModel newVm)
+                {
+                    newVm.FlashMarkInButton += OnFlashMarkInButton;
+                    newVm.FlashMarkOutButton += OnFlashMarkOutButton;
+                    newVm.FlashTagClipButton += OnFlashTagClipButton;
+                }
+            };
+        }
+
+        private void OnFlashMarkInButton()
+        {
+            var storyboard = (System.Windows.Media.Animation.Storyboard)Application.Current.Resources["ButtonFlashAnimation"];
+            var clone = storyboard.Clone();
+            System.Windows.Media.Animation.Storyboard.SetTarget(clone, MarkInButton);
+            clone.Begin();
+        }
+
+        private void OnFlashMarkOutButton()
+        {
+            var storyboard = (System.Windows.Media.Animation.Storyboard)Application.Current.Resources["ButtonFlashAnimation"];
+            var clone = storyboard.Clone();
+            System.Windows.Media.Animation.Storyboard.SetTarget(clone, MarkOutButton);
+            clone.Begin();
+        }
+
+        private void OnFlashTagClipButton()
+        {
+            var storyboard = (System.Windows.Media.Animation.Storyboard)Application.Current.Resources["ButtonFlashAnimation"];
+            var clone = storyboard.Clone();
+            System.Windows.Media.Animation.Storyboard.SetTarget(clone, TagClipButton);
+            clone.Begin();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -23,14 +65,17 @@ namespace Veriflow.Desktop.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-             // Do NOT Stop() here if we want to Resume. 
-             // Just detach the VideoView to clean up the Vout/HWND connection.
+             // Stop playback when navigating away from this page
+             if (DataContext is VideoPlayerViewModel vm)
+             {
+                 vm.StopCommand?.Execute(null);
+             }
              
-            // Detach to prevent memory leaks and "stolen" instance issues
-            if (VideoViewControl != null)
-            {
-                VideoViewControl.MediaPlayer = null;
-            }
+             // Detach VideoView to clean up the Vout/HWND connection
+             if (VideoViewControl != null)
+             {
+                 VideoViewControl.MediaPlayer = null;
+             }
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

@@ -165,9 +165,9 @@
                          </Style>
                     </StackPanel.Resources>
                     
-                    <Button Command="{Binding SetInCommand}" Content="MARK IN" ToolTip="Set In Point (I)" Focusable="False"/>
-                    <Button Command="{Binding SetOutCommand}" Content="MARK OUT" ToolTip="Set Out Point (O)" Focusable="False"/>
-                    <Button Command="{Binding TagClipCommand}" Content="TAG CLIP" Background="{DynamicResource Brush.Accent}" BorderBrush="{DynamicResource Brush.Accent}" Foreground="Black" Focusable="False" ToolTip="Tag Clip (T)"/> 
+                    <Button x:Name="MarkInButton" Command="{Binding SetInCommand}" Content="MARK IN" ToolTip="Set In Point (I)" Focusable="False"/>
+                    <Button x:Name="MarkOutButton" Command="{Binding SetOutCommand}" Content="MARK OUT" ToolTip="Set Out Point (O)" Focusable="False"/>
+                    <Button x:Name="TagClipButton" Command="{Binding TagClipCommand}" Content="TAG CLIP" Background="{DynamicResource Brush.Accent}" BorderBrush="{DynamicResource Brush.Accent}" Foreground="Black" Focusable="False" ToolTip="Tag Clip (T)"/> 
                 </StackPanel>
             </Grid>
 

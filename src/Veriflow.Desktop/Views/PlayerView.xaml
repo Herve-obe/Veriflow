@@ -104,6 +104,14 @@
 
                     <!-- Stop Button (Right-aligned in Left box) -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0">
+                        <!-- Previous Button -->
+                        <Button Command="{Binding NavigatePreviousCommand}" ToolTip="Previous File (Ctrl+Left)" 
+                                Style="{StaticResource Style.Transport.Base}" Foreground="White" 
+                                Width="36" Height="36" Margin="0,0,10,0">
+                            <!-- Skip Previous Icon: |◀ -->
+                            <Path Data="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
+                        </Button>
+                        
                         <Button Command="{Binding StopCommand}" Tag="{Binding IsStopPressed}" ToolTip="Stop" Style="{StaticResource Style.Transport.Stop}">
                             <Path Data="M6,6H18V18H6V6Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
                         </Button>
@@ -116,8 +124,16 @@
 
                     <!-- Pause & Volume (Left-aligned in Right box) -->
                     <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0">
-                         <Button Command="{Binding PauseCommand}" Tag="{Binding IsPaused}" ToolTip="Pause" Style="{StaticResource Style.Transport.Pause}" Margin="0,0,20,0">
+                         <Button Command="{Binding PauseCommand}" Tag="{Binding IsPaused}" ToolTip="Pause" Style="{StaticResource Style.Transport.Pause}" Margin="0,0,10,0">
                             <Path Data="M14,19H18V5H14M6,19H10V5H6V19Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
+                        </Button>
+                        
+                        <!-- Next Button -->
+                        <Button Command="{Binding NavigateNextCommand}" ToolTip="Next File (Ctrl+Right)" 
+                                Style="{StaticResource Style.Transport.Base}" Foreground="White" 
+                                Width="36" Height="36" Margin="0,0,20,0">
+                            <!-- Skip Next Icon: ▶| -->
+                            <Path Data="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" Height="14" Width="14" Stretch="Uniform"/>
                         </Button>
 
                          <!-- Volume Group -->

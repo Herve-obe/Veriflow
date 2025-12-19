@@ -3,6 +3,17 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:helpers="clr-namespace:Veriflow.Desktop.Helpers">
 
+    <!-- ============================================ -->
+    <!-- GLOBAL ANIMATIONS -->
+    <!-- ============================================ -->
+    
+    <!-- Button Flash Animation for Keyboard Shortcut Feedback -->
+    <Storyboard x:Key="ButtonFlashAnimation">
+        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                         From="1.0" To="0.3" Duration="0:0:0.15"
+                         AutoReverse="True"/>
+    </Storyboard>
+
     <!-- 
         THEME PRO: NATIVE DARK (DaVinci/Silverstack)
         No dependencies. Pure WPF.

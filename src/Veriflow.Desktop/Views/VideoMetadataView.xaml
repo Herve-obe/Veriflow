@@ -171,14 +171,57 @@
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Border BorderBrush="#333" BorderThickness="0,0,0,1" Padding="5">
+                                            <!-- Editing mode border -->
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}"/>
+                                                            <Setter Property="BorderThickness" Value="2"/>
+                                                            <Setter Property="Background" Value="#1A1A1A"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
+                                                
                                                 <Rectangle Width="4" Fill="{Binding TagColor}" Margin="0,0,5,0"/>
+                                                
                                                 <StackPanel Grid.Column="1">
-                                                    <TextBlock Text="{Binding Notes}" Foreground="White" FontWeight="Bold"/>
+                                                    <!-- Notes - Editable when IsEditing -->
+                                                    <TextBlock Text="{Binding Notes}" Foreground="White" FontWeight="Bold">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    
+                                                    <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" 
+                                                             Foreground="White" FontWeight="Bold" Background="#222" BorderBrush="{DynamicResource Brush.Accent}"
+                                                             Padding="2" Margin="0,0,0,3">
+                                                        <TextBox.Style>
+                                                            <Style TargetType="TextBox">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBox.Style>
+                                                    </TextBox>
+                                                    
+                                                    <!-- Timecodes -->
                                                     <StackPanel Orientation="Horizontal">
                                                         <TextBlock Text="{Binding InPoint}" Foreground="#888" FontSize="10"/>
                                                         <TextBlock Text=" - " Foreground="#888" FontSize="10"/>
@@ -187,8 +230,42 @@
                                                         <TextBlock Text="{Binding Duration}" Foreground="#888" FontSize="10"/>
                                                         <TextBlock Text=")" Foreground="#888" FontSize="10"/>
                                                     </StackPanel>
+                                                    
+                                                    <!-- Edit mode buttons -->
+                                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                                        <StackPanel.Style>
+                                                            <Style TargetType="StackPanel">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </StackPanel.Style>
+                                                        
+                                                        <Button Content="✓ Save" Height="20" Padding="5,0" FontSize="10" Margin="0,0,5,0"
+                                                                Command="{Binding DataContext.SaveClipEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                Style="{StaticResource ContextualActionButtonStyle}" Background="#2E7D32" BorderBrush="#2E7D32"/>
+                                                        
+                                                        <Button Content="✗ Cancel" Height="20" Padding="5,0" FontSize="10" Margin="0,0,5,0"
+                                                                Command="{Binding DataContext.CancelClipEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                Style="{StaticResource ContextualActionButtonStyle}" Background="#C62828" BorderBrush="#C62828"/>
+                                                        
+                                                        <Button Content="🗑 Delete" Height="20" Padding="5,0" FontSize="10"
+                                                                Command="{Binding DataContext.DeleteClipCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{StaticResource ContextualActionButtonStyle}" Background="#555" BorderBrush="#555"/>
+                                                    </StackPanel>
                                                 </StackPanel>
                                             </Grid>
+                                            
+                                            <!-- Double-click to enter edit mode -->
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftDoubleClick" 
+                                                              Command="{Binding DataContext.EnterEditModeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                              CommandParameter="{Binding}"/>
+                                            </Border.InputBindings>
                                         </Border>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>

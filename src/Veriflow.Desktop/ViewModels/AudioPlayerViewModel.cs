@@ -87,6 +87,10 @@ namespace Veriflow.Desktop.ViewModels
         [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
         private bool _isPaused;
 
+        // --- FILE NAVIGATION ---
+        private List<string> _siblingFiles = new();
+        private int _currentFileIndex = -1;
+
         [ObservableProperty]
         private bool _isStopPressed;
 
@@ -185,6 +189,9 @@ namespace Veriflow.Desktop.ViewModels
             Tracks.Clear();
             RulerTicks.Clear();
             CurrentMetadata = new AudioMetadata();
+
+            _siblingFiles.Clear();
+            _currentFileIndex = -1;
         }
 
         [RelayCommand]
@@ -239,7 +246,10 @@ namespace Veriflow.Desktop.ViewModels
                 PlaybackMaximum = _inputStream.GetLength().TotalSeconds;
 
                 await LoadMetadataWithFFprobe(path);
-
+            
+                // Update sibling files for navigation
+                UpdateSiblingFiles(path);
+                
                 // Try to parse frame rate from metadata if available
                 if (!string.IsNullOrEmpty(CurrentMetadata.FrameRate))
                 {
@@ -632,6 +642,66 @@ namespace Veriflow.Desktop.ViewModels
             {
                 System.Diagnostics.Debug.WriteLine($"Metadata Error: {ex.Message}");
                 CurrentMetadata = new AudioMetadata { Filename = System.IO.Path.GetFileName(path) };
+            }
+        }
+
+        // --- FILE NAVIGATION COMMANDS ---
+
+        [RelayCommand(CanExecute = nameof(CanNavigatePrevious))]
+        private async Task NavigatePrevious()
+        {
+            if (_currentFileIndex > 0)
+            {
+                await LoadAudio(_siblingFiles[_currentFileIndex - 1]);
+            }
+        }
+
+        private bool CanNavigatePrevious() => _currentFileIndex > 0;
+
+        [RelayCommand(CanExecute = nameof(CanNavigateNext))]
+        private async Task NavigateNext()
+        {
+            if (_currentFileIndex < _siblingFiles.Count - 1)
+            {
+                await LoadAudio(_siblingFiles[_currentFileIndex + 1]);
+            }
+        }
+
+        private bool CanNavigateNext() => _currentFileIndex >= 0 && _currentFileIndex < _siblingFiles.Count - 1;
+
+        private void UpdateSiblingFiles(string currentPath)
+        {
+            try
+            {
+                var directory = System.IO.Path.GetDirectoryName(currentPath);
+                if (string.IsNullOrEmpty(directory) || !System.IO.Directory.Exists(directory))
+                {
+                    _siblingFiles.Clear();
+                    _currentFileIndex = -1;
+                    NavigatePreviousCommand.NotifyCanExecuteChanged();
+                    NavigateNextCommand.NotifyCanExecuteChanged();
+                    return;
+                }
+
+                // Get all audio files in the directory
+                var audioExtensions = new[] { ".wav", ".mp3", ".aif", ".aiff", ".flac", ".m4a", ".aac", ".ogg" };
+                var files = System.IO.Directory.GetFiles(directory)
+                    .Where(f => audioExtensions.Contains(System.IO.Path.GetExtension(f).ToLower()))
+                    .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                _siblingFiles = files;
+                _currentFileIndex = files.FindIndex(f => f.Equals(currentPath, StringComparison.OrdinalIgnoreCase));
+
+                // Update command states
+                NavigatePreviousCommand.NotifyCanExecuteChanged();
+                NavigateNextCommand.NotifyCanExecuteChanged();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"UpdateSiblingFiles error: {ex.Message}");
+                _siblingFiles.Clear();
+                _currentFileIndex = -1;
             }
         }
     }

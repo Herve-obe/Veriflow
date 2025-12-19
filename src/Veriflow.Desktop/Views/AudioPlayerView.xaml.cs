@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Veriflow.Desktop.Views
@@ -8,6 +9,16 @@ namespace Veriflow.Desktop.Views
         {
             InitializeComponent();
             Loaded += (s, e) => Focus();
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            // Stop playback when navigating away from this page
+            if (DataContext is ViewModels.AudioPlayerViewModel vm)
+            {
+                vm.StopCommand?.Execute(null);
+            }
         }
 
         private void Slider_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
