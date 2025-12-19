@@ -94,7 +94,7 @@
 
             <!-- HELP -->
             <MenuItem Header="Help">
-                <MenuItem Header="View Help" InputGestureText="F1" Command="{Binding ViewHelpCommand}"/>
+                <MenuItem Header="View Help" InputGestureText="F12" Command="{Binding ViewHelpCommand}"/>
                 <MenuItem Header="Open Log Folder" Command="{Binding OpenLogFolderCommand}"/>
                 <Separator/>
                 <MenuItem Header="About Veriflow" Command="{Binding OpenAboutCommand}"/>
