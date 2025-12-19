@@ -17,6 +17,11 @@
     </Window.DataContext>
 
     <Window.InputBindings>
+        <!-- Session Management Shortcuts -->
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewSessionCommand}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenSessionCommand}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveSessionCommand}"/>
+        
         <!-- F-Key Navigation Shortcuts -->
         <KeyBinding Key="F1" Command="{Binding ShowSecureCopyCommand}"/>
         <KeyBinding Key="F2" Command="{Binding ShowMediaCommand}"/>
@@ -53,25 +58,25 @@
         <Menu Grid.Row="0" VerticalAlignment="Center" Padding="5,0">
             <!-- FILE -->
             <MenuItem Header="File">
-                <MenuItem Header="New Session" InputGestureText="Ctrl+N" />
-                <MenuItem Header="Open Session..." InputGestureText="Ctrl+O" />
-                <MenuItem Header="Save Session" InputGestureText="Ctrl+S" />
+                <MenuItem Header="New Session" InputGestureText="Ctrl+N" Command="{Binding NewSessionCommand}"/>
+                <MenuItem Header="Open Session..." InputGestureText="Ctrl+O" Command="{Binding OpenSessionCommand}"/>
+                <MenuItem Header="Save Session" InputGestureText="Ctrl+S" Command="{Binding SaveSessionCommand}"/>
                 <Separator/>
-                <MenuItem Header="Settings" />
+                <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
                 <Separator/>
                 <MenuItem Header="Exit" InputGestureText="Alt+F4" Command="{Binding ExitCommand}"/>
             </MenuItem>
 
             <!-- EDIT -->
             <MenuItem Header="Edit">
-                <MenuItem Header="Undo" InputGestureText="Ctrl+Z" />
-                <MenuItem Header="Redo" InputGestureText="Ctrl+Y" />
+                <MenuItem Header="Undo" InputGestureText="Ctrl+Z" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Redo" InputGestureText="Ctrl+Y" Command="{Binding RedoCommand}"/>
                 <Separator/>
-                <MenuItem Header="Cut" />
-                <MenuItem Header="Copy" />
-                <MenuItem Header="Paste" />
+                <MenuItem Header="Cut" InputGestureText="Ctrl+X" Command="{Binding CutCommand}"/>
+                <MenuItem Header="Copy" InputGestureText="Ctrl+C" Command="{Binding CopyCommand}"/>
+                <MenuItem Header="Paste" InputGestureText="Ctrl+V" Command="{Binding PasteCommand}"/>
                 <Separator/>
-                <MenuItem Header="Reset Metadata" />
+                <MenuItem Header="Clear Current Page" Command="{Binding ClearCurrentPageCommand}"/>
             </MenuItem>
 
             <!-- VIEW -->

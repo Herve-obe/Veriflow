@@ -577,5 +577,66 @@ namespace Veriflow.Desktop.ViewModels
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Clears all reports for session management
+        /// </summary>
+        public void ClearAllReports()
+        {
+            AudioReportItems.Clear();
+            VideoReportItems.Clear();
+            IsReportActive = false;
+        }
+
+        /// <summary>
+        /// Restores a report item from session data
+        /// </summary>
+        public void RestoreReportItem(Veriflow.Core.Models.ReportItemData reportData, bool isVideo)
+        {
+            try
+            {
+                if (!System.IO.File.Exists(reportData.FilePath)) return;
+
+                var fileInfo = new System.IO.FileInfo(reportData.FilePath);
+                var mediaItem = new MediaItemViewModel(fileInfo);
+                
+                var reportItem = new ReportItem(mediaItem)
+                {
+                    Scene = reportData.Scene,
+                    Take = reportData.Take,
+                    ItemNotes = reportData.Notes
+                };
+
+                // Restore clips if any
+                if (reportData.Clips != null)
+                {
+                    foreach (var clipData in reportData.Clips)
+                    {
+                        reportItem.Clips.Add(new ClipLogItem
+                        {
+                            SourceFile = reportData.FilePath,
+                            InPoint = clipData.InPoint,
+                            OutPoint = clipData.OutPoint,
+                            Notes = clipData.Notes
+                        });
+                    }
+                }
+
+                if (isVideo)
+                {
+                    VideoReportItems.Add(reportItem);
+                }
+                else
+                {
+                    AudioReportItems.Add(reportItem);
+                }
+
+                IsReportActive = true;
+            }
+            catch
+            {
+                // Skip items that can't be restored
+            }
+        }
     }
 }

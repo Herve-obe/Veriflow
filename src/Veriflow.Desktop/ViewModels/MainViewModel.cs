@@ -70,6 +70,7 @@ namespace Veriflow.Desktop.ViewModels
         public MediaViewModel MediaViewModel { get; }
         public SyncViewModel SyncViewModel { get; }
         public ReportsViewModel ReportsViewModel { get; }
+        public SessionViewModel SessionViewModel { get; }
 
         // Private backing fields
         private readonly SecureCopyViewModel _secureCopyViewModel;
@@ -80,6 +81,7 @@ namespace Veriflow.Desktop.ViewModels
         private readonly MediaViewModel _mediaViewModel;
         private readonly SyncViewModel _syncViewModel;
         private readonly ReportsViewModel _reportsViewModel;
+        private readonly SessionViewModel _sessionViewModel;
 
         public ICommand ShowPlayerCommand { get; }
         public ICommand ShowMediaCommand { get; }
@@ -92,6 +94,18 @@ namespace Veriflow.Desktop.ViewModels
         public ICommand ToggleAudioVideoModeCommand { get; }
         public ICommand OpenAboutCommand { get; }
         public ICommand ExitCommand { get; }
+        public ICommand NewSessionCommand { get; }
+        public ICommand OpenSessionCommand { get; }
+        public ICommand SaveSessionCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
+        
+        // Edit Menu Commands
+        public ICommand UndoCommand { get; }
+        public ICommand RedoCommand { get; }
+        public ICommand CutCommand { get; }
+        public ICommand CopyCommand { get; }
+        public ICommand PasteCommand { get; }
+        public ICommand ClearCurrentPageCommand { get; }
 
         public MainViewModel()
         {
@@ -115,6 +129,12 @@ namespace Veriflow.Desktop.ViewModels
             SyncViewModel = _syncViewModel;
             ReportsViewModel = _reportsViewModel;
 
+            // Initialize SessionViewModel with callbacks
+            _sessionViewModel = new SessionViewModel(
+                captureStateCallback: CaptureSessionState,
+                restoreStateCallback: RestoreSessionState);
+            SessionViewModel = _sessionViewModel;
+
             // Navigation Commands
             ShowPlayerCommand = new RelayCommand(() => NavigateTo(PageType.Player));
             ShowMediaCommand = new RelayCommand(() => NavigateTo(PageType.Media));
@@ -128,6 +148,20 @@ namespace Veriflow.Desktop.ViewModels
             ToggleAudioVideoModeCommand = new RelayCommand(ToggleAudioVideoMode);
             OpenAboutCommand = new RelayCommand(OpenAbout);
             ExitCommand = new RelayCommand(() => Application.Current.Shutdown());
+
+            // Session Commands
+            NewSessionCommand = new RelayCommand(() => _sessionViewModel.NewSessionCommand.Execute(null));
+            OpenSessionCommand = new RelayCommand(async () => await _sessionViewModel.OpenSessionCommand.ExecuteAsync(null));
+            SaveSessionCommand = new RelayCommand(async () => await _sessionViewModel.SaveSessionCommand.ExecuteAsync(null));
+            OpenSettingsCommand = new RelayCommand(OpenSettings);
+            
+            // Edit Commands
+            UndoCommand = new RelayCommand(Undo, CanUndo);
+            RedoCommand = new RelayCommand(Redo, CanRedo);
+            CutCommand = new RelayCommand(Cut, CanCutCopy);
+            CopyCommand = new RelayCommand(Copy, CanCutCopy);
+            PasteCommand = new RelayCommand(Paste, CanPaste);
+            ClearCurrentPageCommand = new RelayCommand(ClearCurrentPage);
 
             // Default
             SetMode(AppMode.Video);
@@ -279,6 +313,136 @@ namespace Veriflow.Desktop.ViewModels
             catch { /* Log */ }
         }
 
+        /// <summary>
+        /// Captures the current application state into a Session object
+        /// </summary>
+        private Veriflow.Core.Models.Session CaptureSessionState()
+        {
+            var session = new Veriflow.Core.Models.Session
+            {
+                CurrentMode = CurrentAppMode == AppMode.Audio ? "Audio" : "Video",
+                CurrentPage = CurrentPageType.ToString(),
+                MediaFiles = _mediaViewModel.GetLoadedFiles(),
+                SecureCopySettings = new Veriflow.Core.Models.SecureCopySettings
+                {
+                    SourcePath = _secureCopyViewModel.SourcePath ?? string.Empty,
+                    MainDestination = _secureCopyViewModel.Destination1Path ?? string.Empty,
+                    SecondaryDestination = _secureCopyViewModel.Destination2Path ?? string.Empty
+                },
+                TranscodeQueue = _transcodeViewModel.GetQueuedFiles()
+            };
+
+            // Capture Audio Reports
+            foreach (var item in _reportsViewModel.AudioReportItems)
+            {
+                session.AudioReportItems.Add(new Veriflow.Core.Models.ReportItemData
+                {
+                    FilePath = item.OriginalMedia.FullName,
+                    FileName = item.Filename,
+                    Scene = item.Scene,
+                    Take = item.Take,
+                    Notes = item.ItemNotes,
+                    Timecode = item.StartTimeCode,
+                    Duration = item.Duration
+                });
+            }
+
+            // Capture Video Reports
+            foreach (var item in _reportsViewModel.VideoReportItems)
+            {
+                var reportData = new Veriflow.Core.Models.ReportItemData
+                {
+                    FilePath = item.OriginalMedia.FullName,
+                    FileName = item.Filename,
+                    Scene = item.Scene,
+                    Take = item.Take,
+                    Notes = item.ItemNotes,
+                    Timecode = item.StartTimeCode,
+                    Duration = item.Duration,
+                    Clips = new System.Collections.Generic.List<Veriflow.Core.Models.ClipData>()
+                };
+
+                // Capture clips if any
+                if (item.Clips != null)
+                {
+                    foreach (var clip in item.Clips)
+                    {
+                        reportData.Clips.Add(new Veriflow.Core.Models.ClipData
+                        {
+                            InPoint = clip.InPoint,
+                            OutPoint = clip.OutPoint,
+                            Notes = clip.Notes
+                        });
+                    }
+                }
+
+                session.VideoReportItems.Add(reportData);
+            }
+
+            return session;
+        }
+
+        /// <summary>
+        /// Restores application state from a Session object
+        /// </summary>
+        private void RestoreSessionState(Veriflow.Core.Models.Session session)
+        {
+            try
+            {
+                // Restore Mode
+                var mode = session.CurrentMode == "Audio" ? AppMode.Audio : AppMode.Video;
+                SetMode(mode);
+
+                // Restore Media Files
+                _mediaViewModel.LoadFiles(session.MediaFiles);
+
+                // Restore SecureCopy Settings
+                if (session.SecureCopySettings != null)
+                {
+                    _secureCopyViewModel.SourcePath = session.SecureCopySettings.SourcePath;
+                    _secureCopyViewModel.Destination1Path = session.SecureCopySettings.MainDestination;
+                    _secureCopyViewModel.Destination2Path = session.SecureCopySettings.SecondaryDestination;
+                }
+
+                // Restore Transcode Queue
+                _transcodeViewModel.LoadFiles(session.TranscodeQueue);
+
+                // Restore Reports
+                _reportsViewModel.ClearAllReports();
+                
+                foreach (var reportData in session.AudioReportItems)
+                {
+                    _reportsViewModel.RestoreReportItem(reportData, isVideo: false);
+                }
+
+                foreach (var reportData in session.VideoReportItems)
+                {
+                    _reportsViewModel.RestoreReportItem(reportData, isVideo: true);
+                }
+
+                // Restore Page
+                if (Enum.TryParse<PageType>(session.CurrentPage, out var pageType))
+                {
+                    NavigateTo(pageType);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error restoring session state:\n{ex.Message}",
+                    "Restore Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+        }
+
+        private void OpenSettings()
+        {
+            var window = new Views.SettingsWindow();
+            window.Owner = Application.Current.MainWindow;
+            window.ShowDialog();
+        }
+
         private void OpenAbout()
         {
             var window = new Views.AboutWindow();
@@ -415,6 +579,284 @@ namespace Veriflow.Desktop.ViewModels
             // don't implement IDisposable as they don't have timers or unmanaged resources
             
             GC.SuppressFinalize(this);
+        }
+
+        // ========================================================================
+        // EDIT MENU COMMANDS
+        // ========================================================================
+
+        private bool CanUndo() => false; // TODO: Implement undo stack
+        private bool CanRedo() => false; // TODO: Implement redo stack
+
+        private void Undo()
+        {
+            MessageBox.Show(
+                "Undo functionality is not yet implemented.",
+                "Undo",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        private void Redo()
+        {
+            MessageBox.Show(
+                "Redo functionality is not yet implemented.",
+                "Redo",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        private bool CanCutCopy()
+        {
+            // Enable for Reports, Media, and Transcode views
+            return CurrentPageType == PageType.Reports ||
+                   CurrentPageType == PageType.Media ||
+                   CurrentPageType == PageType.Transcode;
+        }
+
+        private bool CanPaste()
+        {
+            // Check if clipboard has data
+            return Clipboard.ContainsText() && CanCutCopy();
+        }
+
+        private void Cut()
+        {
+            Copy(); // Copy first
+            // Then delete based on current view
+            switch (CurrentPageType)
+            {
+                case PageType.Reports:
+                    // TODO: Delete selected report items
+                    break;
+                case PageType.Media:
+                    // TODO: Remove selected media files
+                    break;
+                case PageType.Transcode:
+                    // TODO: Remove selected transcode items
+                    break;
+            }
+        }
+
+        private void Copy()
+        {
+            try
+            {
+                switch (CurrentPageType)
+                {
+                    case PageType.Reports:
+                        CopyReportsToClipboard();
+                        break;
+                    case PageType.Media:
+                        CopyMediaToClipboard();
+                        break;
+                    case PageType.Transcode:
+                        CopyTranscodeToClipboard();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error copying to clipboard:\n{ex.Message}",
+                    "Copy Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void Paste()
+        {
+            try
+            {
+                if (!Clipboard.ContainsText()) return;
+
+                var clipboardText = Clipboard.GetText();
+                
+                switch (CurrentPageType)
+                {
+                    case PageType.Reports:
+                        // TODO: Paste report items from clipboard
+                        MessageBox.Show("Paste to Reports not yet implemented.", "Paste", MessageBoxButton.OK, MessageBoxImage.Information);
+                        break;
+                    case PageType.Media:
+                        // Parse file paths and load
+                        var filePaths = clipboardText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        _mediaViewModel.LoadFiles(filePaths.ToList());
+                        break;
+                    case PageType.Transcode:
+                        // Parse file paths and add to queue
+                        var transcodeFiles = clipboardText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        _transcodeViewModel.LoadFiles(transcodeFiles.ToList());
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error pasting from clipboard:\n{ex.Message}",
+                    "Paste Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void CopyReportsToClipboard()
+        {
+            var reportItems = CurrentAppMode == AppMode.Audio
+                ? _reportsViewModel.AudioReportItems
+                : _reportsViewModel.VideoReportItems;
+
+            if (reportItems.Count == 0)
+            {
+                MessageBox.Show("No reports to copy.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Copy report file paths
+            var filePaths = string.Join(Environment.NewLine, reportItems.Select(r => r.OriginalMedia.FullName));
+            Clipboard.SetText(filePaths);
+            MessageBox.Show($"Copied {reportItems.Count} report file path(s) to clipboard.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void CopyMediaToClipboard()
+        {
+            var loadedFiles = _mediaViewModel.GetLoadedFiles();
+            if (loadedFiles.Count == 0)
+            {
+                MessageBox.Show("No media files to copy.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var filePaths = string.Join(Environment.NewLine, loadedFiles);
+            Clipboard.SetText(filePaths);
+            MessageBox.Show($"Copied {loadedFiles.Count} file path(s) to clipboard.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void CopyTranscodeToClipboard()
+        {
+            var queuedFiles = _transcodeViewModel.GetQueuedFiles();
+            if (queuedFiles.Count == 0)
+            {
+                MessageBox.Show("No transcode queue items to copy.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var filePaths = string.Join(Environment.NewLine, queuedFiles);
+            Clipboard.SetText(filePaths);
+            MessageBox.Show($"Copied {queuedFiles.Count} queued file path(s) to clipboard.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void ClearCurrentPage()
+        {
+            var pageName = CurrentPageType.ToString();
+            var result = MessageBox.Show(
+                $"Are you sure you want to clear the {pageName} page?\n\nThis will reset the page to its default state.\n\nThis action cannot be undone.",
+                "Clear Current Page",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                switch (CurrentPageType)
+                {
+                    case PageType.SecureCopy:
+                        ClearSecureCopyPage();
+                        break;
+                    case PageType.Media:
+                        ClearMediaPage();
+                        break;
+                    case PageType.Player:
+                        ClearPlayerPage();
+                        break;
+                    case PageType.Sync:
+                        ClearSyncPage();
+                        break;
+                    case PageType.Transcode:
+                        ClearTranscodePage();
+                        break;
+                    case PageType.Reports:
+                        ClearReportsPage();
+                        break;
+                }
+
+                MessageBox.Show(
+                    $"{pageName} page has been cleared.",
+                    "Clear Complete",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error clearing page:\n{ex.Message}",
+                    "Clear Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void ClearSecureCopyPage()
+        {
+            // Clear source and destination paths
+            _secureCopyViewModel.SourcePath = string.Empty;
+            _secureCopyViewModel.Destination1Path = string.Empty;
+            _secureCopyViewModel.Destination2Path = string.Empty;
+        }
+
+        private void ClearMediaPage()
+        {
+            // Clear loaded media files and reset browser to default
+            _mediaViewModel.LoadFiles(new List<string>());
+            // Browser will reset to default state when files are cleared
+        }
+
+        private void ClearPlayerPage()
+        {
+            // Clear loaded media using commands
+            if (CurrentAppMode == AppMode.Audio)
+            {
+                if (_audioViewModel.UnloadMediaCommand.CanExecute(null))
+                {
+                    _audioViewModel.UnloadMediaCommand.Execute(null);
+                }
+            }
+            else
+            {
+                if (_videoPlayerViewModel.UnloadMediaCommand.CanExecute(null))
+                {
+                    _videoPlayerViewModel.UnloadMediaCommand.Execute(null);
+                }
+                // Clear logged clips list (Video profile only)
+                // TODO: Add method to clear logged clips if needed
+            }
+        }
+
+        private void ClearSyncPage()
+        {
+            // Clear sync datagrids and address field
+            // TODO: Add clear methods to SyncViewModel when available
+            MessageBox.Show(
+                "Sync page clear not yet fully implemented.",
+                "Clear Sync",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        private void ClearTranscodePage()
+        {
+            // Clear media list but keep settings
+            _transcodeViewModel.LoadFiles(new List<string>());
+            // Settings panel remains unchanged
+        }
+
+        private void ClearReportsPage()
+        {
+            // Clear report list and EDL view
+            _reportsViewModel.ClearAllReports();
+            // Panel will reset when reports are cleared
         }
     }
 }

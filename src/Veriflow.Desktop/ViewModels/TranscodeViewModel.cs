@@ -606,6 +606,30 @@ namespace Veriflow.Desktop.ViewModels
         {
              return Files.Count > 0 && !IsBusy;
         }
+
+        /// <summary>
+        /// Gets list of queued file paths for session saving
+        /// </summary>
+        public List<string> GetQueuedFiles()
+        {
+            return Files.Select(f => f.FilePath).ToList();
+        }
+
+        /// <summary>
+        /// Loads files from a list of paths for session restoration
+        /// </summary>
+        public void LoadFiles(List<string> filePaths)
+        {
+            if (filePaths == null) return;
+            
+            foreach (var path in filePaths)
+            {
+                if (System.IO.File.Exists(path))
+                {
+                    AddFile(path);
+                }
+            }
+        }
     }
 }
 

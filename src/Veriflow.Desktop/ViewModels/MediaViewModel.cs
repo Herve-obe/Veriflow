@@ -768,6 +768,33 @@ namespace Veriflow.Desktop.ViewModels
              
              return true; 
         }
+
+        /// <summary>
+        /// Gets list of currently loaded file paths for session saving
+        /// </summary>
+        public List<string> GetLoadedFiles()
+        {
+            return FileList.Select(f => f.FullName).ToList();
+        }
+
+        /// <summary>
+        /// Loads files from a list of paths for session restoration
+        /// </summary>
+        public void LoadFiles(List<string> filePaths)
+        {
+            if (filePaths == null || !filePaths.Any()) return;
+
+            // Get the directory from the first file
+            var firstFile = filePaths.FirstOrDefault();
+            if (!string.IsNullOrEmpty(firstFile) && File.Exists(firstFile))
+            {
+                var directory = Path.GetDirectoryName(firstFile);
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    LoadDirectory(directory);
+                }
+            }
+        }
     }
 
     public partial class MediaItemViewModel : ObservableObject
