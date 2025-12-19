@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -106,6 +108,10 @@ namespace Veriflow.Desktop.ViewModels
         public ICommand CopyCommand { get; }
         public ICommand PasteCommand { get; }
         public ICommand ClearCurrentPageCommand { get; }
+        
+        // Help Menu Commands
+        public ICommand ViewHelpCommand { get; }
+        public ICommand OpenLogFolderCommand { get; }
 
         public MainViewModel()
         {
@@ -162,6 +168,10 @@ namespace Veriflow.Desktop.ViewModels
             CopyCommand = new RelayCommand(Copy, CanCutCopy);
             PasteCommand = new RelayCommand(Paste, CanPaste);
             ClearCurrentPageCommand = new RelayCommand(ClearCurrentPage);
+            
+            // Help Commands
+            ViewHelpCommand = new RelayCommand(ViewHelp);
+            OpenLogFolderCommand = new RelayCommand(OpenLogFolder);
 
             // Default
             SetMode(AppMode.Video);
@@ -857,6 +867,94 @@ namespace Veriflow.Desktop.ViewModels
             // Clear report list and EDL view
             _reportsViewModel.ClearAllReports();
             // Panel will reset when reports are cleared
+        }
+
+        // ========================================================================
+        // HELP MENU COMMANDS
+        // ========================================================================
+
+        private void ViewHelp()
+        {
+            try
+            {
+                var docsFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "docs");
+                var helpPath = Path.Combine(docsFolder, "Veriflow_User_Guide.pdf");
+                
+                // Create docs folder if it doesn't exist
+                if (!Directory.Exists(docsFolder))
+                {
+                    Directory.CreateDirectory(docsFolder);
+                }
+
+                // Generate PDF if it doesn't exist
+                if (!File.Exists(helpPath))
+                {
+                    var result = MessageBox.Show(
+                        "User guide PDF not found. Would you like to generate it now?\n\nThis will create a basic user guide.",
+                        "Generate User Guide",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        Services.DocumentationService.GenerateUserGuidePDF(helpPath);
+                        MessageBox.Show(
+                            "User guide generated successfully!",
+                            "Success",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                // Open PDF
+                Process.Start(new ProcessStartInfo(helpPath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error opening help documentation:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void OpenLogFolder()
+        {
+            try
+            {
+                // Determine log folder location
+                var logFolder = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "Veriflow",
+                    "Logs");
+
+                // Create folder if it doesn't exist
+                if (!Directory.Exists(logFolder))
+                {
+                    Directory.CreateDirectory(logFolder);
+                }
+
+                // Open in Windows Explorer
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = logFolder,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error opening log folder:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
     }
 }

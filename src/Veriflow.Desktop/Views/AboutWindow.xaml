@@ -1,43 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Window x:Class="Veriflow.Desktop.Views.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="About" Height="320" Width="420"
-        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
-        Background="#1E1E1E">
-    <Grid Margin="20">
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            
-            <TextBlock Text="Veriflow Pro" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-            
-            <TextBlock Text="Version 1.0.0" FontSize="14" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-            <TextBlock Text="© 2025 Veriflow. All rights reserved." FontSize="12" Foreground="#888888" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+        Title="About Veriflow" Height="600" Width="700"
+        WindowStartupLocation="CenterOwner" ResizeMode="CanResize"
+        Background="{DynamicResource Brush.Background}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <TextBlock Text="This software uses libraries from the FFmpeg project under the LGPLv2.1. Source code for FFmpeg can be downloaded from the link below." 
-                       FontSize="12" Foreground="#DDDDDD" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,5"/>
+        <!-- Header -->
+        <Border Grid.Row="0" Background="{DynamicResource Brush.Panel.Header}" Padding="20">
+            <StackPanel>
+                <TextBlock Text="Veriflow Pro" 
+                           FontSize="28" 
+                           FontWeight="Bold" 
+                           Foreground="{DynamicResource Brush.Accent}"
+                           HorizontalAlignment="Center"/>
+                <TextBlock x:Name="VersionText" 
+                           Text="Version 1.0.0" 
+                           FontSize="14" 
+                           Foreground="{DynamicResource Brush.Text.Secondary}"
+                           HorizontalAlignment="Center" 
+                           Margin="0,5,0,0"/>
+                <TextBlock Text="© 2025 Veriflow. All rights reserved." 
+                           FontSize="12" 
+                           Foreground="{DynamicResource Brush.Text.Tertiary}"
+                           HorizontalAlignment="Center" 
+                           Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
 
-            <TextBlock HorizontalAlignment="Center">
-                <Hyperlink NavigateUri="https://ffmpeg.org" RequestNavigate="Hyperlink_RequestNavigate">
-                    https://ffmpeg.org
-                </Hyperlink>
-            </TextBlock>
+        <!-- Content - Scrollable Licenses -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20">
+            <StackPanel>
+                <TextBlock Text="THIRD-PARTY SOFTWARE" 
+                           FontSize="16" 
+                           FontWeight="SemiBold" 
+                           Foreground="{DynamicResource Brush.Accent}"
+                           Margin="0,0,0,15"/>
 
-            <Button Content="CLOSE" IsCancel="True" Click="Close_Click"
-                    Width="100" Height="30" Margin="0,30,0,0"
-                    Background="#333" Foreground="#CCC" BorderThickness="0">
+                <TextBlock TextWrapping="Wrap" 
+                           Foreground="{DynamicResource Brush.Text}"
+                           Margin="0,0,0,20">
+                    <Run Text="This software uses the following third-party libraries and tools:"/>
+                </TextBlock>
+
+                <!-- FFmpeg -->
+                <Border Background="{DynamicResource Brush.Panel}" 
+                        BorderBrush="{DynamicResource Brush.Border}" 
+                        BorderThickness="1" 
+                        Padding="15" 
+                        Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="FFmpeg" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource Brush.Text}"/>
+                        <TextBlock Text="License: LGPL v2.1 / GPL v2+" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}" 
+                                   Margin="0,3,0,5"/>
+                        <TextBlock TextWrapping="Wrap" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}">
+                            <Run Text="This software uses code of FFmpeg licensed under the LGPLv2.1 and its source can be downloaded at "/>
+                            <Hyperlink NavigateUri="https://ffmpeg.org/download.html" RequestNavigate="Hyperlink_RequestNavigate">
+                                https://ffmpeg.org
+                            </Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- LibVLC -->
+                <Border Background="{DynamicResource Brush.Panel}" 
+                        BorderBrush="{DynamicResource Brush.Border}" 
+                        BorderThickness="1" 
+                        Padding="15" 
+                        Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="LibVLC / VideoLAN" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource Brush.Text}"/>
+                        <TextBlock Text="License: LGPL v2.1+" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}" 
+                                   Margin="0,3,0,5"/>
+                        <TextBlock TextWrapping="Wrap" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}">
+                            <Run Text="© 1996-2025 VideoLAN. Source code available at "/>
+                            <Hyperlink NavigateUri="https://www.videolan.org/vlc/download-sources.html" RequestNavigate="Hyperlink_RequestNavigate">
+                                https://www.videolan.org
+                            </Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- .NET Libraries -->
+                <Border Background="{DynamicResource Brush.Panel}" 
+                        BorderBrush="{DynamicResource Brush.Border}" 
+                        BorderThickness="1" 
+                        Padding="15" 
+                        Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text=".NET and Related Libraries" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource Brush.Text}"/>
+                        <TextBlock Text="License: MIT" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}" 
+                                   Margin="0,3,0,5"/>
+                        <TextBlock TextWrapping="Wrap" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}">
+                            <Run Text="• .NET 8.0 Runtime"/>
+                            <LineBreak/>
+                            <Run Text="• Windows Presentation Foundation (WPF)"/>
+                            <LineBreak/>
+                            <Run Text="• CommunityToolkit.Mvvm v8.4.0"/>
+                            <LineBreak/>
+                            <Run Text="• Microsoft.Xaml.Behaviors.Wpf v1.1.135"/>
+                            <LineBreak/>
+                            <Run Text="• System.IO.Hashing v10.0.0"/>
+                            <LineBreak/>
+                            <Run Text="© Microsoft Corporation"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Other Libraries -->
+                <Border Background="{DynamicResource Brush.Panel}" 
+                        BorderBrush="{DynamicResource Brush.Border}" 
+                        BorderThickness="1" 
+                        Padding="15" 
+                        Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="Additional Libraries" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource Brush.Text}"/>
+                        <TextBlock TextWrapping="Wrap" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}" 
+                                   Margin="0,5,0,0">
+                            <Run Text="• CSCore v1.2.1.2 (MS-PL) - Audio processing"/>
+                            <LineBreak/>
+                            <Run Text="• QuestPDF v2025.12.0 (MIT) - PDF generation"/>
+                            <LineBreak/>
+                            <Run Text="• MathNet.Numerics v5.0.0 (MIT) - Mathematical computations"/>
+                            <LineBreak/>
+                            <Run Text="• LibVLCSharp.WPF v3.9.5 (LGPL v2.1+) - Video playback"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- License Notice -->
+                <Border Background="{DynamicResource Brush.Panel.Darker}" 
+                        BorderBrush="{DynamicResource Brush.Border}" 
+                        BorderThickness="1" 
+                        Padding="15" 
+                        Margin="0,10,0,0">
+                    <StackPanel>
+                        <TextBlock Text="IMPORTANT NOTICE" 
+                                   FontWeight="Bold" 
+                                   FontSize="12" 
+                                   Foreground="{DynamicResource Brush.Accent}"/>
+                        <TextBlock TextWrapping="Wrap" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Brush.Text.Secondary}" 
+                                   Margin="0,5,0,0">
+                            <Run Text="This software uses libraries licensed under LGPL and GPL. The source code for these libraries is available at the links provided above. Veriflow dynamically links to these libraries and does not modify their source code. For full license texts and compliance information, please visit the respective project websites."/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="{DynamicResource Brush.Panel.Header}" Padding="20">
+            <Button Content="CLOSE" 
+                    IsCancel="True" 
+                    Click="Close_Click"
+                    Width="120" 
+                    Height="35"
+                    Background="{DynamicResource Brush.Accent}" 
+                    Foreground="White" 
+                    BorderThickness="0"
+                    FontWeight="SemiBold"
+                    HorizontalAlignment="Center">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="3">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                         <ControlTemplate.Triggers>
+                        <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#444"/>
+                                <Setter Property="Opacity" Value="0.8"/>
                                 <Setter Property="Cursor" Value="Hand"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-        </StackPanel>
+        </Border>
     </Grid>
 </Window>

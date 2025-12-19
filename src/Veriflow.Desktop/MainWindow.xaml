@@ -94,10 +94,10 @@
 
             <!-- HELP -->
             <MenuItem Header="Help">
-                <MenuItem Header="View Help" InputGestureText="F1" />
-                <MenuItem Header="Open Log Folder" />
+                <MenuItem Header="View Help" InputGestureText="F1" Command="{Binding ViewHelpCommand}"/>
+                <MenuItem Header="Open Log Folder" Command="{Binding OpenLogFolderCommand}"/>
                 <Separator/>
-                <MenuItem Header="About Veriflow" Command="{Binding OpenAboutCommand}" />
+                <MenuItem Header="About Veriflow" Command="{Binding OpenAboutCommand}"/>
             </MenuItem>
         </Menu>
 
