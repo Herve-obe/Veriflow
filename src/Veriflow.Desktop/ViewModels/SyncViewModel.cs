@@ -358,10 +358,7 @@ namespace Veriflow.Desktop.ViewModels
             
             IsBusy = false;
             
-            if (VideoPool.Count > 0 && AudioPool.Count > 0)
-            {
-                await AutoSync();
-            }
+            // Removed auto-sync - let user choose sync method manually
         }
 
         [RelayCommand]
