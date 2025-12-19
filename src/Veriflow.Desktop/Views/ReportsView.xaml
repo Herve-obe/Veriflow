@@ -475,12 +475,36 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                             <Button Content="📷 REPORT" 
                                     Command="{Binding SwitchToReportViewCommand}"
-                                    Style="{StaticResource ContextualActionButtonStyle}" 
-                                    Width="100" Height="26" FontSize="11" Margin="0,0,5,0"/>
+                                    Width="100" Height="26" FontSize="11" Margin="0,0,5,0">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource ContextualActionButtonStyle}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentViewMode}" Value="CameraReport">
+                                                <Setter Property="Opacity" Value="1.0"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CurrentViewMode}" Value="EDLLogging">
+                                                <Setter Property="Opacity" Value="0.5"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                             <Button Content="🎬 EDL" 
                                     Command="{Binding SwitchToEDLViewCommand}"
-                                    Style="{StaticResource ContextualActionButtonStyle}" 
-                                    Width="80" Height="26" FontSize="11"/>
+                                    Width="80" Height="26" FontSize="11">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource ContextualActionButtonStyle}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentViewMode}" Value="EDLLogging">
+                                                <Setter Property="Opacity" Value="1.0"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CurrentViewMode}" Value="CameraReport">
+                                                <Setter Property="Opacity" Value="0.5"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                         </StackPanel>
                         
                         <Button Content="ADD FILE(S)" Command="{Binding AddFilesCommand}" 
@@ -517,14 +541,14 @@
                                 <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <!-- Show when CurrentViewMode is CameraReport -->
-                                        <DataTrigger Binding="{Binding CurrentViewMode}" Value="CameraReport">
+                                        <!-- Show ONLY when CurrentViewMode is CameraReport AND ReportTitle is CAMERA REPORT -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding CurrentViewMode}" Value="CameraReport"/>
+                                                <Condition Binding="{Binding ReportTitle}" Value="CAMERA REPORT"/>
+                                            </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                        <!-- Also show when ReportTitle is CAMERA REPORT (for backward compatibility) -->
-                                        <DataTrigger Binding="{Binding ReportTitle}" Value="CAMERA REPORT">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </DataGrid.Style>
@@ -668,9 +692,14 @@
                                 <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ReportTitle}" Value="SOUND REPORT">
+                                        <!-- Show ONLY when CurrentViewMode is CameraReport AND ReportTitle is SOUND REPORT -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding CurrentViewMode}" Value="CameraReport"/>
+                                                <Condition Binding="{Binding ReportTitle}" Value="SOUND REPORT"/>
+                                            </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </DataGrid.Style>
