@@ -98,6 +98,7 @@
     <SolidColorBrush x:Key="Brush.Icon.Drive" Color="#90A4AE"/>
     <SolidColorBrush x:Key="Brush.Error" Color="#FF4545"/>
     <SolidColorBrush x:Key="Brush.Error.Dark" Color="#8B0000"/>
+    <SolidColorBrush x:Key="Brush.Menu.Highlight" Color="#2A2A2A"/>
 
     <!-- GLOBAL WINDOW STYLE -->
     <Style TargetType="{x:Type Window}">

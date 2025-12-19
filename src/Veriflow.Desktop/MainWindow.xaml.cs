@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Veriflow.Desktop.ViewModels;
 
 namespace Veriflow.Desktop;
@@ -14,8 +16,34 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = new MainViewModel();
         
+        // Load icon programmatically to prevent random taskbar icon issues
+        LoadApplicationIcon();
+        
         // Subscribe to window-level keyboard events for persistent shortcuts
         PreviewKeyDown += MainWindow_PreviewKeyDown;
+    }
+
+    /// <summary>
+    /// Loads the application icon programmatically from embedded resources.
+    /// This prevents the random generic icon issue in Windows taskbar that can occur with pack URI loading.
+    /// </summary>
+    private void LoadApplicationIcon()
+    {
+        try
+        {
+            var iconUri = new Uri("pack://application:,,,/Assets/veriflow.ico");
+            var streamInfo = Application.GetResourceStream(iconUri);
+            
+            if (streamInfo != null)
+            {
+                Icon = BitmapFrame.Create(streamInfo.Stream);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log the error but don't crash the application
+            System.Diagnostics.Debug.WriteLine($"Failed to load application icon: {ex.Message}");
+        }
     }
 
     // ============================================================================

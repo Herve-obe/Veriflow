@@ -7,7 +7,6 @@
         xmlns:local="clr-namespace:Veriflow.Desktop.Views"
         mc:Ignorable="d"
         Title="Veriflow" Height="800" Width="1200"
-        Icon="pack://application:,,,/Assets/veriflow.ico"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         TextElement.FontFamily="Segoe UI"
@@ -113,12 +112,12 @@
                 <MenuItem Header="Full Screen" InputGestureText="F11" />
                 <MenuItem Header="Minimize to Tray" />
                 <Separator/>
-                <MenuItem Header="Go to Media" InputGestureText="Ctrl+1" Command="{Binding ShowMediaCommand}" />
-                <MenuItem Header="Go to Player" InputGestureText="Ctrl+2" Command="{Binding ShowPlayerCommand}" />
-                <MenuItem Header="Go to Sync" InputGestureText="Ctrl+3" Command="{Binding ShowSyncCommand}" />
-                <MenuItem Header="Go to Secure Copy" InputGestureText="Ctrl+4" Command="{Binding ShowSecureCopyCommand}" />
-                <MenuItem Header="Go to Transcode" InputGestureText="Ctrl+5" Command="{Binding ShowTranscodeCommand}" />
-                <MenuItem Header="Go to Report" InputGestureText="Ctrl+6" Command="{Binding ShowReportsCommand}" />
+                <MenuItem Header="Secure Copy" InputGestureText="F1" Command="{Binding ShowSecureCopyCommand}" />
+                <MenuItem Header="Media" InputGestureText="F2" Command="{Binding ShowMediaCommand}" />
+                <MenuItem Header="Player" InputGestureText="F3" Command="{Binding ShowPlayerCommand}" />
+                <MenuItem Header="Sync" InputGestureText="F4" Command="{Binding ShowSyncCommand}" />
+                <MenuItem Header="Transcode" InputGestureText="F5" Command="{Binding ShowTranscodeCommand}" />
+                <MenuItem Header="Report" InputGestureText="F6" Command="{Binding ShowReportsCommand}" />
             </MenuItem>
 
             <!-- HELP -->

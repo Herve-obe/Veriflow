@@ -12,7 +12,8 @@
     <SolidColorBrush x:Key="Brush.Menu.Border" Color="#444444"/>
     <SolidColorBrush x:Key="Brush.Menu.Text" Color="#DDDDDD"/>
     <SolidColorBrush x:Key="Brush.Menu.Text.Disabled" Color="#666666"/>
-    <!-- Using DynamicResource Brush.Accent for Highlighting -->
+    <!-- Brush.Menu.Highlight is defined in Theme.Pro.xaml -->
+
 
     <!-- SEPARATOR STYLE -->
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
@@ -148,7 +149,7 @@
 
                         <!-- STATE: Highlight/Hover -->
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="templateRoot" Property="Background" Value="{DynamicResource Brush.Accent}"/>
+                            <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource Brush.Menu.Highlight}"/>
                             <Setter Property="Foreground" Value="White"/>
                             <Setter TargetName="RightArrow" Property="Fill" Value="White"/>
                             <Setter TargetName="InputGestureText" Property="Foreground" Value="#EEEEEE"/>
