@@ -1071,6 +1071,348 @@ AUDIO MIXING:
 • Use headphones for critical listening
 • Double-click faders to reset");
 
+            // CHAPTER 9: SYNC PAGE
+            column.Item().PageBreak();
+            AddChapterTitle(column, "Chapter 9: SYNC Page");
+            
+            AddSection(column, "9.1 Overview", @"
+The SYNC page provides tools for synchronizing multiple media files, essential for multi-camera productions and multi-track audio workflows.
+
+PURPOSE:
+• Synchronize multiple video cameras
+• Align multi-track audio recordings
+• Match timecode across files
+• Create synchronized outputs
+
+USE CASES:
+• Multi-camera video production
+• Live event recording
+• Music recording sessions
+• Broadcast workflows
+
+NOTE: This page is currently in development. Basic functionality is available, with advanced features coming in future updates.");
+
+            AddSection(column, "9.2 Interface and Workflow", @"
+BASIC SYNC WORKFLOW:
+1. Load multiple media files
+2. Identify sync points (visual or audio cues)
+3. Align files using sync markers
+4. Adjust offsets as needed
+5. Preview synchronized result
+6. Export synchronized files
+
+SYNC METHODS:
+• Timecode sync: Match embedded timecode
+• Audio waveform sync: Align by audio peaks
+• Manual sync: Visual alignment by user
+• Marker sync: Use in-file markers
+
+FUTURE FEATURES:
+• Automatic audio waveform analysis
+• Multi-camera angle switching
+• Real-time preview
+• Batch synchronization");
+
+            // CHAPTER 10: TRANSCODE PAGE
+            column.Item().PageBreak();
+            AddChapterTitle(column, "Chapter 10: TRANSCODE Page");
+            
+            AddSection(column, "10.1 Overview", @"
+The TRANSCODE page provides powerful format conversion and encoding capabilities using FFmpeg.
+
+PURPOSE:
+• Convert between video formats
+• Convert between audio formats
+• Change codecs and containers
+• Adjust quality and compression
+• Batch process multiple files
+
+FEATURES:
+• Wide format support (via FFmpeg)
+• Preset configurations
+• Custom encoding parameters
+• Queue management
+• Progress monitoring
+• Error handling");
+
+            AddSection(column, "10.2 Interface Layout", @"
+The TRANSCODE page is divided into several sections:
+
+TOP SECTION: Source Files
+• Add files button
+• File list with details
+• Remove files option
+• Clear all button
+
+MIDDLE SECTION: Encoding Settings
+• Output format selector
+• Codec selection (video/audio)
+• Quality presets
+• Advanced parameters (optional)
+• Output directory selector
+
+BOTTOM SECTION: Queue and Progress
+• Transcode queue list
+• Current file progress bar
+• Overall progress indicator
+• Start/Stop/Pause buttons
+• Estimated time remaining");
+
+            AddSection(column, "10.3 Adding Files to Queue", @"
+METHODS TO ADD FILES:
+
+METHOD 1: Add Files Button
+1. Click 'Add Files' button
+2. Browse to media files
+3. Select one or multiple files
+4. Click Open
+5. Files added to source list
+
+METHOD 2: Drag and Drop
+1. Open Windows Explorer
+2. Select media files
+3. Drag to TRANSCODE page
+4. Drop in source files area
+5. Files added automatically
+
+METHOD 3: From MEDIA Page
+1. Navigate to MEDIA page (F2)
+2. Select file(s)
+3. Right-click > Add to Transcode Queue
+4. Return to TRANSCODE page (F5)
+5. Files appear in queue");
+
+            AddSection(column, "10.4 Configuring Output Settings", @"
+OUTPUT FORMAT:
+• Select container format (MP4, MOV, MKV, etc.)
+• Choose based on intended use
+• Consider compatibility requirements
+
+VIDEO CODEC SELECTION:
+• H.264: Universal compatibility, good compression
+• H.265/HEVC: Better compression, newer devices
+• ProRes: Professional editing, large files
+• DNxHD: Professional editing, Avid compatible
+• VP9: Web delivery, open source
+
+AUDIO CODEC SELECTION:
+• AAC: Universal compatibility
+• MP3: Legacy compatibility
+• PCM: Uncompressed, lossless
+• FLAC: Compressed, lossless
+• AC3: Surround sound support
+
+QUALITY PRESETS:
+• Low: Smaller files, lower quality
+• Medium: Balanced size/quality
+• High: Larger files, better quality
+• Lossless: Maximum quality, largest files
+• Custom: Manual parameter control");
+
+            AddSection(column, "10.5 Advanced Parameters", @"
+VIDEO PARAMETERS:
+• Resolution: Change output resolution
+• Frame rate: Convert frame rate
+• Bit rate: Control file size/quality
+• GOP size: Keyframe interval
+• Profile/Level: Compatibility settings
+
+AUDIO PARAMETERS:
+• Sample rate: 44.1kHz, 48kHz, 96kHz, etc.
+• Bit depth: 16-bit, 24-bit, 32-bit
+• Channels: Mono, Stereo, 5.1, etc.
+• Bit rate: Quality control
+
+FILTERS (Future):
+• Deinterlacing
+• Scaling algorithms
+• Color correction
+• Audio normalization
+• Noise reduction");
+
+            AddSection(column, "10.6 Processing and Monitoring", @"
+STARTING TRANSCODE:
+1. Configure all settings
+2. Click 'Start' button
+3. Processing begins
+4. Monitor progress bars
+5. Wait for completion
+
+PROGRESS INDICATORS:
+• Per-file progress bar
+• Overall queue progress
+• Current file name
+• Estimated time remaining
+• Processing speed (fps)
+
+QUEUE MANAGEMENT:
+• Pause: Temporarily stop processing
+• Resume: Continue paused transcode
+• Stop: Cancel current operation
+• Remove: Delete items from queue
+• Reorder: Change processing order (future)
+
+ERROR HANDLING:
+• Failed files marked in red
+• Error messages displayed
+• Option to retry failed files
+• Logs saved for troubleshooting");
+
+            AddSection(column, "10.7 Tips and Best Practices", @"
+PERFORMANCE:
+• Close other applications during transcode
+• Use local drives (not network)
+• SSD drives recommended
+• Monitor system temperature
+• Don't use computer heavily during processing
+
+QUALITY:
+• Never upscale resolution
+• Match or reduce resolution only
+• Use appropriate codecs for purpose
+• Test settings on sample file first
+• Keep original files as backup
+
+WORKFLOW:
+• Organize output files by project
+• Use consistent naming conventions
+• Document encoding settings used
+• Verify output files before deleting sources
+• Keep transcode logs for reference");
+
+            // CHAPTER 11: REPORTS PAGE
+            column.Item().PageBreak();
+            AddChapterTitle(column, "Chapter 11: REPORTS Page");
+            
+            AddSection(column, "11.1 Overview", @"
+The REPORTS page provides comprehensive media analysis and reporting capabilities, with different features for Audio and Video profiles.
+
+PURPOSE:
+• Generate technical reports
+• Quality control analysis
+• Metadata extraction
+• EDL generation (Video profile)
+• PDF export
+
+FEATURES:
+• Detailed file analysis
+• Professional PDF reports
+• Customizable templates
+• Batch processing (future)
+• Archive-ready documentation");
+
+            AddSection(column, "11.2 Video Profile Features", @"
+VIDEO PROFILE REPORTS:
+The Video profile emphasizes EDL logging and video quality analysis.
+
+EDL LOGGING VIEW:
+• Logged clips from PLAYER page
+• Edit decision list generation
+• Multiple EDL format support
+• Clip notes and metadata
+
+TECHNICAL ANALYSIS:
+• Video codec information
+• Resolution and frame rate
+• Bit rate analysis
+• Color space details
+• Audio track information
+
+QUALITY METRICS:
+• Frame consistency check
+• Audio/video sync verification
+• Dropout detection
+• Compression artifacts analysis
+
+EXPORT OPTIONS:
+• EDL formats (CMX 3600, XML, ALE)
+• PDF technical reports
+• CSV data export
+• Custom templates");
+
+            AddSection(column, "11.3 Audio Profile Features", @"
+AUDIO PROFILE REPORTS:
+The Audio profile focuses on audio analysis and specifications.
+
+AUDIO ANALYSIS:
+• Waveform analysis
+• Peak levels detection
+• RMS levels measurement
+• Dynamic range analysis
+• Frequency response (future)
+
+TECHNICAL SPECIFICATIONS:
+• Sample rate and bit depth
+• Channel configuration
+• Audio codec details
+• Bit rate information
+• Duration and timecode
+
+LOUDNESS MEASUREMENTS:
+• Peak dBFS levels
+• LUFS measurements (future)
+• True peak detection
+• Loudness range
+
+QUALITY CHECKS:
+• Clipping detection
+• Silence detection
+• Phase issues (future)
+• Noise floor analysis");
+
+            AddSection(column, "11.4 Generating Reports", @"
+REPORT GENERATION WORKFLOW:
+1. Load media file for analysis
+2. Select report type
+3. Configure report parameters
+4. Click 'Generate Report' button
+5. Wait for analysis to complete
+6. Review report preview
+7. Export to PDF
+
+REPORT TYPES:
+• Technical Specification Report
+• Quality Control Report
+• Metadata Report
+• EDL Report (Video profile)
+• Custom Report (future)
+
+CUSTOMIZATION OPTIONS:
+• Company logo (future)
+• Report header/footer
+• Include/exclude sections
+• Custom notes and comments
+• Template selection
+
+PDF EXPORT:
+• Professional formatting
+• Embedded metadata
+• Searchable text
+• Archive-quality
+• Print-ready");
+
+            AddSection(column, "11.5 Tips and Best Practices", @"
+REPORTING WORKFLOW:
+• Generate reports immediately after QC
+• Use consistent report templates
+• Archive reports with media files
+• Include all relevant metadata
+• Document any issues found
+
+QUALITY CONTROL:
+• Always verify report accuracy
+• Cross-check critical measurements
+• Include screenshots when relevant
+• Document testing methodology
+• Keep reports for compliance
+
+ORGANIZATION:
+• Use consistent naming for reports
+• Store reports with project files
+• Maintain report templates
+• Version control for templates
+• Regular backup of reports");
+
         }
 
 
