@@ -170,6 +170,50 @@ namespace Veriflow.Desktop.ViewModels
         }
 
         [RelayCommand]
+        private async System.Threading.Tasks.Task DropFile(System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[]? files = e.Data.GetData(System.Windows.DataFormats.FileDrop) as string[];
+                if (files != null && files.Length > 0)
+                {
+                    // Auto-switch Audio/Video mode based on file type
+                    var mainVM = System.Windows.Application.Current.MainWindow?.DataContext as MainViewModel;
+                    mainVM?.AutoSwitchModeForFiles(files);
+
+                    // Wait for mode switch to complete
+                    await System.Threading.Tasks.Task.Delay(100);
+
+                    // Create list of MediaItemViewModels from dropped files
+                    var mediaItems = new List<MediaItemViewModel>();
+                    foreach (var file in files)
+                    {
+                        if (System.IO.File.Exists(file))
+                        {
+                            var fileInfo = new System.IO.FileInfo(file);
+                            var mediaItem = new MediaItemViewModel(fileInfo);
+                            await mediaItem.LoadMetadata();
+                            mediaItems.Add(mediaItem);
+                        }
+                    }
+
+                    // Create or add to report
+                    if (mediaItems.Any())
+                    {
+                        if (!IsReportActive)
+                        {
+                            CreateReport(mediaItems, CurrentReportType);
+                        }
+                        else
+                        {
+                            AddToReport(mediaItems);
+                        }
+                    }
+                }
+            }
+        }
+
+        [RelayCommand]
         private void AddFiles()
         {
             // TODO: Implement file picker

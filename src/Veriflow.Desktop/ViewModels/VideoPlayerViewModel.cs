@@ -284,13 +284,19 @@ namespace Veriflow.Desktop.ViewModels
 
 
 
-        public async Task LoadVideo(string path)
+        public async System.Threading.Tasks.Task LoadVideo(string path)
         {
+             System.Diagnostics.Debug.WriteLine($"LoadVideo: START - path = {path}");
+             
              // Set Path first so Refresh can use it
              FilePath = path;
-             RefreshReportLink();            
+             System.Diagnostics.Debug.WriteLine($"LoadVideo: FilePath set");
+             
+             RefreshReportLink();
+             System.Diagnostics.Debug.WriteLine($"LoadVideo: RefreshReportLink completed");
              
              await LoadMediaContext(path);
+             System.Diagnostics.Debug.WriteLine($"LoadVideo: LoadMediaContext completed");
         }
 
         public void RefreshReportLink()
@@ -343,30 +349,34 @@ namespace Veriflow.Desktop.ViewModels
 
                     // Activate the engine (will respect :start-paused)
                     _mediaPlayer.Play();
+                    System.Diagnostics.Debug.WriteLine("LoadMediaContext: Play() called");
                     
                     // Update State to reflect "Paused at Start"
                     IsPlaying = false;
                     IsPaused = true;
 
-                    // Trigger initial duration update if possible
+                    // Trigger initial duration update if possible (from original method)
                     if (media.Duration > 0)
                     {
                          TotalTimeDisplay = FormatTimecode(TimeSpan.FromMilliseconds(media.Duration));
                     }
 
-                    // Load heavy metadata in background
+                    // Load heavy metadata in background (from original method)
                     // The UI is already active
                     await LoadMetadataWithFFprobe(path);
                     
-                    // Initial Volume Set (Force update)
+                    // Initial Volume Set (Force update) (from original method)
                     _mediaPlayer.Volume = (int)(Volume * 100);
                     _mediaPlayer.Mute = IsMuted;
+
+                    System.Diagnostics.Debug.WriteLine("LoadMediaContext: COMPLETED SUCCESSFULLY");
                 }
             }
             catch (Exception ex)
             {
-                // Handle error
-                System.Diagnostics.Debug.WriteLine($"Error loading video: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadMediaContext: EXCEPTION - {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadMediaContext: Stack trace - {ex.StackTrace}");
+                System.Windows.MessageBox.Show($"Error loading video: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
 
@@ -563,25 +573,6 @@ namespace Veriflow.Desktop.ViewModels
             if (dialog.ShowDialog() == true)
             {
                 await LoadVideo(dialog.FileName);
-            }
-        }
-
-        [RelayCommand]
-        private async Task DropFile(DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[]? files = e.Data.GetData(DataFormats.FileDrop) as string[];
-                if (files != null && files.Length > 0)
-                {
-                    string file = files[0];
-                    string ext = System.IO.Path.GetExtension(file).ToLower();
-                    // Valid video extensions (Expanded)
-                    if (new[] { ".mp4", ".mov", ".mxf", ".avi", ".mkv", ".mts", ".ts", ".webm", ".flv", ".wmv", ".m4v" }.Contains(ext))
-                    {
-                        await LoadVideo(file);
-                    }
-                }
             }
         }
 

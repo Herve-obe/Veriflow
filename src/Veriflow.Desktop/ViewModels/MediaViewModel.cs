@@ -665,6 +665,10 @@ namespace Veriflow.Desktop.ViewModels
                     string[]? files = e.Data.GetData(DataFormats.FileDrop) as string[];
                     if (files != null && files.Length > 0)
                     {
+                        // Auto-switch Audio/Video mode based on file type
+                        var mainVM = Application.Current.MainWindow?.DataContext as MainViewModel;
+                        mainVM?.AutoSwitchModeForFiles(files);
+
                         string dropPath = files[0];
                         string directoryToLoad = dropPath;
                         string? fileToSelect = null;

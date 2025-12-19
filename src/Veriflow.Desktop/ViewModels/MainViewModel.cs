@@ -34,6 +34,30 @@ namespace Veriflow.Desktop.ViewModels
             // Propagate to other VMs if needed
         }
 
+        /// <summary>
+        /// Automatically switches Audio/Video mode based on the file type of the first dragged file.
+        /// This provides seamless UX when dragging files - no manual mode switching needed.
+        /// </summary>
+        public void AutoSwitchModeForFiles(string[] files)
+        {
+            if (files == null || files.Length == 0) return;
+
+            // Check first file extension
+            var ext = System.IO.Path.GetExtension(files[0]).ToLower();
+
+            var audioExts = new[] { ".wav", ".mp3", ".aiff", ".flac", ".m4a" };
+            var videoExts = new[] { ".mov", ".mp4", ".mxf", ".avi", ".mkv" };
+
+            if (audioExts.Contains(ext) && CurrentAppMode != AppMode.Audio)
+            {
+                SwitchToAudioCommand.Execute(null);
+            }
+            else if (videoExts.Contains(ext) && CurrentAppMode != AppMode.Video)
+            {
+                SwitchToVideoCommand.Execute(null);
+            }
+        }
+
         [ObservableProperty]
         private PageType _currentPageType = PageType.Media;
 

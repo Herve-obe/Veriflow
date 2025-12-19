@@ -410,6 +410,10 @@ namespace Veriflow.Desktop.ViewModels
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 if (files != null)
                 {
+                    // Auto-switch Audio/Video mode based on file type
+                    var mainVM = System.Windows.Application.Current.MainWindow?.DataContext as MainViewModel;
+                    mainVM?.AutoSwitchModeForFiles(files);
+
                     foreach (var file in files)
                     {
                         // Filter explicit audio extensions if needed, or allow all and let ffmpeg handle

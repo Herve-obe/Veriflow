@@ -166,25 +166,6 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        [RelayCommand]
-        private async Task DropFile(DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (files != null && files.Length > 0)
-                {
-                    string file = files[0];
-                    string ext = System.IO.Path.GetExtension(file).ToLower();
-                    // Expanded extensions list for CSCore (MP3, WAV, etc.)
-                    if (new[] { ".wav", ".bwf", ".mp3", ".m4a", ".flac", ".aiff", ".ogg", ".wma" }.Contains(ext))
-                    {
-                        await LoadAudio(file);
-                    }
-                }
-            }
-        }
-
         private bool CanUnloadMedia() => IsAudioLoaded;
 
         [RelayCommand(CanExecute = nameof(CanUnloadMedia))]
