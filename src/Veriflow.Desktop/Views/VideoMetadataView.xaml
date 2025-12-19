@@ -201,13 +201,13 @@
 
             <!-- BOTTOM ACTIONS -->
             <StackPanel Grid.Row="2" Margin="0,10,0,0">
-                <Button Command="{Binding UpdateReportCommand}"
-                        Content="UPDATE REPORT NOTES" Height="26" ToolTip="Update Report Note" Margin="0,0,0,5"
-                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
-                
                 <Button Command="{Binding ExportLogsCommand}"
-                        Content="EXPORT LOGS (EDL/ALE)" Height="26" ToolTip="Export Tagged Clips"
+                        Content="EXPORT LOGS (EDL/ALE)" Height="26" ToolTip="Export Tagged Clips" Margin="0,0,0,5"
                         Style="{StaticResource ContextualActionButtonStyle}" Background="#2E7D32" BorderBrush="#2E7D32" Focusable="False"/>
+                
+                <Button Command="{Binding UpdateReportCommand}"
+                        Content="UPDATE REPORT NOTES" Height="26" ToolTip="Update Report Note"
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
             </StackPanel>
         </Grid>
     </Border>

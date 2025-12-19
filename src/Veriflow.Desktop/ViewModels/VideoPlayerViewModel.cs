@@ -352,8 +352,10 @@ namespace Veriflow.Desktop.ViewModels
                     System.Diagnostics.Debug.WriteLine("LoadMediaContext: Play() called");
                     
                     // Update State to reflect "Paused at Start"
+                    // Note: We set IsPaused to FALSE because this is an auto-pause for preloading,
+                    // not a user-initiated pause. The pause button should not be active.
                     IsPlaying = false;
-                    IsPaused = true;
+                    IsPaused = false;
 
                     // Trigger initial duration update if possible (from original method)
                     if (media.Duration > 0)
