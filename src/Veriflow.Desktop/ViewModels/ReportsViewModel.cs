@@ -27,14 +27,13 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty] private ObservableCollection<ReportItem> _videoReportItems = new();
         [ObservableProperty] private ObservableCollection<ReportItem> _audioReportItems = new();
 
+        [ObservableProperty] private ReportViewMode _currentViewMode = ReportViewMode.CameraReport; // Default to Camera Report
+
         [ObservableProperty] 
         [NotifyPropertyChangedFor(nameof(ReportTitle))]
         [NotifyPropertyChangedFor(nameof(HasMedia))]
         [NotifyPropertyChangedFor(nameof(HasAnyData))]
         private ReportType _currentReportType = ReportType.Video;
-
-        [ObservableProperty]
-        private ReportViewMode _currentViewMode = ReportViewMode.CameraReport;
 
         partial void OnCurrentReportTypeChanged(ReportType value)
         {

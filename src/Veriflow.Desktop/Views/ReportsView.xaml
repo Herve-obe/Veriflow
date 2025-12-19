@@ -475,12 +475,12 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                             <Button Content="📷 REPORT" 
                                     Command="{Binding SwitchToReportViewCommand}"
-                                    IsEnabled="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=EDLLogging}"
+                                    IsEnabled="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=CameraReport}"
                                     Style="{StaticResource ContextualActionButtonStyle}" 
                                     Width="100" Height="26" FontSize="11" Margin="0,0,5,0"/>
                             <Button Content="🎬 EDL" 
                                     Command="{Binding SwitchToEDLViewCommand}"
-                                    IsEnabled="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=CameraReport}"
+                                    IsEnabled="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=EDLLogging}"
                                     Style="{StaticResource ContextualActionButtonStyle}" 
                                     Width="80" Height="26" FontSize="11"/>
                         </StackPanel>
@@ -515,18 +515,15 @@
                                   RowStyle="{StaticResource DataGridRowStyle}"
                                   SelectionMode="Single"
                                   Focusable="False">
-                            <DataGrid.Visibility>
-                                <Binding Path="CurrentViewMode">
-                                    <Binding.Converter>
-                                        <conv:EnumToBoolConverter/>
-                                    </Binding.Converter>
-                                    <Binding.ConverterParameter>CameraReport</Binding.ConverterParameter>
-                                </Binding>
-                            </DataGrid.Visibility>
-                             <DataGrid.Style>
+                            <DataGrid.Style>
                                 <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                     <Style.Triggers>
+                                        <!-- Show when CurrentViewMode is CameraReport -->
+                                        <DataTrigger Binding="{Binding CurrentViewMode}" Value="CameraReport">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <!-- Also show when ReportTitle is CAMERA REPORT (for backward compatibility) -->
                                         <DataTrigger Binding="{Binding ReportTitle}" Value="CAMERA REPORT">
                                             <Setter Property="Visibility" Value="Visible"/>
                                         </DataTrigger>
@@ -839,7 +836,17 @@
                         </TextBlock>
 
                         <!-- EDL LOGGING VIEW -->
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=EDLLogging}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ScrollViewer.Style>
+                                <Style TargetType="ScrollViewer">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CurrentViewMode}" Value="EDLLogging">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ScrollViewer.Style>
                             <ItemsControl ItemsSource="{Binding CurrentReportItems}" Margin="10">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
