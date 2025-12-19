@@ -32,6 +32,9 @@
         
         <!-- Profile Toggle -->
         <KeyBinding Key="Tab" Modifiers="Ctrl" Command="{Binding ToggleAudioVideoModeCommand}"/>
+        
+        <!-- Help Menu -->
+        <KeyBinding Key="F12" Command="{Binding ViewHelpCommand}"/>
     </Window.InputBindings>
 
     <Window.Resources>

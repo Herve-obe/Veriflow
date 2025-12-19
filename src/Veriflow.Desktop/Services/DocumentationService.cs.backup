@@ -76,6 +76,7 @@ namespace Veriflow.Desktop.Services
 
         private static void AddCoverPage(ColumnDescriptor column)
         {
+            column.Item().PageBreak();
             column.Item().PaddingTop(100).AlignCenter().Text("VERIFLOW PRO").FontSize(48).Bold().FontColor(Colors.Blue.Darken2);
             column.Item().PaddingTop(20).AlignCenter().Text("User Guide").FontSize(32).SemiBold();
             column.Item().PaddingTop(40).AlignCenter().Text("Version 1.0.0").FontSize(16);
