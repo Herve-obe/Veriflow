@@ -16,6 +16,7 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <conv:PercentToPositionConverter x:Key="PercentToPositionConverter"/>
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
 
         <!-- DataGrid Resources (Copied from TranscodeView) -->
         <Style TargetType="DataGridColumnHeader">
@@ -468,7 +469,20 @@
                 
                 <Grid Margin="0,0,0,5">
                     <TextBlock Text="FILE LIST" Style="{StaticResource LabelStyle}" VerticalAlignment="Center" Opacity="0.5"/>
+                    <!-- Action Buttons -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <!-- View Mode Toggle -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
+                            <RadioButton Content="📷 REPORT" 
+                                         IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=CameraReport}"
+                                         Style="{StaticResource SegmentedToggleStyle}" 
+                                         GroupName="ViewMode"/>
+                            <RadioButton Content="🎬 EDL" 
+                                         IsChecked="{Binding CurrentViewMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=EDLLogging}"
+                                         Style="{StaticResource SegmentedToggleStyle}" 
+                                         GroupName="ViewMode" Margin="5,0,0,0"/>
+                        </StackPanel>
+                        
                         <Button Content="ADD FILE(S)" Command="{Binding AddFilesCommand}" 
                                 Style="{StaticResource ContextualActionButtonStyle}" 
                                 Width="120" Height="26" FontSize="11" 
@@ -1038,11 +1052,11 @@
                     </Grid>
                 </ScrollViewer>
 
-                <!-- EXPORT BUTTONS -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                    <Button Content="EXPORT TO PDF" Command="{Binding ExportPdfCommand}" 
-                            Style="{StaticResource ContextualActionButtonStyle}" Height="30" Margin="0,0,10,0"/>
+                <!-- EXPORT BUTTONS (Vertical like Player) -->
+                <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,10,0,0">
                     <Button Content="EXPORT SESSION EDL/ALE" Command="{Binding ExportSessionEDLCommand}" 
+                            Style="{StaticResource ContextualActionButtonStyle}" Height="30" Margin="0,0,0,5"/>
+                    <Button Content="EXPORT TO PDF" Command="{Binding ExportPdfCommand}" 
                             Style="{StaticResource ContextualActionButtonStyle}" Height="30"/>
                 </StackPanel>
             </Grid>
