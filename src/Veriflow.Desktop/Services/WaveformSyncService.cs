@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MathNet.Numerics;
+using MathNet.Numerics.IntegralTransforms;
 
 namespace Veriflow.Desktop.Services
 {
@@ -112,8 +114,8 @@ namespace Veriflow.Desktop.Services
         }
 
         /// <summary>
-        /// Performs cross-correlation between two WAV files to find offset.
-        /// Uses a simplified sliding window approach.
+        /// Performs FFT-based cross-correlation between two WAV files to find offset.
+        /// This is the proper way - much faster than naive sliding window.
         /// </summary>
         private Task<double?> PerformCrossCorrelationAsync(string wavFile1, string wavFile2)
         {
@@ -121,86 +123,106 @@ namespace Veriflow.Desktop.Services
             {
                 try
                 {
+                    Debug.WriteLine("[WaveformSync] Reading WAV samples...");
+                    
                     // Read WAV files
                     var samples1 = ReadWavSamples(wavFile1);
                     var samples2 = ReadWavSamples(wavFile2);
 
                     if (samples1 == null || samples2 == null || samples1.Length == 0 || samples2.Length == 0)
+                    {
+                        Debug.WriteLine("[WaveformSync] Failed to read samples");
                         return null;
+                    }
 
-                    // Perform cross-correlation
-                    // For performance, we'll use a simplified approach:
-                    // Slide the shorter signal over the longer one and find the best match
+                    Debug.WriteLine($"[WaveformSync] Samples read: {samples1.Length} vs {samples2.Length}");
+
+                    // Ensure both signals have the same length (pad with zeros if needed)
+                    int maxLength = Math.Max(samples1.Length, samples2.Length);
                     
-                    double[] reference, signal;
-                    bool audioIsReference;
+                    // Use power of 2 for FFT efficiency
+                    int fftSize = (int)Math.Pow(2, Math.Ceiling(Math.Log(maxLength * 2) / Math.Log(2)));
+                    
+                    Debug.WriteLine($"[WaveformSync] FFT size: {fftSize}");
 
-                    if (samples1.Length > samples2.Length)
+                    // Convert to complex arrays and pad
+                    var complex1 = new System.Numerics.Complex[fftSize];
+                    var complex2 = new System.Numerics.Complex[fftSize];
+
+                    for (int i = 0; i < samples1.Length; i++)
+                        complex1[i] = new System.Numerics.Complex(samples1[i], 0);
+                    
+                    for (int i = 0; i < samples2.Length; i++)
+                        complex2[i] = new System.Numerics.Complex(samples2[i], 0);
+
+                    Debug.WriteLine("[WaveformSync] Performing FFT...");
+
+                    // Perform FFT on both signals
+                    Fourier.Forward(complex1, FourierOptions.Matlab);
+                    Fourier.Forward(complex2, FourierOptions.Matlab);
+
+                    // Cross-correlation in frequency domain: 
+                    // corr = IFFT(FFT(signal1) * conj(FFT(signal2)))
+                    var crossPower = new System.Numerics.Complex[fftSize];
+                    for (int i = 0; i < fftSize; i++)
                     {
-                        reference = samples1;
-                        signal = samples2;
-                        audioIsReference = false; // video is reference
+                        crossPower[i] = complex1[i] * System.Numerics.Complex.Conjugate(complex2[i]);
                     }
-                    else
+
+                    Debug.WriteLine("[WaveformSync] Performing inverse FFT...");
+
+                    // Inverse FFT to get cross-correlation
+                    Fourier.Inverse(crossPower, FourierOptions.Matlab);
+
+                    Debug.WriteLine("[WaveformSync] Finding peak...");
+
+                    // Find the peak in the cross-correlation
+                    double maxCorr = double.MinValue;
+                    int maxLag = 0;
+
+                    // Only search reasonable range (not the entire FFT size)
+                    int searchRange = Math.Min(fftSize / 2, maxLength);
+                    
+                    for (int i = 0; i < searchRange; i++)
                     {
-                        reference = samples2;
-                        signal = samples1;
-                        audioIsReference = true; // audio is reference
-                    }
-
-                    int maxLag = reference.Length - signal.Length;
-                    if (maxLag < 0) return null;
-
-                    double maxCorrelation = double.MinValue;
-                    int bestLag = 0;
-
-                    // Sliding window correlation
-                    for (int lag = 0; lag < maxLag; lag += 100) // Step by 100 samples for performance
-                    {
-                        double correlation = CalculateCorrelation(reference, signal, lag);
-                        if (correlation > maxCorrelation)
+                        double magnitude = crossPower[i].Magnitude;
+                        if (magnitude > maxCorr)
                         {
-                            maxCorrelation = correlation;
-                            bestLag = lag;
+                            maxCorr = magnitude;
+                            maxLag = i;
                         }
                     }
 
-                    // Fine-tune around best lag
-                    int searchStart = Math.Max(0, bestLag - 100);
-                    int searchEnd = Math.Min(maxLag, bestLag + 100);
-                    for (int lag = searchStart; lag < searchEnd; lag++)
+                    // Also check negative lags (second half of FFT)
+                    for (int i = fftSize - searchRange; i < fftSize; i++)
                     {
-                        double correlation = CalculateCorrelation(reference, signal, lag);
-                        if (correlation > maxCorrelation)
+                        double magnitude = crossPower[i].Magnitude;
+                        if (magnitude > maxCorr)
                         {
-                            maxCorrelation = correlation;
-                            bestLag = lag;
+                            maxCorr = magnitude;
+                            maxLag = i - fftSize; // Negative lag
                         }
                     }
 
-                    // Convert lag (in samples) to seconds
-                    double sampleRate = 16000; // Updated to 16kHz for speed
-                    double offsetSeconds = bestLag / sampleRate;
+                    // Convert lag to seconds
+                    double sampleRate = 16000; // 16kHz
+                    double offsetSeconds = (double)maxLag / sampleRate;
 
-                    // Adjust sign based on which file was reference
-                    if (!audioIsReference)
-                    {
-                        offsetSeconds = -offsetSeconds; // Video was reference, so negate
-                    }
-
-                    Debug.WriteLine($"[WaveformSync] Correlation complete: maxCorr={maxCorrelation:F4}, bestLag={bestLag}, offset={offsetSeconds:F3}s");
+                    Debug.WriteLine($"[WaveformSync] Correlation complete: maxCorr={maxCorr:F2}, maxLag={maxLag}, offset={offsetSeconds:F3}s");
+                    
                     return (double?)offsetSeconds;
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"[WaveformSync] Correlation error: {ex.Message}");
+                    Debug.WriteLine($"[WaveformSync] Stack: {ex.StackTrace}");
                     return null;
                 }
             });
         }
 
         /// <summary>
-        /// Calculates correlation between two signals at a given lag
+        /// Calculates correlation between two signals at a given lag (DEPRECATED - using FFT now)
         /// </summary>
         private double CalculateCorrelation(double[] reference, double[] signal, int lag)
         {
