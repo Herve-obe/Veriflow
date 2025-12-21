@@ -39,8 +39,8 @@ namespace Veriflow.Desktop.Services
                     new XElement("hashlist",
                         new XAttribute("version", "1.1"),
                         new XElement("creatorinfo",
-                            new XElement("tool", "Veriflow SoundLog Pro"),
-                            new XElement("toolversion", "1.0.0"), // TODO: Get actual version
+                            new XElement("tool", "Veriflow"),
+                            new XElement("toolversion", "1.1.0"),
                             new XElement("hostname", Environment.MachineName),
                             new XElement("username", Environment.UserName),
                             new XElement("startdate", relevantResults.Min(r => r.Timestamp).ToString("yyyy-MM-ddTHH:mm:sszzz")),

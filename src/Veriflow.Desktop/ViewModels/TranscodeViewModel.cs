@@ -58,8 +58,7 @@ namespace Veriflow.Desktop.ViewModels
             "MPEG-2", "MPEG-1", "DV", "theora", "MJPEG", "Xvid", "WMV"
         };
         
-        // No longer using single list
-        // public ObservableCollection<string> AvailableFormats { get; } = new();
+
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsAudioFormat))]
@@ -200,7 +199,7 @@ namespace Veriflow.Desktop.ViewModels
             if (!isProxy) IsBurnInEnabled = false;
         }
 
-        // Removed UpdateAvailableFormats() as it's not needed for Split Dropdowns
+
 
         // Bitrates Support
         public ObservableCollection<string> AvailableBitrates { get; } = new();
@@ -261,9 +260,6 @@ namespace Veriflow.Desktop.ViewModels
                 ClearListCommand.NotifyCanExecuteChanged();
             };
             
-            // Initialize
-
-
             // Initialize
 
             UpdateFormatOptions(SelectedFormat);
