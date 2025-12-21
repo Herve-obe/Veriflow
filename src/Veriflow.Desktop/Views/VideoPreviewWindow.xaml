@@ -3,61 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         Title="Video Preview"
-        WindowStyle="None"
-        AllowsTransparency="True"
         ResizeMode="CanResize"
         Topmost="True"
-        Background="Transparent"
         ShowInTaskbar="False"
         SizeToContent="Manual"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        Style="{StaticResource Style.Window.Dialog}">
     
     <Border BorderBrush="#333333" BorderThickness="1">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="35"/> <!-- Title Bar -->
-                <RowDefinition Height="*"/>  <!-- Video Content -->
-            </Grid.RowDefinitions>
-
-            <!-- Custom Title Bar -->
-            <Grid Grid.Row="0" Background="{StaticResource Brush.Panel.Header}">
-                <TextBlock Text="Video Preview" 
-                           VerticalAlignment="Center" 
-                           Margin="15,0" 
-                           Foreground="{StaticResource Brush.Text.Secondary}" 
-                           FontWeight="SemiBold"
-                           FontSize="{StaticResource Font.Size.Small}"/>
-                
-                <!-- Close Button -->
-                <Button Content="✕" 
-                        HorizontalAlignment="Right" 
-                        Width="35" 
-                        Height="35" 
-                        Background="Transparent" 
-                        Foreground="{StaticResource Brush.Text.Secondary}" 
-                        BorderThickness="0"
-                        Click="CloseButton_Click"
-                        FontSize="{StaticResource Font.Size.Medium}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#C42B1C"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="Cursor" Value="Hand"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
-
-            <!-- Video Content -->
-            <Grid Grid.Row="1" Background="{StaticResource Brush.Panel}">
+            <!-- Content Only -->
+            <Grid Background="{StaticResource Brush.Panel}">
                 <vlc:VideoView x:Name="VideoViewControl" MediaPlayer="{Binding PreviewPlayer}"/>
             </Grid>
         </Grid>

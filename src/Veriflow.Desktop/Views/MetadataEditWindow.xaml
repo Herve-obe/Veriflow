@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Batch Metadata Editor" Height="450" Width="400"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
-        Background="{StaticResource Brush.Panel}">
+        Style="{StaticResource Style.Window.Dialog}">
     <Window.Resources>
         <!-- Simple Dark Styles -->
         <Style TargetType="TextBlock">

@@ -28,6 +28,9 @@ namespace Veriflow.Core.Models
         
         // Transcode Queue
         public List<string> TranscodeQueue { get; set; } = new();
+
+        // Report Settings
+        public ReportSettings ReportSettings { get; set; } = new();
     }
 
     /// <summary>

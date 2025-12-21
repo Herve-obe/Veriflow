@@ -8,8 +8,8 @@
         Title="Settings - Veriflow" 
         Height="500" Width="600"
         WindowStartupLocation="CenterOwner"
-        Background="{DynamicResource Brush.Background}"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Style="{StaticResource Style.Window.Dialog}">
 
     <Window.DataContext>
         <vm:SettingsViewModel/>

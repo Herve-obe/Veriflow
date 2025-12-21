@@ -18,7 +18,7 @@ namespace Veriflow.Desktop.ViewModels
     public partial class MainViewModel : ObservableObject, IDisposable
     {
         [ObservableProperty]
-        private string _title = "Veriflow Pro";
+        private string _title = "Veriflow";
 
         [ObservableProperty]
         private object? _currentView;
@@ -172,7 +172,7 @@ namespace Veriflow.Desktop.ViewModels
             RedoCommand = new RelayCommand(Redo, CanRedo);
             CutCommand = new RelayCommand(Cut, CanCutCopy);
             CopyCommand = new RelayCommand(Copy, CanCutCopy);
-            PasteCommand = new RelayCommand(Paste, CanPaste);
+            PasteCommand = new AsyncRelayCommand(Paste, CanPaste);
             ClearCurrentPageCommand = new RelayCommand(ClearCurrentPage);
             
             // Help Commands
@@ -366,7 +366,8 @@ namespace Veriflow.Desktop.ViewModels
                     MainDestination = _secureCopyViewModel.Destination1Path ?? string.Empty,
                     SecondaryDestination = _secureCopyViewModel.Destination2Path ?? string.Empty
                 },
-                TranscodeQueue = _transcodeViewModel.GetQueuedFiles()
+                TranscodeQueue = _transcodeViewModel.GetQueuedFiles(),
+                ReportSettings = _reportsViewModel.ReportSettings.Clone()
             };
 
             // Capture Audio Reports
@@ -455,6 +456,13 @@ namespace Veriflow.Desktop.ViewModels
                 foreach (var reportData in session.VideoReportItems)
                 {
                     _reportsViewModel.RestoreReportItem(reportData, isVideo: true);
+                }
+
+                // Restore Page
+                // Restore Report Settings
+                if (session.ReportSettings != null)
+                {
+                    _reportsViewModel.ReportSettings = session.ReportSettings;
                 }
 
                 // Restore Page
@@ -845,7 +853,7 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        private async void Paste()
+        private async Task Paste()
         {
             try
             {
@@ -1172,17 +1180,24 @@ namespace Veriflow.Desktop.ViewModels
                 {
                     _videoPlayerViewModel.UnloadMediaCommand.Execute(null);
                 }
+                
                 // Clear logged clips list (Video profile only)
-                // TODO: Add method to clear logged clips if needed
+                if (_videoPlayerViewModel.ClearLoggedClipsCommand.CanExecute(null))
+                {
+                    _videoPlayerViewModel.ClearLoggedClipsCommand.Execute(null);
+                }
             }
         }
 
         private void ClearSyncPage()
         {
-            // Clear sync datagrids and address field
-            // TODO: Add clear methods to SyncViewModel when available
+            if (_syncViewModel.ClearAllCommand.CanExecute(null))
+            {
+                _syncViewModel.ClearAllCommand.Execute(null);
+            }
+            
             MessageBox.Show(
-                "Sync page clear not yet fully implemented.",
+                "Sync page has been cleared.",
                 "Clear Sync",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -1228,19 +1243,24 @@ namespace Veriflow.Desktop.ViewModels
         {
             try
             {
-                var shortcutsWindow = new Views.ShortcutsWindow
+                var shortcutsWindow = new Views.ShortcutsWindow();
+                
+                // Try to set owner effectively
+                if (Application.Current?.MainWindow != null && Application.Current.MainWindow.IsVisible)
                 {
-                    Owner = Application.Current.MainWindow
-                };
+                    shortcutsWindow.Owner = Application.Current.MainWindow;
+                }
+                else
+                {
+                    // Fallback to center screen if no main window or main window hidden
+                    shortcutsWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                }
+                
                 shortcutsWindow.ShowDialog();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Error opening shortcuts window:\n{ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show($"Error opening shortcuts window: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

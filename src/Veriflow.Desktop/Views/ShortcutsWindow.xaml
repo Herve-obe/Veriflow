@@ -5,40 +5,83 @@
         Title="Keyboard Shortcuts" 
         Height="600" Width="700"
         WindowStartupLocation="CenterOwner"
-        Background="{DynamicResource Brush.Panel}"
-        ResizeMode="CanResize">
+        ResizeMode="CanResize"
+        Style="{StaticResource Style.Window.Dialog}">
     
     <Window.DataContext>
         <vm:ShortcutsViewModel/>
     </Window.DataContext>
 
-    <Grid Margin="20">
+    <!-- RESOURCES -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Theme.Pro.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- CollectionViewSource removed, handled in ViewModel -->
+            <!-- <CollectionViewSource x:Key="GroupedShortcuts" Source="{Binding Shortcuts}"> -->
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
         <Grid.RowDefinitions>
+            <!-- Title Bar handled by Template -->
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="Keyboard Shortcuts" 
-                       Style="{StaticResource HeaderStyle}"
-                       Margin="0,0,0,10"/>
-            <TextBlock Text="Quick Reference Guide" 
-                       Foreground="{DynamicResource Brush.Text.Secondary}"
-                       FontSize="{StaticResource Font.Size.Body}"/>
-        </StackPanel>
+            <!-- HEADER -->
+            <StackPanel Grid.Row="0" Margin="20,20,20,0">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                     <TextBlock Text="KEYBOARD SHORTCUTS" Style="{StaticResource HeaderStyle}" VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <!-- Search Box -->
+                <Border Background="{DynamicResource Brush.Input}" CornerRadius="4" Height="36" Padding="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Path Data="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" 
+                              Fill="{DynamicResource Brush.Text.Muted}" 
+                              Stretch="Uniform" Margin="5"
+                              Width="16" Height="16"/>
+                        <TextBox Grid.Column="1" 
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 Foreground="{DynamicResource Brush.Text.Primary}"
+                                 CaretBrush="{DynamicResource Brush.Accent}"
+                                 Background="Transparent" BorderThickness="0"
+                                 VerticalContentAlignment="Center"
+                                 FontSize="{StaticResource Font.Size.Standard}"/>
+                        <TextBlock Grid.Column="1" Text="Search shortcuts..." 
+                                   IsHitTestVisible="False"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource Brush.Text.Muted}"
+                                   Opacity="0.5">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SearchText}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SearchText}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+            </StackPanel>
 
-        <!-- Shortcuts List -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <ItemsControl>
-                <ItemsControl.ItemsSource>
-                    <CollectionViewSource Source="{Binding Shortcuts}">
-                        <CollectionViewSource.GroupDescriptions>
-                            <PropertyGroupDescription PropertyName="Category"/>
-                        </CollectionViewSource.GroupDescriptions>
-                    </CollectionViewSource>
-                </ItemsControl.ItemsSource>
+            <!-- Shortcuts List -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="20,10,20,0">
+                <ItemsControl ItemsSource="{Binding ShortcutsView}">
 
                 <ItemsControl.GroupStyle>
                     <GroupStyle>

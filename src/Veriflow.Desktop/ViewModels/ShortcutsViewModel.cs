@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.ComponentModel;
+using System.Windows.Data;
 using Veriflow.Desktop.Models;
 
 namespace Veriflow.Desktop.ViewModels
@@ -10,10 +12,33 @@ namespace Veriflow.Desktop.ViewModels
     public partial class ShortcutsViewModel : ObservableObject
     {
         public ObservableCollection<ShortcutInfo> Shortcuts { get; } = new();
+        public ICollectionView ShortcutsView { get; }
+
+        [ObservableProperty]
+        private string _searchText = "";
+
+        partial void OnSearchTextChanged(string value)
+        {
+            ShortcutsView.Refresh();
+        }
 
         public ShortcutsViewModel()
         {
             LoadShortcuts();
+            
+            ShortcutsView = CollectionViewSource.GetDefaultView(Shortcuts);
+            ShortcutsView.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+            ShortcutsView.Filter = FilterShortcuts;
+        }
+
+        private bool FilterShortcuts(object obj)
+        {
+            if (obj is not ShortcutInfo info) return false;
+            if (string.IsNullOrWhiteSpace(SearchText)) return true;
+
+            return info.Key.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                || info.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                || info.Category.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
         }
 
         private void LoadShortcuts()
@@ -66,21 +91,22 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand]
         private void OpenFullManual()
         {
+            // Close the shortcuts window if possible (optional, but good UX)
+            // Application.Current.Windows.OfType<Views.ShortcutsWindow>().FirstOrDefault()?.Close();
+
             try
             {
-                var helpPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Help", "UserGuide.html");
-                if (File.Exists(helpPath))
+                // Open the integrated Help Window instead of external browser
+                var helpWindow = new Views.HelpWindow();
+                if (System.Windows.Application.Current?.MainWindow != null)
                 {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = helpPath,
-                        UseShellExecute = true
-                    });
+                    helpWindow.Owner = System.Windows.Application.Current.MainWindow;
                 }
+                helpWindow.Show();
             }
             catch
             {
-                // Silently fail if help file not found
+                // Silently fail
             }
         }
     }

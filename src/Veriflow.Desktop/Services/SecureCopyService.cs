@@ -43,11 +43,15 @@ namespace Veriflow.Desktop.Services
                 {
                     var destDir = Path.GetDirectoryName(destPaths[i]);
                     if (!string.IsNullOrEmpty(destDir) && !Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
+                    
+                    // Pre-flight Write Check
+                    VerifyWritePermission(destDir ?? "");
+
                     activeDestinations.Add(i);
                 }
                 catch (Exception ex)
                 {
-                    results[i].Note = $"Init Failed: {ex.Message}";
+                    results[i].Note = $"Init Failed (Write Check): {ex.Message}";
                 }
             }
 
@@ -282,6 +286,14 @@ namespace Veriflow.Desktop.Services
                 }
                 catch { /* Report generation failed - non-critical but annoying */ }
             });
+        }
+
+        private void VerifyWritePermission(string folderPath)
+        {
+            if (string.IsNullOrEmpty(folderPath)) throw new ArgumentNullException(nameof(folderPath));
+            
+            string dummyPath = Path.Combine(folderPath, $".veriflow_check_{Guid.NewGuid()}.tmp");
+            using (File.Create(dummyPath, 1, FileOptions.DeleteOnClose)) { }
         }
     }
 

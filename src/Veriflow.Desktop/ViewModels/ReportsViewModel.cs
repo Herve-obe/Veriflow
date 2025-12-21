@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using Veriflow.Desktop.Models;
 using Veriflow.Desktop.Services;
+using Veriflow.Core.Models;
 
 namespace Veriflow.Desktop.ViewModels
 {
@@ -20,6 +21,8 @@ namespace Veriflow.Desktop.ViewModels
         // --- DATA ---
         private ReportHeader _videoHeader = new() { ProductionCompany = "Veriflow Video" };
         private ReportHeader _audioHeader = new() { ProductionCompany = "SoundLog Pro Production" };
+
+        [ObservableProperty] private ReportSettings _reportSettings = new();
 
         [ObservableProperty] private ReportHeader _header;
         
@@ -47,6 +50,9 @@ namespace Veriflow.Desktop.ViewModels
             }
             ClearListCommand.NotifyCanExecuteChanged();
             ClearMediaCommand.NotifyCanExecuteChanged();
+            PrintCommand.NotifyCanExecuteChanged();
+            ExportPdfCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(HasReport));
         }
 
         public string ReportTitle => CurrentReportType == ReportType.Audio ? "SOUND REPORT" : "CAMERA REPORT";
@@ -93,6 +99,7 @@ namespace Veriflow.Desktop.ViewModels
             ClearMediaCommand.NotifyCanExecuteChanged();
             PrintCommand.NotifyCanExecuteChanged();
             ExportPdfCommand.NotifyCanExecuteChanged();
+            ExportSessionEDLCommand.NotifyCanExecuteChanged();
         }
 
         public void SetAppMode(AppMode mode)
@@ -122,7 +129,24 @@ namespace Veriflow.Desktop.ViewModels
             if (reportItem != null)
             {
                 clip.SourceFile = reportItem.OriginalMedia.FullName; // Ensure full path
-                reportItem.Clips.Add(clip);
+                
+                // Use Undoable Command
+                var command = new Commands.Reports.AddClipCommand(reportItem, clip);
+                ExecuteCommandCallback?.Invoke(command);
+            }
+        }
+
+        [RelayCommand]
+        private void RemoveClip(ClipLogItem clip)
+        {
+            if (clip == null) return;
+
+            // Find parent report item
+            var reportItem = CurrentReportItems.FirstOrDefault(r => r.Clips.Contains(clip));
+            if (reportItem != null)
+            {
+                var command = new Commands.Reports.RemoveClipCommand(reportItem, clip);
+                ExecuteCommandCallback?.Invoke(command);
             }
         }
 
@@ -136,6 +160,18 @@ namespace Veriflow.Desktop.ViewModels
         private void SwitchToEDLView()
         {
             CurrentViewMode = ReportViewMode.EDLLogging;
+        }
+
+        [RelayCommand]
+        private void OpenTemplatesWindow()
+        {
+            var vm = new ReportTemplatesViewModel(ReportSettings);
+            var window = new Views.ReportTemplatesWindow
+            {
+                DataContext = vm,
+                Owner = Application.Current.MainWindow
+            };
+            window.ShowDialog();
         }
 
         // --- ACTIONS ---
@@ -322,10 +358,8 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (item != null)
             {
-                if (CurrentReportType == ReportType.Audio)
-                    AudioReportItems.Remove(item);
-                else
-                    VideoReportItems.Remove(item);
+                var command = new Commands.Reports.RemoveReportItemCommand(this, item, CurrentReportType == ReportType.Video);
+                ExecuteCommandCallback?.Invoke(command);
             }
         }
 
@@ -338,10 +372,8 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (SelectedReportItem != null)
             {
-                if (CurrentReportType == ReportType.Audio)
-                    AudioReportItems.Remove(SelectedReportItem);
-                else
-                    VideoReportItems.Remove(SelectedReportItem);
+                var command = new Commands.Reports.RemoveReportItemCommand(this, SelectedReportItem, CurrentReportType == ReportType.Video);
+                ExecuteCommandCallback?.Invoke(command);
                     
                 SelectedReportItem = null;
             }
@@ -489,10 +521,10 @@ namespace Veriflow.Desktop.ViewModels
             _printingService.PrintReport(Header, CurrentReportItems, CurrentReportType);
         }
 
-        [RelayCommand(CanExecute = nameof(HasReport))]
+        [RelayCommand(CanExecute = nameof(HasMedia))]
         private void ExportPdf()
         {
-             if (!IsReportActive) return;
+             // if (!IsReportActive) return; // Removed to allow export if media is present regardless of strict active state
 
              var dlg = new Microsoft.Win32.SaveFileDialog
              {
@@ -506,7 +538,7 @@ namespace Veriflow.Desktop.ViewModels
                  try
                  {
                      bool isVideo = CurrentReportType == ReportType.Video;
-                     _pdfService.GeneratePdf(dlg.FileName, Header, CurrentReportItems, isVideo);
+                     _pdfService.GeneratePdf(dlg.FileName, Header, CurrentReportItems, isVideo, ReportSettings);
                  }
                  catch (System.IO.IOException)
                  {
@@ -519,7 +551,7 @@ namespace Veriflow.Desktop.ViewModels
               }
          }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExportSessionEDL))]
         private void ExportSessionEDL()
         {
             // Collect all clips from all ReportItems
@@ -564,6 +596,11 @@ namespace Veriflow.Desktop.ViewModels
                     MessageBox.Show($"Export Failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private bool CanExportSessionEDL()
+        {
+            return CurrentReportItems.Any(item => item.Clips.Any());
         }
 
         private string GenerateSessionEdl(List<ClipLogItem> clips)

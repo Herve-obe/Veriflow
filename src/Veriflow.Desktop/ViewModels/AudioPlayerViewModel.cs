@@ -143,20 +143,9 @@ namespace Veriflow.Desktop.ViewModels
 
         private string FormatTimecode(TimeSpan time)
         {
-            // Add Start Offset (Time Reference) from Metadata (BWF)
             double offsetSeconds = CurrentMetadata?.TimeReferenceSeconds ?? 0;
-            var absoluteTime = time.Add(TimeSpan.FromSeconds(offsetSeconds));
-
-            // Format: hh:mm:ss:ii (frames)
-            double totalSeconds = absoluteTime.TotalSeconds;
-            int h = (int)absoluteTime.TotalHours;
-            int m = absoluteTime.Minutes;
-            int s = absoluteTime.Seconds;
-            int frames = (int)Math.Round((totalSeconds - (int)totalSeconds) * _fps);
-            
-            if (frames >= _fps) frames = 0; // Safety wrap
-
-            return $"{h:D2}:{m:D2}:{s:D2}:{frames:D2}";
+            var offset = TimeSpan.FromSeconds(offsetSeconds);
+            return Services.TimecodeHelper.FormatTimecode(time, _fps, offset);
         }
 
         partial void OnPlaybackPositionChanged(double value)
@@ -669,7 +658,7 @@ namespace Veriflow.Desktop.ViewModels
                 
                 _inputStream.SetPosition(targetTime);
                 PlaybackPosition = targetTime.TotalSeconds;
-                CurrentTimeDisplay = FormatTimecode(targetTime);
+                CurrentTimeDisplay = Services.TimecodeHelper.FormatTimecode(targetTime, _fps);
             }
         }
 
@@ -690,7 +679,7 @@ namespace Veriflow.Desktop.ViewModels
                 
                 _inputStream.SetPosition(targetTime);
                 PlaybackPosition = targetTime.TotalSeconds;
-                CurrentTimeDisplay = FormatTimecode(targetTime);
+                CurrentTimeDisplay = Services.TimecodeHelper.FormatTimecode(targetTime, _fps);
             }
         }
 
@@ -707,7 +696,7 @@ namespace Veriflow.Desktop.ViewModels
                 
                 _inputStream.SetPosition(targetTime);
                 PlaybackPosition = targetTime.TotalSeconds;
-                CurrentTimeDisplay = FormatTimecode(targetTime);
+                CurrentTimeDisplay = Services.TimecodeHelper.FormatTimecode(targetTime, _fps);
             }
         }
 
@@ -725,7 +714,7 @@ namespace Veriflow.Desktop.ViewModels
                 
                 _inputStream.SetPosition(targetTime);
                 PlaybackPosition = targetTime.TotalSeconds;
-                CurrentTimeDisplay = FormatTimecode(targetTime);
+                CurrentTimeDisplay = Services.TimecodeHelper.FormatTimecode(targetTime, _fps);
             }
         }
 

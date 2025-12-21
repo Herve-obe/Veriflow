@@ -564,56 +564,29 @@
         <Border Grid.Column="2" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" Background="{StaticResource Brush.Panel}" Padding="10" DataContext="{Binding SelectedMedia}">
             <Grid>
                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Header -->
+                    <RowDefinition Height="*"/>    <!-- Content -->
                     <RowDefinition Height="Auto"/> <!-- Buttons -->
-                    <RowDefinition Height="*"/>    <!-- Layout -->
-                    <RowDefinition Height="Auto"/> <!-- Footer -->
                 </Grid.RowDefinitions>
                 
-                <!-- Action Buttons Area (Vertical Stack) -->
-                <StackPanel Grid.Row="0" Margin="0,0,0,10">
-                    <Button Command="{Binding DataContext.CreateReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="CREATE REPORT" Height="26" ToolTip="Start a new report with listed files" Margin="0,0,0,5"
-                            Style="{StaticResource ContextualActionButtonStyle}"/>
-                    
-                    <Button Command="{Binding DataContext.AddToReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="ADD TO REPORT" Height="26" ToolTip="Add listed files to current report" Margin="0,0,0,20"
-                            Style="{StaticResource ContextualActionButtonStyle}"
-                            IsEnabled="{Binding DataContext.HasActiveReport, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-
-                    <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="OPEN FILE IN PLAYER" Height="26" ToolTip="Open selected file in Player" Margin="0,0,0,20"
-                            Style="{StaticResource ContextualActionButtonStyle}"/>
-                    
-                    <Button Command="{Binding DataContext.SendToSecureCopyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="SEND TO SECURE COPY" Height="26" ToolTip="Send selected folder to Secure Copy" Margin="0,0,0,20"
-                            Style="{StaticResource ContextualActionButtonStyle}"/>
-
-                    <Button Command="{Binding DataContext.SendFileToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="SEND FILE TO TRANSCODE" Height="26" ToolTip="Send selected file to Transcode" Margin="0,0,0,5"
-                            Style="{StaticResource ContextualActionButtonStyle}"/>
-
-                    <Button Command="{Binding DataContext.SendToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                            Content="SEND FOLDER TO TRANSCODE" Height="26" ToolTip="Send all files in folder to Transcode" Margin="0,0,0,5"
-                            Style="{StaticResource ContextualActionButtonStyle}"/>
-
-
-                </StackPanel>
-
-                <!-- METADATA PANELS CONTAINER -->
-                <Grid Grid.Row="1">
-                    
-                    <!-- AUDIO METADATA PANEL (Visible when IsVideoMode=False) -->
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ScrollViewer.Style>
-                            <Style TargetType="ScrollViewer">
-                                <Setter Property="Visibility" Value="Visible"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding DataContext.IsVideoMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ScrollViewer.Style>
+                <!-- Header Title -->
+                <TextBlock Text="MEDIA INFO" Style="{StaticResource HeaderStyle}" Margin="0,0,0,20"/>
+                
+                <!-- Content Area (Metadata) -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,-10,0">
+                    <StackPanel>
+                        <!-- AUDIO METADATA PANEL (Visible when IsVideoMode=False) -->
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DataContext.IsVideoMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
 
 
                         <StackPanel>
@@ -769,12 +742,12 @@
                                 </DataGrid>
                             </Expander>
                         </StackPanel>
-                    </ScrollViewer>
-
+                    </StackPanel>
+                    
                     <!-- VIDEO METADATA PANEL (Visible when IsVideoMode=True) -->
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ScrollViewer.Style>
-                            <Style TargetType="ScrollViewer">
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding DataContext.IsVideoMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
@@ -782,8 +755,7 @@
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </ScrollViewer.Style>
-
+                        </StackPanel.Style>
 
                         <StackPanel>
 
@@ -893,12 +865,41 @@
 
                             </Expander>
                          </StackPanel>
-                    </ScrollViewer>
-                </Grid>
+                    </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+                
+                <!-- Action Buttons Area (Bottom) -->
+                <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                    <Button Command="{Binding DataContext.CreateReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="CREATE REPORT" Height="26" ToolTip="Start a new report with listed files" Margin="0,0,0,5"
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
+                    
+                    <Button Command="{Binding DataContext.AddToReportCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="ADD TO REPORT" Height="26" ToolTip="Add listed files to current report" Margin="0,0,0,5"
+                            Style="{StaticResource ContextualActionButtonStyle}"
+                            IsEnabled="{Binding DataContext.HasActiveReport, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
 
-                <Button Grid.Row="2" Command="{Binding DataContext.EditMetadataCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                        Content="EDIT METADATA" Height="26" ToolTip="Edit metadata for selected media" Margin="0,10,0,0"
-                        Style="{StaticResource ContextualActionButtonStyle}"/>
+                    <Button Command="{Binding DataContext.OpenInPlayerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="OPEN FILE IN PLAYER" Height="26" ToolTip="Open selected file in Player" Margin="0,0,0,5"
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
+                    
+                    <Button Command="{Binding DataContext.SendToSecureCopyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="SEND TO SECURE COPY" Height="26" ToolTip="Send selected folder to Secure Copy" Margin="0,0,0,5"
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
+
+                    <Button Command="{Binding DataContext.SendFileToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="SEND FILE TO TRANSCODE" Height="26" ToolTip="Send selected file to Transcode" Margin="0,0,0,5"
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
+
+                    <Button Command="{Binding DataContext.SendToTranscodeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="SEND FOLDER TO TRANSCODE" Height="26" ToolTip="Send all files in folder to Transcode" Margin="0,0,0,5"
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
+                            
+                    <Button Command="{Binding DataContext.EditMetadataCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Content="EDIT METADATA" Height="26" ToolTip="Edit metadata for selected media" Margin="0,0,0,0"
+                            Style="{StaticResource ContextualActionButtonStyle}"/>
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

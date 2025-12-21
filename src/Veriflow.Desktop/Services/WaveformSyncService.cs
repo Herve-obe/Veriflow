@@ -17,7 +17,7 @@ namespace Veriflow.Desktop.Services
     {
         private readonly string _ffmpegPath;
         private readonly string _tempDir;
-        private readonly string _logFile;
+        // private readonly string _logFile; // Removed per user request
 
         public WaveformSyncService()
         {
@@ -25,11 +25,7 @@ namespace Veriflow.Desktop.Services
             _tempDir = Path.Combine(Path.GetTempPath(), "Veriflow_WaveformSync");
             Directory.CreateDirectory(_tempDir);
             
-            // Log file on Desktop for easy access
-            _logFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Veriflow_WaveformSync_Log.txt");
-            
-            // Clear previous log
-            try { File.Delete(_logFile); } catch { }
+            // Log file removed
             
             Log("=== Veriflow Waveform Sync Service Started ===");
             Log($"FFmpeg path: {_ffmpegPath}");
@@ -39,12 +35,7 @@ namespace Veriflow.Desktop.Services
 
         private void Log(string message)
         {
-            try
-            {
-                string timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
-                File.AppendAllText(_logFile, $"[{timestamp}] {message}\n");
-            }
-            catch { }
+            Debug.WriteLine($"[WaveformSync] {message}");
         }
 
         /// <summary>

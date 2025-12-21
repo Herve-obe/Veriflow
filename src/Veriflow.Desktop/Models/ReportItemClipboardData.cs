@@ -7,7 +7,7 @@ namespace Veriflow.Desktop.Models
     /// </summary>
     public class ReportItemClipboardData
     {
-        public string Version { get; set; } = "1.0";
+        public string Version { get; set; } = "1.7";
         public string ReportType { get; set; } = ""; // "Audio" or "Video"
         public List<ReportItemData> Items { get; set; } = new();
     }

@@ -14,26 +14,15 @@
     <Border Padding="10" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" CornerRadius="0">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header -->
+                <RowDefinition Height="*"/>    <!-- Content -->
                 <RowDefinition Height="Auto"/> <!-- Buttons -->
-                <RowDefinition Height="*"/>    <!-- Layout -->
-                <RowDefinition Height="Auto"/> <!-- Bottom Actions -->
             </Grid.RowDefinitions>
 
-            <!-- Action Buttons Area (Vertical Stack) -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,41">
-                <Button Command="{Binding LoadFileCommand}"
-                        Content="OPEN FILE" Height="26" ToolTip="Import Audio File" Margin="0,0,0,5"
-                        Style="{StaticResource ContextualActionButtonStyle}"/>
-                
-                <Button Command="{Binding UnloadMediaCommand}"
-                        Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,20"
-                        Style="{StaticResource ContextualActionButtonStyle}"/>
+            <!-- Header Title -->
+            <TextBlock Text="METADATA" Style="{StaticResource HeaderStyle}" Margin="0,0,0,20"/>
 
-                <Button Command="{Binding SendFileToTranscodeCommand}"
-                        Content="SEND TO TRANSCODE" Height="26" ToolTip="Send current file to Transcode Page"
-                        Style="{StaticResource ContextualActionButtonStyle}"/>
-            </StackPanel>
-
+            <!-- Content Area (Metadata) -->
             <ScrollViewer Grid.Row="1" Focusable="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <ScrollViewer.Resources>
                         <Style TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource ModernScrollBarStyle}"/>
@@ -194,10 +183,24 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <!-- BOTTOM ACTIONS -->
-            <Button Grid.Row="2" Command="{Binding ModifyInReportCommand}"
-                    Content="UPDATE REPORT NOTES" Height="26" ToolTip="Navigate to Reports Page with this item" Margin="0,10,0,0"
-                    Style="{StaticResource ContextualActionButtonStyle}"/>
+            <!-- Action Buttons Area (Bottom) -->
+            <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                <Button Command="{Binding LoadFileCommand}"
+                        Content="OPEN FILE" Height="26" ToolTip="Import Audio File" Margin="0,0,0,5"
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
+                
+                <Button Command="{Binding UnloadMediaCommand}"
+                        Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,5"
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
+
+                <Button Command="{Binding SendFileToTranscodeCommand}"
+                        Content="SEND TO TRANSCODE" Height="26" ToolTip="Send current file to Transcode Page" Margin="0,0,0,5"
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
+                        
+                <Button Command="{Binding ModifyInReportCommand}"
+                        Content="UPDATE REPORT NOTES" Height="26" ToolTip="Navigate to Reports Page with this item" Margin="0,0,0,0"
+                        Style="{StaticResource ContextualActionButtonStyle}"/>
+            </StackPanel>
         </Grid>
     </Border>
 

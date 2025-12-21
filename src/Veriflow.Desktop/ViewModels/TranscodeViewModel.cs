@@ -177,6 +177,11 @@ namespace Veriflow.Desktop.ViewModels
         {
             "Same as Source", "8-bit", "10-bit"
         };
+        
+        public ObservableCollection<TranscodeEngineItem> AvailableEngines { get; } = new();
+
+        [ObservableProperty]
+        private TranscodeEngine _selectedEngine = TranscodeEngine.CPU;
 
 
 
@@ -184,7 +189,7 @@ namespace Veriflow.Desktop.ViewModels
         private string _selectedVideoBitDepth = "Same as Source";
 
         [ObservableProperty]
-        private string _outputExtension = ".mp4";
+        private string _outputExtension = "";
 
         [ObservableProperty]
         private string _destinationFolder = "";
@@ -192,6 +197,9 @@ namespace Veriflow.Desktop.ViewModels
         public TranscodeViewModel()
         {
             _transcodingService = new Services.TranscodingService();
+            
+            // Initialize encoder detection asynchronously
+            _ = InitializeEncodersAsync();
             Files.CollectionChanged += (s, e) => 
             {
                 StartTranscodeCommand.NotifyCanExecuteChanged();
@@ -562,7 +570,8 @@ namespace Veriflow.Desktop.ViewModels
                     SampleRate = SelectedSampleRate,
                     BitDepth = SelectedBitDepth,
                     Bitrate = SelectedBitrate,
-                    VideoBitDepth = SelectedVideoBitDepth
+                    VideoBitDepth = SelectedVideoBitDepth,
+                    Engine = SelectedEngine
                 };
 
                 foreach (var item in Files)
@@ -653,6 +662,77 @@ namespace Veriflow.Desktop.ViewModels
                 }
             }
         }
+
+        private async Task InitializeEncodersAsync()
+        {
+            try
+            {
+                var detectionService = EncoderDetectionService.Instance;
+                var availableEncoderNames = await detectionService.GetAvailableEncodersAsync();
+                
+                // Map encoder names to TranscodeEngine enum
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    AvailableEngines.Clear();
+                    
+                    // Always add CPU
+                    AvailableEngines.Add(new TranscodeEngineItem 
+                    { 
+                        Engine = TranscodeEngine.CPU, 
+                        DisplayName = "CPU (libx264)",
+                        IsAvailable = true
+                    });
+                    
+                    // Add NVENC if available
+                    bool hasNVENC = availableEncoderNames.Contains("h264_nvenc", StringComparer.OrdinalIgnoreCase);
+                    AvailableEngines.Add(new TranscodeEngineItem 
+                    { 
+                        Engine = TranscodeEngine.NvidiaNVENC, 
+                        DisplayName = hasNVENC ? "NVIDIA NVENC" : "NVIDIA NVENC (Not Available)",
+                        IsAvailable = hasNVENC
+                    });
+                    
+                    // Add QSV if available
+                    bool hasQSV = availableEncoderNames.Contains("h264_qsv", StringComparer.OrdinalIgnoreCase);
+                    AvailableEngines.Add(new TranscodeEngineItem 
+                    { 
+                        Engine = TranscodeEngine.IntelQSV, 
+                        DisplayName = hasQSV ? "Intel Quick Sync" : "Intel Quick Sync (Not Available)",
+                        IsAvailable = hasQSV
+                    });
+                    
+                    // Set default to first available
+                    SelectedEngine = AvailableEngines.First(e => e.IsAvailable).Engine;
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[TranscodeViewModel] Encoder detection failed: {ex.Message}");
+                
+                // Fallback: Add CPU only
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    AvailableEngines.Clear();
+                    AvailableEngines.Add(new TranscodeEngineItem 
+                    { 
+                        Engine = TranscodeEngine.CPU, 
+                        DisplayName = "CPU (libx264)",
+                        IsAvailable = true
+                    });
+                    SelectedEngine = TranscodeEngine.CPU;
+                });
+            }
+        }
+    }
+
+    /// <summary>
+    /// Helper class for displaying encoder options with availability status
+    /// </summary>
+    public class TranscodeEngineItem
+    {
+        public TranscodeEngine Engine { get; set; }
+        public string DisplayName { get; set; } = string.Empty;
+        public bool IsAvailable { get; set; }
     }
 }
 

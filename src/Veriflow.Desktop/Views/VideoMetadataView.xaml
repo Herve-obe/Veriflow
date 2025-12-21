@@ -14,25 +14,13 @@
     <Border Padding="10" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" CornerRadius="0">
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Header -->
+                <RowDefinition Height="*"/>    <!-- Content -->
                 <RowDefinition Height="Auto"/> <!-- Buttons -->
-                <RowDefinition Height="*"/>    <!-- Layout -->
-                <RowDefinition Height="Auto"/> <!-- Bottom Actions -->
             </Grid.RowDefinitions>
 
-            <!-- Action Buttons Area -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,41">
-                <Button Command="{Binding OpenFileCommand}"
-                        Content="OPEN FILE" Height="26" ToolTip="Import Video File" Margin="0,0,0,5"
-                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
-                
-                <Button Command="{Binding UnloadMediaCommand}"
-                        Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,20"
-                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
-
-                <Button Command="{Binding SendFileToTranscodeCommand}"
-                        Content="SEND TO TRANSCODE" Height="26" ToolTip="Send current file to Transcode Page"
-                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
-            </StackPanel>
+            <!-- Header Title -->
+            <TextBlock Text="METADATA" Style="{StaticResource HeaderStyle}" Margin="0,0,0,20"/>
 
             <!-- VIDEO METADATA SCROLLVIEWER -->
             <ScrollViewer Grid.Row="1" Focusable="False" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -277,13 +265,26 @@
 
 
             <!-- BOTTOM ACTIONS -->
+            <!-- Action Buttons Area (Bottom) -->
             <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                <Button Command="{Binding OpenFileCommand}"
+                        Content="OPEN FILE" Height="26" ToolTip="Import Video File" Margin="0,0,0,5"
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
+                
+                <Button Command="{Binding UnloadMediaCommand}"
+                        Content="CLOSE FILE" Height="26" ToolTip="Unload current media" Margin="0,0,0,5"
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
+
+                <Button Command="{Binding SendFileToTranscodeCommand}"
+                        Content="SEND TO TRANSCODE" Height="26" ToolTip="Send current file to Transcode Page" Margin="0,0,0,5"
+                        Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
+                        
                 <Button Command="{Binding ExportLogsCommand}"
                         Content="EXPORT LOGS (EDL/ALE)" Height="26" ToolTip="Export Tagged Clips" Margin="0,0,0,5"
                         Style="{StaticResource ContextualActionButtonStyle}" Background="{StaticResource Brush.Success}" BorderBrush="{StaticResource Brush.Success}" Focusable="False"/>
                 
                 <Button Command="{Binding UpdateReportCommand}"
-                        Content="UPDATE REPORT NOTES" Height="26" ToolTip="Update Report Note"
+                        Content="UPDATE REPORT NOTES" Height="26" ToolTip="Update Report Note" Margin="0,0,0,0"
                         Style="{StaticResource ContextualActionButtonStyle}" Focusable="False"/>
             </StackPanel>
         </Grid>

@@ -1,0 +1,120 @@
+<Window x:Class="Veriflow.Desktop.Views.ReportTemplatesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Veriflow.Desktop.ViewModels"
+        mc:Ignorable="d"
+        Title="Report Templates" Height="500" Width="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Style="{StaticResource Style.Window.Dialog}">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Theme.Pro.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Header -->
+            <RowDefinition Height="*"/>    <!-- Content -->
+            <RowDefinition Height="Auto"/> <!-- Footer -->
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="REPORT TEMPLATES" Style="{StaticResource HeaderStyle}" FontSize="20" Margin="0,0,0,20"/>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                
+                <!-- Branding Section -->
+                <GroupBox Header="Branding" BorderBrush="{StaticResource Brush.Border}" Foreground="{StaticResource Brush.Text.Secondary}" Padding="10" Margin="0,0,0,20">
+                    <StackPanel>
+                        <!-- Custom Title -->
+                        <CheckBox Content="Use Custom Title" IsChecked="{Binding Settings.UseCustomTitle}" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding Settings.CustomTitle, UpdateSourceTrigger=PropertyChanged}" 
+                                 IsEnabled="{Binding Settings.UseCustomTitle}"
+                                 Margin="0,0,0,10" Padding="5"/>
+
+                        <!-- Custom Logo -->
+                        <CheckBox Content="Use Custom Logo" IsChecked="{Binding Settings.UseCustomLogo}" Margin="0,0,0,5"/>
+                        <Grid IsEnabled="{Binding Settings.UseCustomLogo}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Settings.CustomLogoPath}" IsReadOnly="True" VerticalContentAlignment="Center" Margin="0,0,5,0" Padding="5"/>
+                            <Button Grid.Column="1" Content="..." Command="{Binding BrowseLogoCommand}" Width="40" Margin="0,0,5,0"/>
+                            <Button Grid.Column="2" Content="X" Command="{Binding ClearLogoCommand}" Width="30" Foreground="Red"/>
+                        </Grid>
+                        
+                        <!-- Logo Preview (Optional) -->
+                        <Image Source="{Binding Settings.CustomLogoPath}" Height="50" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Columns Section -->
+                <GroupBox Header="Visible Columns" BorderBrush="{StaticResource Brush.Border}" Foreground="{StaticResource Brush.Text.Secondary}" Padding="10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- Left: Common & Video -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="General &amp; Video" FontWeight="Bold" Margin="0,0,0,5" Foreground="{DynamicResource Brush.Accent.Video}"/>
+                            <CheckBox Content="Filename" IsChecked="{Binding Settings.ShowFilename}" Margin="0,2"/>
+                            <CheckBox Content="Scene" IsChecked="{Binding Settings.ShowScene}" Margin="0,2"/>
+                            <CheckBox Content="Take" IsChecked="{Binding Settings.ShowTake}" Margin="0,2"/>
+                            <CheckBox Content="Timecode" IsChecked="{Binding Settings.ShowTimecode}" Margin="0,2"/>
+                            <CheckBox Content="Duration" IsChecked="{Binding Settings.ShowDuration}" Margin="0,2"/>
+                            <CheckBox Content="FPS" IsChecked="{Binding Settings.ShowFps}" Margin="0,2"/>
+                            <CheckBox Content="ISO" IsChecked="{Binding Settings.ShowIso}" Margin="0,2"/>
+                            <CheckBox Content="White Balance" IsChecked="{Binding Settings.ShowWhiteBalance}" Margin="0,2"/>
+                            <CheckBox Content="Codec / Res" IsChecked="{Binding Settings.ShowCodecResultion}" Margin="0,2"/>
+                        </StackPanel>
+
+                        <!-- Right: Audio & Misc -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Audio &amp; Notes" FontWeight="Bold" Margin="0,0,0,5" Foreground="{DynamicResource Brush.Accent.Audio}"/>
+                            <CheckBox Content="Sample Rate" IsChecked="{Binding Settings.ShowSampleRate}" Margin="0,2"/>
+                            <CheckBox Content="Bit Depth" IsChecked="{Binding Settings.ShowBitDepth}" Margin="0,2"/>
+                            <CheckBox Content="Tracks" IsChecked="{Binding Settings.ShowTracks}" Margin="0,2"/>
+                            <CheckBox Content="Notes" IsChecked="{Binding Settings.ShowNotes}" Margin="0,10,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer / Actions -->
+        <Grid Grid.Row="2" Margin="0,20,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="Load Preset" Command="{Binding LoadPresetCommand}" Width="100" Margin="0,0,10,0" Style="{StaticResource ContextualActionButtonStyle}"/>
+                <Button Content="Save Preset" Command="{Binding SavePresetCommand}" Width="100" Style="{StaticResource ContextualActionButtonStyle}"/>
+            </StackPanel>
+            
+            <Button Content="Close" 
+                    Command="{Binding CloseCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    Width="80" 
+                    HorizontalAlignment="Right"
+                    Style="{StaticResource ContextualActionButtonStyle}"/>
+        </Grid>
+        <!-- Footer -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button x:Name="OkButton" Content="OK" 
+                    Width="100" Height="30" 
+                    Style="{StaticResource Style.Button.Primary}"
+                    Click="OkButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

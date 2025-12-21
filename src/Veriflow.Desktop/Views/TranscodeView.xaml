@@ -404,6 +404,24 @@
                     <TextBlock Text="VIDEO SETTINGS" Style="{StaticResource LabelStyle}" Margin="0,0,0,10" Opacity="0.7"/>
 
                     <StackPanel Margin="0,0,0,10">
+                         <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Hardware Acceleration" Foreground="#888" Margin="0,0,0,5"/>
+                             <ComboBox ItemsSource="{Binding AvailableEngines}" 
+                                       SelectedValue="{Binding SelectedEngine}"
+                                       DisplayMemberPath="DisplayName"
+                                       SelectedValuePath="Engine">
+                                 <ComboBox.ItemContainerStyle>
+                                     <Style TargetType="ComboBoxItem">
+                                         <Style.Triggers>
+                                             <DataTrigger Binding="{Binding IsAvailable}" Value="False">
+                                                 <Setter Property="Foreground" Value="#666"/>
+                                                 <Setter Property="FontStyle" Value="Italic"/>
+                                             </DataTrigger>
+                                         </Style.Triggers>
+                                     </Style>
+                                 </ComboBox.ItemContainerStyle>
+                             </ComboBox>
+                        </StackPanel>
                         <StackPanel Margin="0,0,0,15">
                             <TextBlock Text="Bit Depth (Color)" Foreground="#888" Margin="0,0,0,5"/>
                             <ComboBox ItemsSource="{Binding AvailableVideoBitDepths}" SelectedItem="{Binding SelectedVideoBitDepth}"/>

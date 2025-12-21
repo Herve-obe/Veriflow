@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Veriflow.Desktop.Models;
+using Veriflow.Core.Models;
 
 namespace Veriflow.Desktop.Services
 {
@@ -16,7 +17,7 @@ namespace Veriflow.Desktop.Services
             QuestPDF.Settings.License = LicenseType.Community;
         }
 
-        public void GeneratePdf(string filePath, ReportHeader header, IEnumerable<ReportItem> items, bool isVideo)
+        public void GeneratePdf(string filePath, ReportHeader header, IEnumerable<ReportItem> items, bool isVideo, ReportSettings settings)
         {
             // Calculate Total Size
             long totalBytes = 0;
@@ -47,8 +48,8 @@ namespace Veriflow.Desktop.Services
                     page.PageColor(Colors.White);
                     page.DefaultTextStyle(x => x.FontSize(9).FontFamily(Fonts.Arial));
 
-                    page.Header().Element(compose => ComposeHeader(compose, header, isVideo, totalSizeStr));
-                    page.Content().Element(compose => ComposeContent(compose, items, isVideo));
+                    page.Header().Element(compose => ComposeHeader(compose, header, isVideo, totalSizeStr, settings));
+                    page.Content().Element(compose => ComposeContent(compose, items, isVideo, settings));
                     page.Footer().Element(ComposeFooter);
                 });
             })
@@ -68,7 +69,7 @@ namespace Veriflow.Desktop.Services
             return string.Format("{0:n2} {1}", number, suffixes[counter]);
         }
 
-        private void ComposeHeader(IContainer container, ReportHeader header, bool isVideo, string totalSize)
+        private void ComposeHeader(IContainer container, ReportHeader header, bool isVideo, string totalSize, ReportSettings settings)
         {
             // Title Logic
             string title = isVideo ? "CAMERA REPORT" : "SOUND REPORT";
@@ -76,12 +77,22 @@ namespace Veriflow.Desktop.Services
 
             // Logo Path
             string logoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "veriflow.ico");
-            // Fix path if running from bin/Debug/... to point to src if needed, or rely on CopyToOutput.
-            // Assuming Assets are copied to output. If not, fallback to source path for dev.
             if (!File.Exists(logoPath))
             {
                  // Fallback to strict source path since we are in dev environment
                  logoPath = @"d:\ELEMENT\VERIFLOW\src\Veriflow.Desktop\Assets\veriflow.ico";
+            }
+
+            // Custom Title
+            if (settings.UseCustomTitle && !string.IsNullOrWhiteSpace(settings.CustomTitle))
+            {
+                title = settings.CustomTitle;
+            }
+
+            // Custom Logo
+            if (settings.UseCustomLogo && File.Exists(settings.CustomLogoPath))
+            {
+                logoPath = settings.CustomLogoPath;
             }
 
             container.Column(column =>
@@ -152,49 +163,49 @@ namespace Veriflow.Desktop.Services
             });
         }
 
-        private void ComposeContent(IContainer container, IEnumerable<ReportItem> items, bool isVideo)
+        private void ComposeContent(IContainer container, IEnumerable<ReportItem> items, bool isVideo, ReportSettings settings)
         {
             var itemList = items.ToList();
 
             if (isVideo)
             {
-                ComposeVideoTable(container, itemList);
+                ComposeVideoTable(container, itemList, settings);
             }
             else
             {
-                ComposeAudioTable(container, itemList);
+                ComposeAudioTable(container, itemList, settings);
             }
         }
 
-        private void ComposeVideoTable(IContainer container, List<ReportItem> itemList)
+        private void ComposeVideoTable(IContainer container, List<ReportItem> itemList, ReportSettings settings)
         {
              container.PaddingTop(10).Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.RelativeColumn(1.5f); // Filename (Reduced)
-                    columns.RelativeColumn(0.8f); // Scene
-                    columns.RelativeColumn(0.6f); // Take
-                    columns.ConstantColumn(85);   // Start TC
-                    columns.ConstantColumn(85);   // Duration
-                    columns.ConstantColumn(35);   // FPS
-                    columns.ConstantColumn(70);   // ISO / WB
-                    columns.RelativeColumn(1.5f); // Codec / RES
-                    columns.RelativeColumn(2f);   // Notes
+                    if (settings.ShowFilename) columns.RelativeColumn(1.5f);
+                    if (settings.ShowScene) columns.RelativeColumn(0.8f);
+                    if (settings.ShowTake) columns.RelativeColumn(0.6f);
+                    if (settings.ShowTimecode) columns.ConstantColumn(85);
+                    if (settings.ShowDuration) columns.ConstantColumn(85);
+                    if (settings.ShowFps) columns.ConstantColumn(35);
+                    if (settings.ShowIso || settings.ShowWhiteBalance) columns.ConstantColumn(70);
+                    if (settings.ShowCodecResultion) columns.RelativeColumn(1.5f);
+                    if (settings.ShowNotes) columns.RelativeColumn(2f);
                 });
 
                 // Header
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellStyle).Text("Filename");
-                    header.Cell().Element(CellStyle).Text("Scene");
-                    header.Cell().Element(CellStyle).Text("Take");
-                    header.Cell().Element(CellStyle).Text("Start TC");
-                    header.Cell().Element(CellStyle).Text("Duration");
-                    header.Cell().Element(CellStyle).Text("FPS");
-                    header.Cell().Element(CellStyle).Text("ISO / WB");
-                    header.Cell().Element(CellStyle).Text("Codec / Res");
-                    header.Cell().Element(CellStyle).Text("Notes");
+                    if (settings.ShowFilename) header.Cell().Element(CellStyle).Text("Filename");
+                    if (settings.ShowScene) header.Cell().Element(CellStyle).Text("Scene");
+                    if (settings.ShowTake) header.Cell().Element(CellStyle).Text("Take");
+                    if (settings.ShowTimecode) header.Cell().Element(CellStyle).Text("Start TC");
+                    if (settings.ShowDuration) header.Cell().Element(CellStyle).Text("Duration");
+                    if (settings.ShowFps) header.Cell().Element(CellStyle).Text("FPS");
+                    if (settings.ShowIso || settings.ShowWhiteBalance) header.Cell().Element(CellStyle).Text("ISO / WB");
+                    if (settings.ShowCodecResultion) header.Cell().Element(CellStyle).Text("Codec / Res");
+                    if (settings.ShowNotes) header.Cell().Element(CellStyle).Text("Notes");
                 });
 
                 // Content
@@ -203,36 +214,47 @@ namespace Veriflow.Desktop.Services
                     var item = itemList[i];
                     var bgColor = i % 2 == 0 ? "#F5F5F5" : "#FFFFFF";
                     
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Filename).FontSize(8);
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Scene ?? "");
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Take ?? "");
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew);
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Duration ?? "").FontFamily(Fonts.CourierNew);
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Fps ?? "");
+                    if (settings.ShowFilename) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Filename).FontSize(8);
+                    if (settings.ShowScene) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Scene ?? "");
+                    if (settings.ShowTake) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Take ?? "");
+                    if (settings.ShowTimecode) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew);
+                    if (settings.ShowDuration) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Duration ?? "").FontFamily(Fonts.CourierNew);
+                    if (settings.ShowFps) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.Fps ?? "");
                     
-                    // ISO / WB Logic
-                    string iso = string.IsNullOrWhiteSpace(item.Iso) || item.Iso == "N/A" ? "" : item.Iso;
-                    string wb = string.IsNullOrWhiteSpace(item.WhiteBalance) || item.WhiteBalance == "N/A" ? "" : item.WhiteBalance;
-                    string isoWbDisplay = "";
-                    if (!string.IsNullOrEmpty(iso) && !string.IsNullOrEmpty(wb)) isoWbDisplay = $"{iso} / {wb}";
-                    else if (!string.IsNullOrEmpty(iso)) isoWbDisplay = iso;
-                    else if (!string.IsNullOrEmpty(wb)) isoWbDisplay = wb;
-                    
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(isoWbDisplay);
-                    
-                    // Codec / Res Logic (2 lines)
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Column(col => 
+                    if (settings.ShowIso || settings.ShowWhiteBalance)
                     {
-                        col.Item().Text(item.Codec ?? "").FontSize(8);
-                        col.Item().Text(item.Resolution ?? "").FontSize(7).FontColor(Colors.Grey.Darken2);
-                    });
+                        // ISO / WB Logic
+                        string iso = string.IsNullOrWhiteSpace(item.Iso) || item.Iso == "N/A" ? "" : item.Iso;
+                        string wb = string.IsNullOrWhiteSpace(item.WhiteBalance) || item.WhiteBalance == "N/A" ? "" : item.WhiteBalance;
+                        string isoWbDisplay = "";
+                        // If one is hidden? Logic assumes combined column.
+                        // Ideally we respect individual flags if possible, but for table layout simplicity we group or check if ANY.
+                        // Here simple logic: Show whatever is available if column is shown.
+                        bool showIso = settings.ShowIso && !string.IsNullOrEmpty(iso);
+                        bool showWb = settings.ShowWhiteBalance && !string.IsNullOrEmpty(wb);
+                         
+                        if (showIso && showWb) isoWbDisplay = $"{iso} / {wb}";
+                        else if (showIso) isoWbDisplay = iso;
+                        else if (showWb) isoWbDisplay = wb;
+                        
+                        table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(isoWbDisplay);
+                    }
+                    
+                    if (settings.ShowCodecResultion)
+                    {
+                        table.Cell().Element(c => BodyCellStyle(c, bgColor)).Column(col => 
+                        {
+                            col.Item().Text(item.Codec ?? "").FontSize(8);
+                            col.Item().Text(item.Resolution ?? "").FontSize(7).FontColor(Colors.Grey.Darken2);
+                        });
+                    }
 
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.ItemNotes ?? "");
+                    if (settings.ShowNotes) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(item.ItemNotes ?? "");
                 }
             });
         }
 
-        private void ComposeAudioTable(IContainer container, List<ReportItem> itemList)
+        private void ComposeAudioTable(IContainer container, List<ReportItem> itemList, ReportSettings settings)
         {
             // Interleaved Paging Logic:
             // A1, A2, B1, B2...
@@ -249,13 +271,17 @@ namespace Veriflow.Desktop.Services
                     var chunk = chunkArr.ToList();
                     
                     // Part 1: Basic Info
-                    column.Item().PaddingTop(10).Element(c => ComposeAudioTablePart1(c, chunk));
+                    column.Item().PaddingTop(10).Element(c => ComposeAudioTablePart1(c, chunk, settings));
                     
                     // Force Page Break to show Tracks for THIS chunk on the NEXT page
                     column.Item().PageBreak();
 
                     // Part 2: Tracks Info
-                    column.Item().Element(c => ComposeAudioTablePart2(c, chunk));
+                    // Check if Tracks are enabled
+                    if (settings.ShowTracks)
+                    {
+                         column.Item().Element(c => ComposeAudioTablePart2(c, chunk, settings));
+                    }
 
                     // If not the last chunk, add another Page Break to start the next chunk cleanly
                     if (chunkArr != chunks.Last())
@@ -266,32 +292,32 @@ namespace Veriflow.Desktop.Services
             });
         }
 
-        private void ComposeAudioTablePart1(IContainer container, List<ReportItem> itemList)
+        private void ComposeAudioTablePart1(IContainer container, List<ReportItem> itemList, ReportSettings settings)
         {
              container.Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.RelativeColumn(1.5f); // Filename (Reduced by half from 3)
-                    columns.RelativeColumn(1); // Scene
-                    columns.RelativeColumn(1); // Take
-                    columns.ConstantColumn(85);   // Start TC
-                    columns.ConstantColumn(85);   // Duration
-                    columns.RelativeColumn(0.8f); // Sample Rate
-                    columns.RelativeColumn(0.6f); // Bit Depth
-                    columns.RelativeColumn(2); // Notes (Added)
+                    if (settings.ShowFilename) columns.RelativeColumn(1.5f);
+                    if (settings.ShowScene) columns.RelativeColumn(1);
+                    if (settings.ShowTake) columns.RelativeColumn(1);
+                    if (settings.ShowTimecode) columns.ConstantColumn(85);
+                    if (settings.ShowDuration) columns.ConstantColumn(85);
+                    if (settings.ShowSampleRate) columns.RelativeColumn(0.8f);
+                    if (settings.ShowBitDepth) columns.RelativeColumn(0.6f);
+                    if (settings.ShowNotes) columns.RelativeColumn(2);
                 });
 
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellStyle).Text("Filename");
-                    header.Cell().Element(CellStyle).Text("Scene");
-                    header.Cell().Element(CellStyle).Text("Take");
-                    header.Cell().Element(CellStyle).Text("Start TC");
-                    header.Cell().Element(CellStyle).Text("Duration");
-                    header.Cell().Element(CellStyle).Text("SR");
-                    header.Cell().Element(CellStyle).Text("Bit");
-                    header.Cell().Element(CellStyle).Text("Notes");
+                    if (settings.ShowFilename) header.Cell().Element(CellStyle).Text("Filename");
+                    if (settings.ShowScene) header.Cell().Element(CellStyle).Text("Scene");
+                    if (settings.ShowTake) header.Cell().Element(CellStyle).Text("Take");
+                    if (settings.ShowTimecode) header.Cell().Element(CellStyle).Text("Start TC");
+                    if (settings.ShowDuration) header.Cell().Element(CellStyle).Text("Duration");
+                    if (settings.ShowSampleRate) header.Cell().Element(CellStyle).Text("SR");
+                    if (settings.ShowBitDepth) header.Cell().Element(CellStyle).Text("Bit");
+                    if (settings.ShowNotes) header.Cell().Element(CellStyle).Text("Notes");
                 });
 
                 for (int i = 0; i < itemList.Count; i++)
@@ -300,19 +326,19 @@ namespace Veriflow.Desktop.Services
                     var bgColor = i % 2 == 0 ? "#F5F5F5" : "#FFFFFF";
                     bool isCircled = item.IsCircled;
 
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Filename).FontSize(9); if (isCircled) s.SemiBold(); });
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Scene ?? ""); if (isCircled) s.SemiBold(); });
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Take ?? ""); if (isCircled) s.SemiBold(); });
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Duration ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.SampleRate ?? ""); if (isCircled) s.SemiBold(); });
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.BitDepth ?? ""); if (isCircled) s.SemiBold(); });
-                    table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.ItemNotes ?? ""); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowFilename) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Filename).FontSize(9); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowScene) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Scene ?? ""); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowTake) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Take ?? ""); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowTimecode) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.StartTimeCode ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowDuration) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.Duration ?? "").FontFamily(Fonts.CourierNew); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowSampleRate) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.SampleRate ?? ""); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowBitDepth) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.BitDepth ?? ""); if (isCircled) s.SemiBold(); });
+                    if (settings.ShowNotes) table.Cell().Element(c => BodyCellStyle(c, bgColor)).Text(t => { var s = t.Span(item.ItemNotes ?? ""); if (isCircled) s.SemiBold(); });
                 }
             });
         }
 
-        private void ComposeAudioTablePart2(IContainer container, List<ReportItem> itemList)
+        private void ComposeAudioTablePart2(IContainer container, List<ReportItem> itemList, ReportSettings settings)
         {
             // Calculate Max Tracks
             int maxTracks = 0;
@@ -415,7 +441,7 @@ namespace Veriflow.Desktop.Services
                     x.TotalPages();
                 });
 
-                row.RelativeItem().AlignRight().Text("Generated by Veriflow 1.0 (Beta)");
+                row.RelativeItem().AlignRight().Text("Generated by Veriflow 1.7.0 (Beta)");
             });
         }
     }

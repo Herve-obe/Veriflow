@@ -450,8 +450,10 @@
 
                     </StackPanel>
                     
-                    <!-- FileName and Timecode removed -->
                 </StackPanel>
+                
+                <!-- Explicit DataContext is inherited from View, which is ReportsViewModel -->
+
             </Grid>
 
 
@@ -471,6 +473,14 @@
                     <TextBlock Text="FILE LIST" Style="{StaticResource LabelStyle}" VerticalAlignment="Center" Opacity="0.5"/>
                     <!-- Action Buttons -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        
+                        <!-- CONFIG BUTTON (Moved) -->
+                         <Button Content="⚙ CONFIG" 
+                                 Command="{Binding OpenTemplatesWindowCommand}"
+                                 Style="{StaticResource ContextualActionButtonStyle}"
+                                 Width="120" Height="26" FontSize="{StaticResource Font.Size.Mini}"
+                                 Margin="0,0,10,0"/>
+
                         <!-- View Mode Toggle (Simplified) - VIDEO MODE ONLY -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                             <StackPanel.Style>
@@ -485,7 +495,7 @@
                             </StackPanel.Style>
                             <Button Content="📷 REPORT" 
                                     Command="{Binding SwitchToReportViewCommand}"
-                                    Width="100" Height="26" FontSize="{StaticResource Font.Size.Mini}" Margin="0,0,5,0">
+                                    Width="120" Height="26" FontSize="{StaticResource Font.Size.Mini}" Margin="0,0,10,0">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource ViewModeToggleStyle}">
                                         <Style.Triggers>
@@ -498,7 +508,7 @@
                             </Button>
                             <Button Content="🎬 EDL" 
                                     Command="{Binding SwitchToEDLViewCommand}"
-                                    Width="80" Height="26" FontSize="{StaticResource Font.Size.Mini}">
+                                    Width="120" Height="26" FontSize="{StaticResource Font.Size.Mini}">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource ViewModeToggleStyle}">
                                         <Style.Triggers>
@@ -517,7 +527,7 @@
                                 Margin="0,0,10,0"/>
                         <Button Content="CLEAR LIST" Command="{Binding ClearListCommand}" 
                                 Style="{StaticResource ContextualActionButtonStyle}" 
-                                Width="100" Height="26" FontSize="{StaticResource Font.Size.Mini}"/>
+                                Width="120" Height="26" FontSize="{StaticResource Font.Size.Mini}"/>
                     </StackPanel>
                 </Grid>
                 
@@ -903,6 +913,7 @@
                                                                         <ColumnDefinition Width="Auto"/>
                                                                         <ColumnDefinition Width="*"/>
                                                                         <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="Auto"/>
                                                                     </Grid.ColumnDefinitions>
                                                                     
                                                                     <!-- Timecode Info -->
@@ -917,7 +928,38 @@
                                                                     <TextBlock Grid.Column="1" Text="{Binding Notes}" Foreground="#CCC" FontSize="{StaticResource Font.Size.Mini}" VerticalAlignment="Center"/>
                                                                     
                                                                     <!-- Duration -->
-                                                                    <TextBlock Grid.Column="2" Text="{Binding Duration}" Foreground="{DynamicResource Brush.Accent}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Micro}" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="2" Text="{Binding Duration}" Foreground="{DynamicResource Brush.Accent}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Micro}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                                                                    <!-- Remove Clip Button -->
+                                                                    <Button Grid.Column="3" Content="✕" 
+                                                                            Command="{Binding DataContext.RemoveClipCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                            CommandParameter="{Binding}"
+                                                                            Background="Transparent" BorderThickness="0" 
+                                                                            Foreground="{DynamicResource Brush.Text.Muted}"
+                                                                            FontWeight="Bold" FontSize="10"
+                                                                            Width="18" Height="18"
+                                                                            Padding="0" Margin="5,0,0,0">
+                                                                        <Button.Style>
+                                                                            <Style TargetType="Button">
+                                                                                <Setter Property="Opacity" Value="0.5"/>
+                                                                                <Setter Property="Template">
+                                                                                    <Setter.Value>
+                                                                                        <ControlTemplate TargetType="Button">
+                                                                                            <Border Background="{TemplateBinding Background}">
+                                                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                                            </Border>
+                                                                                        </ControlTemplate>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                                <Style.Triggers>
+                                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                                        <Setter Property="Opacity" Value="1"/>
+                                                                                        <Setter Property="Foreground" Value="#FF5555"/>
+                                                                                    </Trigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </Button.Style>
+                                                                    </Button>
                                                                 </Grid>
                                                             </Border>
                                                         </DataTemplate>
@@ -939,12 +981,16 @@
         <Border Grid.Column="1" Padding="10" VerticalAlignment="Stretch" Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1,0,0,0" CornerRadius="0">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/> <!-- Header -->
+                    <RowDefinition Height="*"/>    <!-- Content -->
+                    <RowDefinition Height="Auto"/> <!-- Buttons -->
                 </Grid.RowDefinitions>
 
+                <!-- Header Title -->
+                <TextBlock Text="REPORT INFOS" Style="{StaticResource HeaderStyle}" Margin="0,0,0,20"/>
+
                 <!-- Video Report Form -->
-                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Margin="0,-5,0,0">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,-5,0,0">
                     <Grid>
                         <!-- VIDEO FORM -->
                         <StackPanel Margin="5" KeyboardNavigation.TabNavigation="Cycle">
@@ -1159,7 +1205,7 @@
                 </ScrollViewer>
 
                 <!-- EXPORT BUTTONS (Vertical like Player, Full Width) -->
-                <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,10,0,0">
+                <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,10,0,0">
                     <Button Content="EXPORT SESSION EDL/ALE" Command="{Binding ExportSessionEDLCommand}" 
                             Height="30" Margin="0,0,0,5">
                         <Button.Style>

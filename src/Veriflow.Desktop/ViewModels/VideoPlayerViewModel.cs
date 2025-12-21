@@ -253,19 +253,7 @@ namespace Veriflow.Desktop.ViewModels
 
         private string FormatTimecode(TimeSpan time)
         {
-            // Add Start Offset (Time Reference)
-            var absoluteTime = time + _startHeaderOffset;
-
-            // Format: hh:mm:ss:ii (frames)
-            double totalSeconds = absoluteTime.TotalSeconds;
-            int h = (int)absoluteTime.TotalHours; // Support hours > 24 if needed? Usually TC wraps or just goes up.
-            int m = absoluteTime.Minutes;
-            int s = absoluteTime.Seconds;
-            int frames = (int)Math.Round((totalSeconds - (int)totalSeconds) * _fps);
-            
-            if (frames >= _fps) frames = 0; // Safety wrap
-
-            return $"{h:D2}:{m:D2}:{s:D2}:{frames:D2}";
+            return Services.TimecodeHelper.FormatTimecode(time, _fps, _startHeaderOffset);
         }
 
         private void OnLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
@@ -426,53 +414,12 @@ namespace Veriflow.Desktop.ViewModels
              var provider = new FFprobeMetadataProvider();
              CurrentVideoMetadata = await provider.GetVideoMetadataAsync(path);
              
-             // Parse FPS
-             if (!string.IsNullOrEmpty(CurrentVideoMetadata.FrameRate))
-             {
-                 try
-                 {
-                     // Extract number from string like "24 fps" or "23.98 fps" or "25,00 fps"
-                     string normalizedFn = CurrentVideoMetadata.FrameRate.Replace(',', '.');
-                     string fpsString = new string(normalizedFn.Where(c => char.IsDigit(c) || c == '.').ToArray());
-                     
-                     if (double.TryParse(fpsString, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsedFps))
-                     {
-                         if (parsedFps > 0) _fps = parsedFps;
-                     }
-                 }
-                 catch { /* Ignore parse error, keep default */ }
-             }
+              // Parse FPS
+              double parsedFps = Services.TimecodeHelper.ParseFrameRate(CurrentVideoMetadata.FrameRate);
+              if (parsedFps > 0) _fps = parsedFps;
 
-             // Parse Start Timecode Offset
-             _startHeaderOffset = TimeSpan.Zero;
-             if (!string.IsNullOrEmpty(CurrentVideoMetadata.StartTimecode))
-             {
-                 try
-                 {
-                     // Expected format: HH:mm:ss:ff or HH:mm:ss
-                     var parts = CurrentVideoMetadata.StartTimecode.Split(':');
-                     if (parts.Length >= 3)
-                     {
-                         int h = int.Parse(parts[0]);
-                         int m = int.Parse(parts[1]);
-                         int s = int.Parse(parts[2]);
-                         // Ignore frames for offset base, or converting frames to ms? 
-                         // Usually TimeReference is seconds. But here we have string TC.
-                         // Let's rely on TimeSpan parsing if possible or manual.
-                         // Simplified: just Hours/Min/Sec for base offset. Frames might be trickier without knowing exact drop-frame logic?
-                         // Let's try to keep it simple: Start TC is usually a fixed offset.
-                         // If parts[3] exists (frames), convert to MS.
-                         double ms = 0;
-                         if (parts.Length == 4)
-                         {
-                             int f = int.Parse(parts[3]);
-                             ms = (f / _fps) * 1000;
-                         }
-                         _startHeaderOffset = new TimeSpan(0, h, m, s, (int)ms);
-                     }
-                 }
-                 catch { /* invalid TC string */ }
-             }
+              // Parse Start Timecode Offset
+              _startHeaderOffset = Services.TimecodeHelper.ParseTimecodeOffset(CurrentVideoMetadata.StartTimecode, _fps);
         }
 
         [RelayCommand(CanExecute = nameof(CanPlay))]
@@ -884,6 +831,7 @@ namespace Veriflow.Desktop.ViewModels
 
              // Add to local list (for current session display)
              TaggedClips.Add(clip);
+             ExportLogsCommand.NotifyCanExecuteChanged();
 
              // ← NEW: Send to Report for multi-rush logging
              AddClipToReportCallback?.Invoke(clip);
@@ -900,7 +848,7 @@ namespace Veriflow.Desktop.ViewModels
         }
 
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanExportLogs))]
         private void ExportLogs()
         {
             if (TaggedClips.Count == 0)
@@ -939,6 +887,8 @@ namespace Veriflow.Desktop.ViewModels
                 }
             }
         }
+
+        private bool CanExportLogs() => TaggedClips.Count > 0;
 
         private string GenerateEdlContent()
         {
@@ -1092,6 +1042,17 @@ namespace Veriflow.Desktop.ViewModels
             }
 
             TaggedClips.Remove(clip);
+            ExportLogsCommand.NotifyCanExecuteChanged();
+        }
+
+        [RelayCommand]
+        public void ClearLoggedClips()
+        {
+            if (TaggedClips.Count > 0)
+            {
+                TaggedClips.Clear();
+                ExportLogsCommand.NotifyCanExecuteChanged();
+            }
         }
 
         private void RecalculateClipDuration(ClipLogItem clip)

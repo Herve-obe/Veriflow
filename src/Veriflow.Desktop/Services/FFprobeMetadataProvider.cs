@@ -67,7 +67,10 @@ namespace Veriflow.Desktop.Services
                     bytes = bytes / 1024;
                 }
                 return $"{bytes:0.##} {sizes[order]}";
-            } catch { return ""; }
+            } catch (Exception ex) { 
+                Debug.WriteLine($"[FFprobeMetadataProvider] GetFileSizeString Error: {ex.Message}");
+                return ""; 
+            }
         }
 
         private bool IsWavOrBwf(string path)
@@ -115,8 +118,8 @@ namespace Veriflow.Desktop.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"FFprobe Error: {ex.Message}");
-
+                Debug.WriteLine($"[FFprobeMetadataProvider] PopulateFromFFprobeAsync Error: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
             }
         }
 
@@ -235,7 +238,10 @@ namespace Veriflow.Desktop.Services
                 // We map them just in case Native parsing fails or isn't run
                 // ... (Logic omitted for brevity as Native will overwrite if present)
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[FFprobeMetadataProvider] ParseJson Error: {ex.Message}");
+            }
         }
         #endregion
 
@@ -488,7 +494,10 @@ namespace Veriflow.Desktop.Services
                      metadata.TimecodeStart = SecondsToTimecode(metadata.TimeReferenceSeconds, fps);
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[FFprobeMetadataProvider] ParseIXml Error: {ex.Message}");
+            }
         }
 
         private string SamplesToTimecode(long samples, int sampleRate)
@@ -552,7 +561,8 @@ namespace Veriflow.Desktop.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"FFprobe Video Error: {ex.Message}");
+                Debug.WriteLine($"[FFprobeMetadataProvider] PopulateVideoFromFFprobeAsync Error: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
             }
         }
 
@@ -677,7 +687,11 @@ namespace Veriflow.Desktop.Services
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[FFprobeMetadataProvider] ParseVideoJson Error: {ex.Message}");
+                Debug.WriteLine(ex.StackTrace);
+            }
         }
         #endregion
     }

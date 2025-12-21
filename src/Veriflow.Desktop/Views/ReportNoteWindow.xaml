@@ -5,9 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Edit Report Note" Height="350" Width="400"
-        WindowStyle="None" ResizeMode="NoResize"
-        Background="{StaticResource Brush.Panel}" BorderBrush="{StaticResource Brush.Border}" BorderThickness="1"
-        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" UseLayoutRounding="True">
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" UseLayoutRounding="True"
+        Style="{StaticResource Style.Window.Dialog}">
     
     <Window.Resources>
         <Style TargetType="TextBox" BasedOn="{StaticResource Style.TextBox.Form}"/>
@@ -16,17 +15,13 @@
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Title -->
             <RowDefinition Height="Auto"/> <!-- Scene / Take -->
             <RowDefinition Height="*"/>    <!-- Notes -->
             <RowDefinition Height="Auto"/> <!-- Buttons -->
         </Grid.RowDefinitions>
 
-        <!-- Title -->
-        <TextBlock Text="EDIT REPORT NOTE" FontSize="{StaticResource Font.Size.Medium}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
-
         <!-- Scene / Take -->
-        <Grid Grid.Row="1" Margin="0,0,0,15">
+        <Grid Grid.Row="0" Margin="0,0,0,15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="10"/>

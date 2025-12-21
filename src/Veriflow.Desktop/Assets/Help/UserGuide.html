@@ -70,7 +70,7 @@
         <!-- Main Content -->
         <main class="content">
             <h1>Veriflow</h1>
-            <p class="subtitle">Complete User Manual - Version 1.0 (Beta)</p>
+            <p class="subtitle">Complete User Manual - Version 1.7.0 (Beta)</p>
             <p><em>Professional Media Verification & Workflow Management Tool</em></p>
 
             <div class="info-box">
@@ -256,11 +256,11 @@
                     </ul>
 
                     <h3>1.6 Licensing Information</h3>
-                    <p>Veriflow 1.0 is currently in Beta. Licensing terms and activation procedures will be
+                    <p>Veriflow 1.7.0 is currently in Beta. Licensing terms and activation procedures will be
                         finalized for the official release. Beta users may be eligible for special upgrade pricing.</p>
 
-                    <h3>1.7 What's New in Version 1.0</h3>
-                    <p>Version 1.0 (Beta) represents the initial release of Veriflow with the following features:
+                    <h3>1.7 What's New in Version 1.7.0</h3>
+                    <p>Version 1.7.0 (Beta) represents the initial release of Veriflow with the following features:
                     </p>
                     <ul>
                         <li>Dual-destination secure copy with hash verification</li>
@@ -372,7 +372,7 @@
                     <ol>
                         <li>Insert camera card into card reader</li>
                         <li>Press <span class="kbd">F1</span> to open Secure Copy page</li>
-                        <li>Click <strong>OPEN</strong> and select the camera card folder</li>
+                        <li>Click <strong>OPEN</strong> to select the camera card or folder.</li>
                         <li>Click <strong>LINK A</strong> and choose your primary backup drive</li>
                         <li>Click <strong>LINK B</strong> and choose your secondary backup drive</li>
                         <li>Click <strong>START COPY</strong></li>
@@ -815,15 +815,12 @@
                     <ul>
                         <li><strong>OPEN Button:</strong> Opens file/folder browser</li>
                         <li><strong>Source Path Display:</strong> Shows full path</li>
-                        <li><strong>Source Info:</strong> Total size and file count</li>
                     </ul>
 
                     <h4>Destination Sections (A and B)</h4>
                     <ul>
-                        <li><strong>LINK Button:</strong> Select destination folder</li>
+                        <li><strong>OPEN Button:</strong> Select destination folder</li>
                         <li><strong>Path Display:</strong> Shows destination path</li>
-                        <li><strong>Available Space:</strong> Free space indicator</li>
-                        <li><strong>Status:</strong> Progress and verification status</li>
                     </ul>
 
                     <h3>5.3 Hash Verification</h3>
@@ -845,7 +842,7 @@
 
                     <h3>5.4 Workflow</h3>
                     <ol>
-                        <li>Click <strong>OPEN</strong> and select source file/folder</li>
+                        <li>Click <strong>OPEN</strong> (Source) to select your media card.</li>
                         <li>Click <strong>LINK A</strong> and choose primary destination</li>
                         <li>Click <strong>LINK B</strong> and choose secondary destination</li>
                         <li>Verify sufficient space on both destinations</li>
@@ -909,6 +906,7 @@
                 <ul>
                     <li><strong>Grid View:</strong> Thumbnails with file names</li>
                     <li><strong>List View:</strong> Detailed file information (name, size, date, duration)</li>
+                    <li><strong>Filmstrip View:</strong> Horizontal strip of clips with large preview</li>
                     <li><strong>Sorting:</strong> Click column headers to sort</li>
                     <li><strong>Filtering:</strong> Show only specific file types</li>
                 </ul>
@@ -931,14 +929,16 @@
                     <li><strong>Drag and drop:</strong> (if enabled)</li>
                 </ul>
 
-                <h4>Context Menu Options</h4>
-                <p>Right-click on any file to access:</p>
+                <h4>Action Buttons</h4>
+                <p>Use the action buttons in the right panel to process selected files:</p>
                 <ul>
-                    <li><strong>Load to Player:</strong> Open in Player page</li>
-                    <li><strong>Add to Transcode Queue:</strong> Queue for transcoding</li>
-                    <li><strong>Add to Report:</strong> Include in Camera/Sound report</li>
-                    <li><strong>Show in Explorer:</strong> Open file location in Windows Explorer</li>
-                    <li><strong>Copy Path:</strong> Copy full file path to clipboard</li>
+                    <li><strong>CREATE REPORT:</strong> Start a new report with listed files</li>
+                    <li><strong>ADD TO REPORT:</strong> Add selected files to the active report</li>
+                    <li><strong>OPEN FILE IN PLAYER:</strong> Load selected file into the Player page</li>
+                    <li><strong>SEND TO SECURE COPY:</strong> Send selected folder to Secure Copy page</li>
+                    <li><strong>SEND FILE TO TRANSCODE:</strong> Send single file to Transcode queue</li>
+                    <li><strong>SEND FOLDER TO TRANSCODE:</strong> Send all files in folder to queue</li>
+                    <li><strong>EDIT METADATA:</strong> Open metadata editor for selected file</li>
                 </ul>
 
                 <h3>6.4 Supported File Formats</h3>
@@ -1009,25 +1009,22 @@
                 <h3>6.5 Metadata Display</h3>
 
                 <h4>Video File Metadata</h4>
-                <p>When a video file is selected, the metadata panel shows:</p>
+                <p>Organized into three expandable sections:</p>
                 <ul>
-                    <li><strong>Codec:</strong> H.264, H.265, ProRes, DNxHD, etc.</li>
-                    <li><strong>Resolution:</strong> 1920x1080, 3840x2160, etc.</li>
-                    <li><strong>Frame Rate:</strong> 23.976, 24, 25, 29.97, 30, 50, 60 fps</li>
-                    <li><strong>Duration:</strong> Total runtime</li>
-                    <li><strong>Bitrate:</strong> Average bitrate in Mbps</li>
-                    <li><strong>Timecode:</strong> Start timecode (if embedded)</li>
+                    <li><strong>FILE INFO:</strong> Name, Container, Size, Duration</li>
+                    <li><strong>VIDEO STREAM:</strong> Codec, Resolution, Aspect Ratio, Frame Rate, Bit Depth, Chroma,
+                        Color Space, Scan Type, GOP Struct, Bitrate</li>
+                    <li><strong>AUDIO & TIMECODE:</strong> Audio Format, Channels, Start TC</li>
                 </ul>
 
                 <h4>Audio File Metadata</h4>
-                <p>When an audio file is selected:</p>
+                <p>Organized into four expandable sections:</p>
                 <ul>
-                    <li><strong>Sample Rate:</strong> 44.1, 48, 96, 192 kHz</li>
-                    <li><strong>Bit Depth:</strong> 16, 24, 32-bit</li>
-                    <li><strong>Channels:</strong> Mono, Stereo, 5.1, 7.1, or custom</li>
-                    <li><strong>Duration:</strong> Total runtime</li>
-                    <li><strong>BWF Metadata:</strong> Description, originator, date (if present)</li>
-                    <li><strong>iXML:</strong> Track names, scene/take info (if present)</li>
+                    <li><strong>GENERAL INFO:</strong> Name, Project, Scene, Take, Tape, Date, Size</li>
+                    <li><strong>RECORDING INFO:</strong> Sample Rate, Bit Depth, Frame Rate, Start TC, Length, User
+                        Bits, Bitrate, Bitrate Mode</li>
+                    <li><strong>TECHNICAL INFO:</strong> Container, Codec, Channels</li>
+                    <li><strong>TRACK INFO:</strong> Detailed list of track names and functions</li>
                 </ul>
 
                 <h3>6.6 Navigation Tips</h3>
@@ -1113,13 +1110,17 @@
                 </ul>
 
                 <h4>Logged Clips (Video Profile)</h4>
-                <p>Create and manage logged clips:</p>
+                <p>Create and manage clips in the "LOGGED CLIPS" metadata section:</p>
                 <ul>
-                    <li><strong>Mark In:</strong> Set clip start point</li>
-                    <li><strong>Mark Out:</strong> Set clip end point</li>
-                    <li><strong>Log Clip:</strong> Save in/out points to list</li>
-                    <li><strong>Export EDL:</strong> Generate Edit Decision List from logged clips</li>
+                    <li><strong>Mark In (I):</strong> Set clip start point</li>
+                    <li><strong>Mark Out (O):</strong> Set clip end point</li>
+                    <li><strong>Tag Clip (T):</strong> Add defined range to the clip list</li>
+                    <li><strong>Export Logs:</strong> Use the "EXPORT LOGS (EDL/ALE)" button to save lists</li>
                 </ul>
+
+                <h4>Action Buttons</h4>
+                <p><strong>Top:</strong> OPEN FILE, CLOSE FILE, SEND TO TRANSCODE</p>
+                <p><strong>Bottom:</strong> EXPORT LOGS (EDL/ALE), UPDATE REPORT NOTES</p>
 
                 <h3>7.3 Audio Profile Mode</h3>
 
@@ -1135,10 +1136,10 @@
                 <h4>Multi-Track Interface</h4>
                 <p>Up to 32 tracks with individual controls:</p>
                 <ul>
-                    <li><strong>Mute:</strong> Silence individual track</li>
-                    <li><strong>Solo:</strong> Hear only selected track(s)</li>
-                    <li><strong>Volume:</strong> Adjust track level (-∞ to +12 dB)</li>
-                    <li><strong>Pan:</strong> Left/Center/Right positioning</li>
+                    <li><strong>Mute (M):</strong> Silence individual track</li>
+                    <li><strong>Solo (S):</strong> Hear only selected track(s)</li>
+                    <li><strong>Volume:</strong> Adjust track level (Fader)</li>
+                    <li><strong>Pan:</strong> Left/Center/Right positioning (Slider)</li>
                 </ul>
 
                 <h4>VU Meters</h4>
@@ -1152,11 +1153,23 @@
 
                 <h3>7.4 Metadata Display</h3>
 
-                <p>Right panel shows comprehensive file information:</p>
+                <p>The right panel adapts to the file type:</p>
+
+                <h4>Video Metadata</h4>
                 <ul>
-                    <li><strong>General Info:</strong> Filename, size, date</li>
-                    <li><strong>Recording Info:</strong> Scene, take, notes (if embedded)</li>
-                    <li><strong>Technical Info:</strong> Codec, sample rate, bit depth, channels</li>
+                    <li><strong>FILE INFO:</strong> Name, Container, Size, Duration</li>
+                    <li><strong>VIDEO STREAM:</strong> Codec, Resolution, Frame Rate, Bit Depth, Color Space, etc.</li>
+                    <li><strong>AUDIO & TIMECODE:</strong> Audio Format, Channels, Start TC</li>
+                    <li><strong>LOGGED CLIPS:</strong> List of tagged clips with In/Out/Duration and Notes</li>
+                </ul>
+
+                <h4>Audio Metadata</h4>
+                <ul>
+                    <li><strong>GENERAL INFO:</strong> Name, Project, Scene, Take, Tape, Date, Size</li>
+                    <li><strong>RECORDING INFO:</strong> Sample Rate, Bit Depth, Frame Rate, Start TC, Length, UBits
+                    </li>
+                    <li><strong>TECHNICAL INFO:</strong> Container, Codec, Channels</li>
+                    <li><strong>TRACK INFO:</strong> Track names and function assignments</li>
                 </ul>
 
                 <h3>7.5 Keyboard Shortcuts</h3>
@@ -1175,28 +1188,24 @@
                         <td>Stop</td>
                     </tr>
                     <tr>
-                        <td><span class="kbd">←</span></td>
-                        <td>Frame/Second backward</td>
+                        <td><span class="kbd">←</span> / <span class="kbd">→</span></td>
+                        <td>Previous / Next Frame</td>
                     </tr>
                     <tr>
-                        <td><span class="kbd">→</span></td>
-                        <td>Frame/Second forward</td>
+                        <td><span class="kbd">↑</span> / <span class="kbd">↓</span></td>
+                        <td>Forward / Rewind (1 Second)</td>
                     </tr>
                     <tr>
-                        <td><span class="kbd">Home</span></td>
-                        <td>Go to start</td>
+                        <td><span class="kbd">B</span> / <span class="kbd">N</span></td>
+                        <td>Previous / Next File</td>
                     </tr>
                     <tr>
-                        <td><span class="kbd">End</span></td>
-                        <td>Go to end</td>
+                        <td><span class="kbd">I</span> / <span class="kbd">O</span></td>
+                        <td>Mark In / Out (Video)</td>
                     </tr>
                     <tr>
-                        <td><span class="kbd">I</span></td>
-                        <td>Mark In (Video profile)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="kbd">O</span></td>
-                        <td>Mark Out (Video profile)</td>
+                        <td><span class="kbd">T</span></td>
+                        <td>Tag Clip (Video)</td>
                     </tr>
                 </table>
 
@@ -1231,48 +1240,54 @@
 
                 <h3>8.3 Interface Elements</h3>
 
-                <h4>Reference Audio Section</h4>
+                <h4>Video Pool</h4>
                 <ul>
-                    <li><strong>Load Reference:</strong> Select the audio file to sync against</li>
-                    <li><strong>Waveform Display:</strong> Visual representation of reference</li>
-                    <li><strong>File Info:</strong> Duration, sample rate, channels</li>
+                    <li><strong>IMPORT VIDEO:</strong> Select the video or reference audio files</li>
+                    <li><strong>List View:</strong> Shows filename, start timecode, and duration</li>
+                    <li><strong>CLEAR LIST:</strong> Remove all items from the video pool</li>
                 </ul>
 
-                <h4>Files to Sync Section</h4>
+                <h4>Audio Pool</h4>
                 <ul>
-                    <li><strong>Add Files:</strong> Select one or more files to synchronize</li>
-                    <li><strong>File List:</strong> Shows all files queued for analysis</li>
-                    <li><strong>Remove:</strong> Remove files from sync queue</li>
+                    <li><strong>IMPORT AUDIO:</strong> Select the audio files to synchronize</li>
+                    <li><strong>List View:</strong> Shows filename, start timecode, and duration</li>
+                    <li><strong>CLEAR LIST:</strong> Remove all items from the audio pool</li>
                 </ul>
 
-                <h4>Results Section</h4>
-                <p>After analysis, displays for each file:</p>
+                <h4>Matched Pairs</h4>
+                <p>After analysis, the matched list displays:</p>
                 <ul>
-                    <li><strong>Offset:</strong> Time difference (e.g., +2.345 seconds)</li>
-                    <li><strong>Confidence:</strong> Correlation strength (0-100%)</li>
-                    <li><strong>Status:</strong> Success, Failed, or In Progress</li>
+                    <li><strong>Video Master:</strong> The reference file name</li>
+                    <li><strong>Audio Source:</strong> The synchronized file name</li>
+                    <li><strong>Offset:</strong> Detected time shift (e.g., +2.34s)</li>
+                    <li><strong>Status:</strong> Synced or Failed</li>
+                    <li><strong>Sync Method:</strong> Timecode or Waveform</li>
+                </ul>
+
+                <h4>Batch Export</h4>
+                <ul>
+                    <li><strong>Export Destination:</strong> Select folder for synced files</li>
+                    <li><strong>EXPORT ALL SYNCED:</strong> Process and save all valid matches</li>
                 </ul>
 
                 <h3>8.4 Workflow</h3>
 
                 <ol>
-                    <li><strong>Load Reference Audio</strong>
+                    <li><strong>Load Video Pool</strong>
                         <ul>
-                            <li>Click <strong>LOAD REFERENCE</strong></li>
-                            <li>Select your reference audio file</li>
-                            <li>This is typically the camera audio or master recording</li>
+                            <li>Click <strong>IMPORT VIDEO</strong></li>
+                            <li>Select your video or reference master files</li>
                         </ul>
                     </li>
-                    <li><strong>Add Files to Sync</strong>
+                    <li><strong>Load Audio Pool</strong>
                         <ul>
-                            <li>Click <strong>ADD FILES</strong></li>
-                            <li>Select files to synchronize (can select multiple)</li>
-                            <li>These are typically separate recorder files</li>
+                            <li>Click <strong>IMPORT AUDIO</strong></li>
+                            <li>Select the separate audio files to synchronize</li>
                         </ul>
                     </li>
                     <li><strong>Start Analysis</strong>
                         <ul>
-                            <li>Click <strong>ANALYZE</strong></li>
+                            <li>Click <strong>SYNC BY TIMECODE</strong> or <strong>SYNC BY WAVEFORM</strong></li>
                             <li>Wait for processing (progress shown per file)</li>
                             <li>Analysis time depends on file duration and sample rate</li>
                         </ul>
@@ -1284,10 +1299,10 @@
                             <li>Note any failed analyses</li>
                         </ul>
                     </li>
-                    <li><strong>Export or Apply</strong>
+                    <li><strong>Export Results</strong>
                         <ul>
-                            <li><strong>Export Results:</strong> Save offset data to CSV/text</li>
-                            <li><strong>Apply Sync:</strong> (if feature available)</li>
+                            <li>Select an <strong>Export Destination</strong> folder</li>
+                            <li>Click <strong>EXPORT ALL SYNCED</strong> to save new files</li>
                         </ul>
                     </li>
                 </ol>
@@ -1314,23 +1329,19 @@
                     </tr>
                 </table>
 
-                <h4>Confidence Scores</h4>
+                <h4>Status Indicators</h4>
                 <ul>
-                    <li><strong>90-100%:</strong> Excellent - very reliable sync</li>
-                    <li><strong>80-89%:</strong> Good - reliable sync</li>
-                    <li><strong>70-79%:</strong> Fair - verify manually</li>
-                    <li><strong>
-                            <70%:< /strong> Poor - may be incorrect, check manually</li>
+                    <li><strong>Synced:</strong> A valid offset was found.</li>
+                    <li><strong>Failed:</strong> No correlation found (signal too different or no overlap).</li>
                 </ul>
 
                 <h3>8.6 Troubleshooting Sync Issues</h3>
 
-                <p><strong>Low Confidence Scores:</strong></p>
+                <p><strong>Sync Fails:</strong></p>
                 <ul>
                     <li>Files may not have overlapping audio content</li>
-                    <li>Audio quality too different (e.g., camera mic vs. boom)</li>
+                    <li>Audio quality too different (e.g. camera mic vs. boom)</li>
                     <li>Excessive background noise</li>
-                    <li>Files from different takes/scenes</li>
                 </ul>
 
                 <p><strong>Analysis Fails:</strong></p>
@@ -1366,20 +1377,23 @@
 
                 <h4>Queue Section</h4>
                 <ul>
-                    <li><strong>File List:</strong> Shows all files queued for transcoding</li>
-                    <li><strong>Status:</strong> Waiting, Processing, Complete, or Failed</li>
-                    <li><strong>Progress:</strong> Percentage complete for active transcodes</li>
-                    <li><strong>Remove:</strong> Remove files from queue</li>
+                    <li><strong>STATUS:</strong> Processing state (Ready, Complete, Failed)</li>
+                    <li><strong>FILENAME:</strong> Name of source file</li>
+                    <li><strong>PATH:</strong> Source file location</li>
+                    <li><strong>DURATION:</strong> File length</li>
+                    <li><strong>FORMAT:</strong> Source technical details</li>
+                    <li><strong>ADD FILE(S):</strong> Import media to the queue</li>
+                    <li><strong>CLEAR LIST:</strong> Remove all items</li>
                 </ul>
 
                 <h4>Settings Section</h4>
+                <p>Veriflow uses preset "Functions" to determine the optimal output format:</p>
                 <ul>
-                    <li><strong>Output Format:</strong> MP4, MOV, MXF, WAV, etc.</li>
-                    <li><strong>Video Codec:</strong> H.264, H.265, ProRes, DNxHD</li>
-                    <li><strong>Audio Codec:</strong> AAC, PCM, MP3</li>
-                    <li><strong>Resolution:</strong> Original, 1080p, 720p, 480p, custom</li>
-                    <li><strong>Quality:</strong> High, Medium, Low, or custom bitrate</li>
-                    <li><strong>Output Folder:</strong> Destination for transcoded files</li>
+                    <li><strong>CHOOSE VIDEO/AUDIO FUNCTION:</strong> Select target workflow (e.g. Standard, Broadcast,
+                        Post-Production).</li>
+                    <li><strong>Audio Settings:</strong> Sample Rate, Bit Depth, Bitrate (Visible for audio).</li>
+                    <li><strong>Video Settings:</strong> Bit Depth (Color), Bitrate/Profile (Visible for video).</li>
+                    <li><strong>Output Settings:</strong> Destination folder selection.</li>
                 </ul>
 
                 <h3>9.3 Supported Formats</h3>
@@ -1432,10 +1446,10 @@
                     </li>
                     <li><strong>Configure Settings</strong>
                         <ul>
-                            <li>Select output format</li>
-                            <li>Choose codec and quality</li>
-                            <li>Set resolution (if different from source)</li>
-                            <li>Select output folder</li>
+                            <li>Select a <strong>Function</strong> (Video or Audio)</li>
+                            <li>Adjust specific quality settings if needed (Bitrate, Bit Depth)</li>
+                            <li>Select <strong>Destination Folder</strong></li>
+                            <li>Click <strong>START TRANSCODE</strong></li>
                         </ul>
                     </li>
                     <li><strong>Start Transcoding</strong>
@@ -1539,25 +1553,27 @@
                 <h4>Header Information</h4>
                 <p>Fill in production details:</p>
                 <ul>
-                    <li><strong>Project:</strong> Production name</li>
-                    <li><strong>Date:</strong> Shoot date</li>
-                    <li><strong>Director:</strong> Director name</li>
-                    <li><strong>DOP:</strong> Director of Photography</li>
-                    <li><strong>Operator:</strong> Camera operator</li>
-                    <li><strong>Data Manager:</strong> DIT/Data manager name</li>
+                    <li><strong>DATE:</strong> Shoot date (Auto/Manual)</li>
+                    <li><strong>PROJECT NAME:</strong> Production title</li>
+                    <li><strong>DIRECTOR:</strong> Director name</li>
+                    <li><strong>DIR. OF PHOT.:</strong> Director of Photography</li>
+                    <li><strong>OPERATOR:</strong> Camera operator</li>
+                    <li><strong>DATA MANAGER:</strong> DIT/Data manager name</li>
+                    <li><strong>CAMERA ID:</strong> Identifier (e.g. A, B, Drone)</li>
+                    <li><strong>REEL NAME:</strong> Current reel/card name</li>
+                    <li><strong>LENS INFO:</strong> Lens metadata</li>
                 </ul>
 
                 <h4>File List</h4>
                 <p>Table showing all media files with:</p>
                 <ul>
-                    <li><strong>Scene:</strong> Scene number (editable)</li>
-                    <li><strong>Take:</strong> Take number (editable)</li>
-                    <li><strong>Filename:</strong> Original filename</li>
-                    <li><strong>Timecode:</strong> Start timecode</li>
+                    <li><strong>Clip Name:</strong> Original filename</li>
+                    <li><strong>Scene / Take:</strong> Scene and take numbers (combined, editable)</li>
+                    <li><strong>TC Start:</strong> Start timecode</li>
                     <li><strong>Duration:</strong> Clip length</li>
                     <li><strong>FPS:</strong> Frame rate</li>
-                    <li><strong>Resolution:</strong> Video resolution</li>
-                    <li><strong>Codec:</strong> Video codec</li>
+                    <li><strong>ISO / WB:</strong> Camera ISO and White Balance (combined, editable)</li>
+                    <li><strong>Codec / Res:</strong> Video codec and resolution (combined)</li>
                     <li><strong>Notes:</strong> Custom notes (editable)</li>
                 </ul>
 
@@ -1565,55 +1581,65 @@
 
                 <h4>Header Information</h4>
                 <ul>
-                    <li><strong>Project:</strong> Production name</li>
-                    <li><strong>Date:</strong> Recording date</li>
-                    <li><strong>Location:</strong> Recording location</li>
-                    <li><strong>Sound Mixer:</strong> Sound recordist name</li>
-                    <li><strong>Boom Operator:</strong> Boom op name</li>
+                    <li><strong>DATE:</strong> Recording date</li>
+                    <li><strong>PROJECT NAME:</strong> Production title</li>
+                    <li><strong>SOUND MIXER:</strong> Sound recordist name</li>
+                    <li><strong>BOOM OP.:</strong> Boom operator name</li>
+                    <li><strong>LOCATION:</strong> Recording location</li>
+                    <li><strong>TIMECODE RATE:</strong> Frame rate (e.g. 24, 25, 30)</li>
+                    <li><strong>FILES TYPE:</strong> File format (e.g. WAV, MP3)</li>
                 </ul>
 
                 <h4>File List</h4>
+                <h4>File List</h4>
                 <p>Table showing all audio files with:</p>
                 <ul>
-                    <li><strong>Scene:</strong> Scene number (editable)</li>
-                    <li><strong>Take:</strong> Take number (editable)</li>
-                    <li><strong>Filename:</strong> Original filename</li>
-                    <li><strong>Timecode:</strong> Start timecode</li>
-                    <li><strong>Duration:</strong> Recording length</li>
-                    <li><strong>Sample Rate:</strong> 48kHz, 96kHz, etc.</li>
-                    <li><strong>Bit Depth:</strong> 16, 24, 32-bit</li>
-                    <li><strong>Tracks:</strong> Number of channels</li>
-                    <li><strong>Circle:</strong> Mark important takes</li>
-                    <li><strong>Notes:</strong> Custom notes (editable)</li>
+                    <li><strong>FILENAME:</strong> Original filename</li>
+                    <li><strong>SCENE:</strong> Scene number (Editable)</li>
+                    <li><strong>TAKE:</strong> Take number (Editable)</li>
+                    <li><strong>START TC:</strong> Start timecode</li>
+                    <li><strong>DURATION:</strong> Recording length</li>
+                    <li><strong>SR:</strong> Sample Rate</li>
+                    <li><strong>BIT:</strong> Bit Depth</li>
+                    <li><strong>TRACKS:</strong> Track count info</li>
+                    <li><strong>CIRCLE:</strong> Checkbox for best takes</li>
+                    <li><strong>NOTES:</strong> Custom notes (Editable)</li>
                 </ul>
 
-                <h3>10.4 Workflow</h3>
-
+                <h4>Workflow</h4>
                 <ol>
                     <li><strong>Add Files to Report</strong>
                         <ul>
                             <li>Files loaded in session appear automatically</li>
-                            <li>Or manually add from Media page</li>
+                            <li>Or manually add via <strong>ADD FILE(S)</strong> or drag-and-drop</li>
+                            <li>Use <strong>⚙ CONFIG</strong> to customize report templates</li>
+                        </ul>
+                    </li>
+                    <li><strong>Toggle View (Video Only)</strong>
+                        <ul>
+                            <li><strong>📷 REPORT:</strong> Standard PDF report view</li>
+                            <li><strong>🎬 EDL:</strong> EDL logging view with large timecode display</li>
                         </ul>
                     </li>
                     <li><strong>Fill Header Information</strong>
                         <ul>
-                            <li>Enter production details in header fields</li>
-                            <li>All fields are saved with session</li>
+                            <li>Enter production details (saved with session)</li>
+                            <li>Video: Camera ID, Reel Name, Lens Info, etc.</li>
+                            <li>Audio: TC Rate, Files Type, Sound Mixer, etc.</li>
                         </ul>
                     </li>
                     <li><strong>Edit File Information</strong>
                         <ul>
                             <li>Click cells to edit Scene/Take numbers</li>
                             <li>Add notes for each file</li>
-                            <li>Circle important takes (Sound Report)</li>
+                            <li>Check <strong>CIRCLE</strong> to mark best takes (Audio only)</li>
                         </ul>
                     </li>
-                    <li><strong>Export PDF</strong>
+                    <li><strong>Export Data</strong>
                         <ul>
-                            <li>Click <strong>EXPORT PDF</strong></li>
-                            <li>Choose save location and filename</li>
-                            <li>PDF is generated and ready to share</li>
+                            <li>Click <strong>EXPORT TO PDF</strong> for a printable report</li>
+                            <li>Click <strong>EXPORT SESSION EDL/ALE</strong> (Video Profile Only) for editorial data
+                            </li>
                         </ul>
                     </li>
                 </ol>
@@ -1917,7 +1943,6 @@
                         <li><strong>First Save:</strong> <span class="kbd">Ctrl+S</span> opens Save dialog</li>
                         <li><strong>Subsequent Saves:</strong> <span class="kbd">Ctrl+S</span> saves to existing file
                         </li>
-                        <li><strong>Save As:</strong> <span class="kbd">Ctrl+Shift+S</span> to save with new name</li>
                     </ul>
 
                     <h4>Naming Conventions</h4>
@@ -1985,8 +2010,9 @@
                     <h4>Using Templates</h4>
                     <ol>
                         <li>Open template file</li>
-                        <li>Immediately Save As with new name</li>
-                        <li>Begin working (template remains unchanged)</li>
+                        <li>Immediately Start New Session specific to the day</li>
+                        <li>(Note: 'Save As' is not currently supported, manual file duplication recommended for
+                            templates)</li>
                     </ol>
 
                     <h3>12.7 Backup Strategies</h3>
@@ -2244,11 +2270,6 @@
                         <tr>
                             <td><span class="kbd">Ctrl</span>+<span class="kbd">S</span></td>
                             <td>Save session</td>
-                        </tr>
-                        <tr>
-                            <td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">S</span>
-                            </td>
-                            <td>Save As</td>
                         </tr>
                     </table>
 
@@ -4071,6 +4092,10 @@
                             <td><span class="kbd">F12</span></td>
                         </tr>
                         <tr>
+                            <td>Show Shortcuts</td>
+                            <td><span class="kbd">Ctrl</span>+<span class="kbd">,</span></td>
+                        </tr>
+                        <tr>
                             <td>Exit</td>
                             <td><span class="kbd">Alt</span>+<span class="kbd">F4</span></td>
                         </tr>
@@ -4176,7 +4201,7 @@
 
             <!-- Footer -->
             <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #3E3E42; color: #666;">
-                <p>Veriflow 1.0 (Beta) - Complete User Manual | © 2025 Veriflow</p>
+                <p>Veriflow 1.7.0 (Beta) - Complete User Manual | © 2025 Veriflow</p>
                 <p>Professional Media Verification & Workflow Management Tool</p>
             </footer>
         </main>

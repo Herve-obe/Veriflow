@@ -11,9 +11,6 @@ namespace Veriflow.Desktop.Views
         {
             InitializeComponent();
             InitializeWebView();
-            
-            // Update maximize button icon based on window state
-            StateChanged += (s, e) => UpdateMaximizeButtonIcon();
         }
 
         private async void InitializeWebView()
@@ -73,34 +70,9 @@ namespace Veriflow.Desktop.Views
         }
 
         // Window control button handlers
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
+        // Window Chrome handlers handling is now done via Theme.Pro.xaml style or not needed.
 
-        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized)
-            {
-                WindowState = WindowState.Normal;
-            }
-            else
-            {
-                WindowState = WindowState.Maximized;
-            }
-        }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
 
-        private void UpdateMaximizeButtonIcon()
-        {
-            if (MaximizeButton != null)
-            {
-                MaximizeButton.Content = WindowState == WindowState.Maximized ? "❐" : "☐";
-            }
-        }
     }
 }

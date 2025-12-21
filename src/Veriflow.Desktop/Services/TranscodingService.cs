@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace Veriflow.Desktop.Services
 {
+    public enum TranscodeEngine
+    {
+        CPU,
+        NvidiaNVENC,
+        IntelQSV
+    }
+
     public interface ITranscodingService
     {
         Task TranscodeAsync(string sourceFile, string outputFile, TranscodeOptions options, IProgress<double>? progress, CancellationToken cancellationToken = default);
@@ -21,6 +28,7 @@ namespace Veriflow.Desktop.Services
         
         // Video Specific
         public string VideoBitDepth { get; set; } = "Same as Source"; // "8-bit", "10-bit"
+        public TranscodeEngine Engine { get; set; } = TranscodeEngine.CPU;
     }
 
     public class SourceMetadata
@@ -62,6 +70,60 @@ namespace Veriflow.Desktop.Services
             string ffmpegArgs = BuildArguments(sourceFile, outputFile, options, newTimeRef);
             string ffmpegPath = GetToolPath("ffmpeg");
 
+            // 3. ATTEMPT TRANSCODE WITH FALLBACK
+            bool usedFallback = false;
+            Exception? lastError = null;
+
+            for (int attempt = 0; attempt < 2; attempt++)
+            {
+                try
+                {
+                    await ExecuteTranscodeAsync(ffmpegPath, ffmpegArgs, cancellationToken);
+                    
+                    // Success - log if fallback was used
+                    if (usedFallback)
+                    {
+                        Debug.WriteLine($"[TranscodingService] Hardware encoder failed, successfully completed with CPU fallback.");
+                    }
+                    return; // Success
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex;
+                    
+                    // If hardware encoder failed and we haven't tried CPU fallback yet
+                    if (attempt == 0 && options.Engine != TranscodeEngine.CPU)
+                    {
+                        Debug.WriteLine($"[TranscodingService] Hardware encoder failed: {ex.Message}");
+                        Debug.WriteLine($"[TranscodingService] Retrying with CPU encoder (libx264)...");
+                        
+                        // Rebuild args with CPU encoder
+                        var fallbackOptions = new TranscodeOptions
+                        {
+                            Format = options.Format,
+                            SampleRate = options.SampleRate,
+                            BitDepth = options.BitDepth,
+                            Bitrate = options.Bitrate,
+                            VideoBitDepth = options.VideoBitDepth,
+                            Engine = TranscodeEngine.CPU
+                        };
+                        
+                        ffmpegArgs = BuildArguments(sourceFile, outputFile, fallbackOptions, newTimeRef);
+                        usedFallback = true;
+                        continue; // Retry with CPU
+                    }
+                    
+                    // No more retries or already using CPU
+                    throw;
+                }
+            }
+            
+            // Should never reach here, but safety
+            if (lastError != null) throw lastError;
+        }
+
+        private async Task ExecuteTranscodeAsync(string ffmpegPath, string ffmpegArgs, CancellationToken cancellationToken)
+        {
             var startInfo = new ProcessStartInfo
             {
                 FileName = ffmpegPath,
@@ -193,15 +255,39 @@ namespace Veriflow.Desktop.Services
                 // Video Codec & Profile
                 if (fmt.Contains("H.264"))
                 {
-                    args += " -c:v libx264 -preset slow -crf 18";
-                    
+                    if (options.Engine == TranscodeEngine.NvidiaNVENC)
+                    {
+                         args += " -c:v h264_nvenc -preset p4 -rc vbr -cq 19";
+                         // NVENC handles pix_fmt less strictly but yuv420p is safe
+                    }
+                    else if (options.Engine == TranscodeEngine.IntelQSV)
+                    {
+                         args += " -c:v h264_qsv -global_quality 20 -look_ahead 1";
+                    }
+                    else
+                    {
+                        args += " -c:v libx264 -preset slow -crf 18";
+                    }
+
                     // Bit Depth / Pixel Format
                     if (options.VideoBitDepth == "10-bit") args += " -pix_fmt yuv420p10le";
                     else args += " -pix_fmt yuv420p"; // Default 8-bit
                 }
                 else if (fmt.Contains("H.265"))
                 {
-                    args += " -c:v libx265 -preset slow -crf 20"; // x265 is more efficient
+                    if (options.Engine == TranscodeEngine.NvidiaNVENC)
+                    {
+                         args += " -c:v hevc_nvenc -preset p4 -rc vbr -cq 21";
+                    }
+                    else if (options.Engine == TranscodeEngine.IntelQSV)
+                    {
+                         args += " -c:v hevc_qsv -global_quality 21 -look_ahead 1";
+                         // QSV HEVC requires specific load args sometimes, but standard builds handle it if driver present
+                    }
+                    else
+                    {
+                        args += " -c:v libx265 -preset slow -crf 20";
+                    }
                     
                     // Bit Depth / Pixel Format
                     if (options.VideoBitDepth == "10-bit") args += " -pix_fmt yuv420p10le";

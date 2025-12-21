@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="About Veriflow" Height="600" Width="700"
         WindowStartupLocation="CenterOwner" ResizeMode="CanResize"
-        Background="{DynamicResource Brush.Background}">
+        Style="{StaticResource Style.Window.Dialog}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,17 +15,16 @@
         <!-- Header -->
         <Border Grid.Row="0" Background="{DynamicResource Brush.Panel.Header}" Padding="20">
             <StackPanel>
-                <TextBlock Text="Veriflow Pro" 
+                <TextBlock Text="Veriflow" 
                            FontSize="28" 
                            FontWeight="Bold" 
                            Foreground="{DynamicResource Brush.Accent}"
                            HorizontalAlignment="Center"/>
                 <TextBlock x:Name="VersionText" 
-                           Text="Version 1.0.0" 
-                           FontSize="14" 
-                           Foreground="{DynamicResource Brush.Text.Secondary}"
-                           HorizontalAlignment="Center" 
-                           Margin="0,5,0,0"/>
+                           Text="Version 1.7.0" 
+                           Style="{StaticResource LabelStyle}"
+                           HorizontalAlignment="Center"
+                           FontSize="{StaticResource Font.Size.SubHeader}"/>
                 <TextBlock Text="© 2025 Veriflow. All rights reserved." 
                            FontSize="12" 
                            Foreground="{DynamicResource Brush.Text.Tertiary}"
