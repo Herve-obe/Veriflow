@@ -13,16 +13,20 @@
     <PackageReference Include="System.IO.Hashing" Version="10.0.0" />
     <PackageReference Include="LibVLCSharp.WPF" Version="3.9.5" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2792.45" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\**" />
-    <Resource Include="Assets\**" />
+    <Resource Include="Assets\**" Exclude="Assets\Help\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\..\ExternalTools\**\*">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Help\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

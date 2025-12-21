@@ -1,0 +1,4104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veriflow - Complete User Manual</title>
+    <link rel="stylesheet" href="help-styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <h2>Veriflow Manual</h2>
+            <nav>
+                <ul>
+                    <li><strong>Part I: Introduction</strong></li>
+                    <li><a href="#ch1">1. Welcome to Veriflow</a></li>
+                    <li><a href="#ch2">2. Quick Start Guide</a></li>
+
+                    <li><strong>Part II: User Interface</strong></li>
+                    <li><a href="#ch3">3. Interface Overview</a></li>
+                    <li><a href="#ch4">4. Core Concepts</a></li>
+
+                    <li><strong>Part III: Pages In-Depth</strong></li>
+                    <li><a href="#ch5">5. Secure Copy Page</a></li>
+                    <li><a href="#ch6">6. Media Page</a></li>
+                    <li><a href="#ch7">7. Player Page</a></li>
+                    <li><a href="#ch8">8. Sync Page</a></li>
+                    <li><a href="#ch9">9. Transcode Page</a></li>
+                    <li><a href="#ch10">10. Report Page</a></li>
+
+                    <li><strong>Part IV: Workflows</strong></li>
+                    <li><a href="#ch11">11. Professional Workflows</a></li>
+                    <li><a href="#ch12">12. Session Management</a></li>
+                    <li><a href="#ch13">13. Profile System</a></li>
+                    <li><a href="#ch14">14. Advanced Techniques</a></li>
+
+                    <li><strong>Part V: Technical Reference</strong></li>
+                    <li><a href="#ch15">15. File Formats & Codecs</a></li>
+                    <li><a href="#ch16">16. Keyboard Shortcuts</a></li>
+                    <li><a href="#ch17">17. Menu Reference</a></li>
+                    <li><a href="#ch18">18. Preferences & Settings</a></li>
+
+                    <li><strong>Part VI: Support</strong></li>
+                    <li><a href="#ch19">19. Troubleshooting</a></li>
+                    <li><a href="#ch20">20. FAQ</a></li>
+
+                    <li><strong>Appendices</strong></li>
+                    <li><a href="#appendix-a">A. Glossary</a></li>
+                    <li><a href="#appendix-b">B. Supported Formats</a></li>
+                    <li><a href="#appendix-c">C. System Requirements</a></li>
+                    <li><a href="#appendix-d">D. Shortcuts Quick Ref</a></li>
+                    <li><a href="#appendix-e">E. Error Messages</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <h1>Veriflow</h1>
+            <p class="subtitle">Complete User Manual - Version 1.0 (Beta)</p>
+            <p><em>Professional Media Verification & Workflow Management Tool</em></p>
+
+            <div class="info-box">
+                <h4>About This Manual</h4>
+                <p>This comprehensive manual covers all aspects of Veriflow. Whether you're a DIT, sound recordist,
+                    or post-production professional, you'll find detailed information on every feature, workflow, and
+                    technique.</p>
+                <p><strong>Manual Organization:</strong> 20 chapters across 7 parts, plus 5 appendices</p>
+            </div>
+
+            <!-- PART I: INTRODUCTION -->
+            <section id="part1" class="part-section">
+                <h1 class="part-title">Part I: Introduction</h1>
+
+                <!-- CHAPTER 1: WELCOME TO Veriflow -->
+                <section id="ch1">
+                    <h2>Chapter 1: Welcome to Veriflow</h2>
+
+                    <h3>1.1 What is Veriflow?</h3>
+                    <p>Veriflow is a professional media verification and workflow management application designed
+                        for video and audio professionals working in production and post-production environments. It
+                        provides a comprehensive suite of tools for secure file copying, media playback,
+                        synchronization, transcoding, and report generation.</p>
+
+                    <p><strong>Core Philosophy:</strong> Veriflow is built around the principle of data integrity
+                        and professional workflow efficiency. Every feature is designed to ensure your media files are
+                        handled safely, verified accurately, and documented thoroughly.</p>
+
+                    <h3>1.2 Who Should Use Veriflow?</h3>
+                    <p>Veriflow is designed for:</p>
+                    <ul>
+                        <li><strong>DITs (Digital Imaging Technicians):</strong> Manage camera media, create camera
+                            reports, verify file integrity, and prepare deliverables</li>
+                        <li><strong>Sound Recordists:</strong> Handle audio files, create sound reports, manage
+                            multi-track recordings, and prepare audio deliverables</li>
+                        <li><strong>Post-Production Professionals:</strong> Organize media, synchronize audio/video,
+                            transcode files, and maintain project documentation</li>
+                        <li><strong>Data Managers:</strong> Ensure data integrity, create backups, verify checksums, and
+                            maintain comprehensive logs</li>
+                        <li><strong>Production Coordinators:</strong> Manage media workflows, generate reports, and
+                            coordinate between departments</li>
+                    </ul>
+
+                    <h3>1.3 Key Features Overview</h3>
+
+                    <h4>Dual-Destination Secure Copy</h4>
+                    <p>Copy files to two destinations simultaneously with xxHash64 verification. Ensures perfect data
+                        integrity with cryptographic hash comparison. Essential for critical media backup workflows.</p>
+
+                    <h4>Professional Media Playback</h4>
+                    <p>Frame-accurate video playback and multi-track audio playback (up to 32 tracks) with comprehensive
+                        metadata display. Supports industry-standard formats and codecs.</p>
+
+                    <h4>Audio Waveform Synchronization</h4>
+                    <p>FFT-based cross-correlation analysis for precise audio synchronization. Automatically detect time
+                        offsets between audio files with sub-frame accuracy.</p>
+
+                    <h4>Batch Transcoding</h4>
+                    <p>Convert media files between formats with support for multiple codecs, resolutions, and quality
+                        settings. Queue-based processing for efficient batch operations.</p>
+
+                    <h4>Professional Report Generation</h4>
+                    <p>Create industry-standard Camera Reports and Sound Reports in PDF format. Includes all essential
+                        metadata, technical specifications, and production notes.</p>
+
+                    <h4>Dual-Profile System</h4>
+                    <p>Switch between Video and Audio profiles optimized for different workflows. UI and features adapt
+                        automatically to your current mode of operation.</p>
+
+                    <h3>1.4 System Requirements</h3>
+
+                    <h4>Minimum Requirements</h4>
+                    <table>
+                        <tr>
+                            <th>Component</th>
+                            <th>Requirement</th>
+                        </tr>
+                        <tr>
+                            <td>Operating System</td>
+                            <td>Windows 10 (64-bit) version 1809 or later</td>
+                        </tr>
+                        <tr>
+                            <td>Processor</td>
+                            <td>Intel Core i5 (6th gen) or AMD Ryzen 5 equivalent</td>
+                        </tr>
+                        <tr>
+                            <td>RAM</td>
+                            <td>8 GB</td>
+                        </tr>
+                        <tr>
+                            <td>Graphics</td>
+                            <td>DirectX 11 compatible GPU with 2 GB VRAM</td>
+                        </tr>
+                        <tr>
+                            <td>Storage</td>
+                            <td>500 MB for application, SSD recommended for media</td>
+                        </tr>
+                        <tr>
+                            <td>Display</td>
+                            <td>1920x1080 resolution minimum</td>
+                        </tr>
+                        <tr>
+                            <td>.NET Runtime</td>
+                            <td>.NET 8.0 Runtime or later</td>
+                        </tr>
+                    </table>
+
+                    <h4>Recommended Requirements</h4>
+                    <table>
+                        <tr>
+                            <th>Component</th>
+                            <th>Recommendation</th>
+                        </tr>
+                        <tr>
+                            <td>Operating System</td>
+                            <td>Windows 11 (64-bit)</td>
+                        </tr>
+                        <tr>
+                            <td>Processor</td>
+                            <td>Intel Core i7 (8th gen+) or AMD Ryzen 7 equivalent</td>
+                        </tr>
+                        <tr>
+                            <td>RAM</td>
+                            <td>16 GB or more</td>
+                        </tr>
+                        <tr>
+                            <td>Graphics</td>
+                            <td>DirectX 12 compatible GPU with 4+ GB VRAM</td>
+                        </tr>
+                        <tr>
+                            <td>Storage</td>
+                            <td>NVMe SSD for application and working media</td>
+                        </tr>
+                        <tr>
+                            <td>Display</td>
+                            <td>2560x1440 or 4K resolution, calibrated for color accuracy</td>
+                        </tr>
+                    </table>
+
+                    <h4>Storage Recommendations</h4>
+                    <ul>
+                        <li><strong>Working Drive:</strong> Fast NVMe SSD for active projects and media playback</li>
+                        <li><strong>Backup Drives:</strong> Two separate physical drives for dual-destination secure
+                            copy</li>
+                        <li><strong>Archive Storage:</strong> RAID array or LTO tape for long-term archival</li>
+                        <li><strong>Network Storage:</strong> 10 GbE connection for shared storage workflows</li>
+                    </ul>
+
+                    <h3>1.5 Installation Guide</h3>
+
+                    <h4>Step 1: Download</h4>
+                    <ol>
+                        <li>Download the latest Veriflow installer from the official website</li>
+                        <li>Verify the download checksum (provided on download page)</li>
+                        <li>Ensure you have administrator privileges on your system</li>
+                    </ol>
+
+                    <h4>Step 2: Install .NET Runtime</h4>
+                    <p>If not already installed:</p>
+                    <ol>
+                        <li>Download .NET 8.0 Runtime from Microsoft's official website</li>
+                        <li>Run the installer and follow the prompts</li>
+                        <li>Restart your computer if prompted</li>
+                    </ol>
+
+                    <h4>Step 3: Install Veriflow</h4>
+                    <ol>
+                        <li>Run the Veriflow installer as administrator</li>
+                        <li>Accept the license agreement</li>
+                        <li>Choose installation directory (default: C:\Program Files\Veriflow)</li>
+                        <li>Select components to install (all recommended)</li>
+                        <li>Click Install and wait for completion</li>
+                        <li>Launch Veriflow from the Start menu or desktop shortcut</li>
+                    </ol>
+
+                    <h4>Step 4: First Launch Configuration</h4>
+                    <p>On first launch, Veriflow will:</p>
+                    <ul>
+                        <li>Create application data folders in your user directory</li>
+                        <li>Initialize default preferences</li>
+                        <li>Check for required system components</li>
+                        <li>Display the welcome screen</li>
+                    </ul>
+
+                    <h3>1.6 Licensing Information</h3>
+                    <p>Veriflow 1.0 is currently in Beta. Licensing terms and activation procedures will be
+                        finalized for the official release. Beta users may be eligible for special upgrade pricing.</p>
+
+                    <h3>1.7 What's New in Version 1.0</h3>
+                    <p>Version 1.0 (Beta) represents the initial release of Veriflow with the following features:
+                    </p>
+                    <ul>
+                        <li>Dual-destination secure copy with hash verification</li>
+                        <li>Professional media playback (audio and video)</li>
+                        <li>FFT-based audio synchronization</li>
+                        <li>Batch transcoding with multiple format support</li>
+                        <li>Camera and Sound report generation</li>
+                        <li>Dual-profile system (Audio/Video modes)</li>
+                        <li>Session management and project organization</li>
+                        <li>Comprehensive metadata display and editing</li>
+                    </ul>
+                </section>
+
+                <!-- CHAPTER 2: QUICK START GUIDE -->
+                <section id="ch2">
+                    <h2>Chapter 2: Quick Start Guide</h2>
+
+                    <h3>2.1 First Launch Walkthrough</h3>
+                    <p>When you launch Veriflow for the first time, you'll see the main application window with the
+                        Secure Copy page active. Let's take a quick tour of the interface.</p>
+
+                    <h4>Main Window Components</h4>
+                    <ul>
+                        <li><strong>Top Menu Bar:</strong> File, Edit, View, and Help menus</li>
+                        <li><strong>Main Content Area:</strong> Displays the currently active page</li>
+                        <li><strong>Bottom Navigation Bar:</strong> Quick access to all six pages plus profile toggle
+                        </li>
+                        <li><strong>Status Bar:</strong> Shows current session name and application status</li>
+                    </ul>
+
+                    <h3>2.2 Interface Tour</h3>
+
+                    <h4>Navigation Bar (Bottom)</h4>
+                    <p>The navigation bar provides one-click access to all pages:</p>
+                    <table>
+                        <tr>
+                            <th>Button</th>
+                            <th>Shortcut</th>
+                            <th>Purpose</th>
+                        </tr>
+                        <tr>
+                            <td>SECURE COPY</td>
+                            <td><span class="kbd">F1</span></td>
+                            <td>Dual-destination file copying with verification</td>
+                        </tr>
+                        <tr>
+                            <td>MEDIA</td>
+                            <td><span class="kbd">F2</span></td>
+                            <td>File browser and media management</td>
+                        </tr>
+                        <tr>
+                            <td>PLAYER</td>
+                            <td><span class="kbd">F3</span></td>
+                            <td>Audio/Video playback and analysis</td>
+                        </tr>
+                        <tr>
+                            <td>SYNC</td>
+                            <td><span class="kbd">F4</span></td>
+                            <td>Audio waveform synchronization</td>
+                        </tr>
+                        <tr>
+                            <td>TRANSCODE</td>
+                            <td><span class="kbd">F5</span></td>
+                            <td>Batch media transcoding</td>
+                        </tr>
+                        <tr>
+                            <td>Report</td>
+                            <td><span class="kbd">F6</span></td>
+                            <td>Camera/Sound report generation</td>
+                        </tr>
+                    </table>
+
+                    <h4>Profile Toggle</h4>
+                    <p>The profile toggle (VIDEO/AUDIO buttons) switches between two optimized modes:</p>
+                    <ul>
+                        <li><strong>VIDEO Profile (Blue):</strong> Optimized for video-centric workflows</li>
+                        <li><strong>AUDIO Profile (Red):</strong> Optimized for audio-centric workflows</li>
+                    </ul>
+                    <p>Press <span class="kbd">Ctrl</span> + <span class="kbd">Tab</span> to toggle between profiles.
+                    </p>
+
+                    <h3>2.3 Creating Your First Session</h3>
+                    <p>Sessions save your complete workspace state. Let's create your first session:</p>
+
+                    <ol>
+                        <li>Click <strong>File</strong> → <strong>New Session</strong> (or press <span
+                                class="kbd">Ctrl</span> + <span class="kbd">N</span>)</li>
+                        <li>All pages reset to their default state</li>
+                        <li>The status bar shows "Untitled Session"</li>
+                        <li>Begin working with your media files</li>
+                        <li>When ready to save, click <strong>File</strong> → <strong>Save Session</strong> (<span
+                                class="kbd">Ctrl</span> + <span class="kbd">S</span>)</li>
+                        <li>Choose a location and name for your session file (.vfsession)</li>
+                        <li>Click Save</li>
+                    </ol>
+
+                    <div class="info-box tip">
+                        <h4>Best Practice</h4>
+                        <p>Create a new session for each project or shoot day. Save sessions regularly to preserve your
+                            work, including loaded media, reports, and settings.</p>
+                    </div>
+
+                    <h3>2.4 Basic Workflow Example</h3>
+                    <p>Let's walk through a complete workflow from ingesting media to generating a report.</p>
+
+                    <h4>Scenario: DIT Workflow for a Shoot Day</h4>
+
+                    <p><strong>Step 1: Secure Copy (F1)</strong></p>
+                    <ol>
+                        <li>Insert camera card into card reader</li>
+                        <li>Press <span class="kbd">F1</span> to open Secure Copy page</li>
+                        <li>Click <strong>OPEN</strong> and select the camera card folder</li>
+                        <li>Click <strong>LINK A</strong> and choose your primary backup drive</li>
+                        <li>Click <strong>LINK B</strong> and choose your secondary backup drive</li>
+                        <li>Click <strong>START COPY</strong></li>
+                        <li>Wait for copy to complete and verify (green checkmarks indicate success)</li>
+                    </ol>
+
+                    <p><strong>Step 2: Browse Media (F2)</strong></p>
+                    <ol>
+                        <li>Press <span class="kbd">F2</span> to open Media page</li>
+                        <li>Navigate to your primary backup drive in the Explorer panel</li>
+                        <li>Browse the copied files in the center panel</li>
+                        <li>Click a file to view its metadata in the right panel</li>
+                    </ol>
+
+                    <p><strong>Step 3: Review Footage (F3)</strong></p>
+                    <ol>
+                        <li>Double-click a video file in Media page (or right-click → Load to Player)</li>
+                        <li>Press <span class="kbd">F3</span> to open Player page</li>
+                        <li>Use <span class="kbd">Space</span> to play/pause</li>
+                        <li>Use <span class="kbd">←</span> <span class="kbd">→</span> for frame-by-frame navigation</li>
+                        <li>Review the footage and make notes</li>
+                    </ol>
+
+                    <p><strong>Step 4: Generate Report (F6)</strong></p>
+                    <ol>
+                        <li>Press <span class="kbd">F6</span> to open Report Page</li>
+                        <li>Ensure you're in VIDEO profile (blue indicator)</li>
+                        <li>Fill in the header information (Project, Date, Director, DOP, etc.)</li>
+                        <li>The file list shows all media from your session</li>
+                        <li>Edit Scene/Take numbers and add notes as needed</li>
+                        <li>Click <strong>EXPORT PDF</strong></li>
+                        <li>Choose save location and filename</li>
+                        <li>The Camera Report PDF is generated and ready to share</li>
+                    </ol>
+
+                    <p><strong>Step 5: Save Session</strong></p>
+                    <ol>
+                        <li>Press <span class="kbd">Ctrl</span> + <span class="kbd">S</span></li>
+                        <li>Save the session with a descriptive name (e.g., "ShootDay_2025-12-21.vfsession")</li>
+                        <li>You can now close Veriflow and resume later by opening this session</li>
+                    </ol>
+
+                    <div class="info-box">
+                        <h4>Workflow Complete!</h4>
+                        <p>You've successfully completed a basic DIT workflow: secure copy, media review, and report
+                            generation. This same workflow applies to audio recording with the AUDIO profile.</p>
+                    </div>
+
+                    <h3>2.5 Essential Shortcuts to Know</h3>
+                    <p>Master these shortcuts to work efficiently:</p>
+
+                    <h4>Navigation</h4>
+                    <table>
+                        <tr>
+                            <th>Shortcut</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">F1</span> - <span class="kbd">F6</span></td>
+                            <td>Switch between pages</td>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">Tab</span></td>
+                            <td>Toggle Audio/Video profile</td>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">F12</span></td>
+                            <td>Open this help manual</td>
+                        </tr>
+                    </table>
+
+                    <h4>Session Management</h4>
+                    <table>
+                        <tr>
+                            <th>Shortcut</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">N</span></td>
+                            <td>New Session</td>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">O</span></td>
+                            <td>Open Session</td>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">Ctrl</span> + <span class="kbd">S</span></td>
+                            <td>Save Session</td>
+                        </tr>
+                    </table>
+
+                    <h4>Player Controls</h4>
+                    <table>
+                        <tr>
+                            <th>Shortcut</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">Space</span></td>
+                            <td>Play/Pause</td>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">Enter</span></td>
+                            <td>Stop</td>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">←</span> / <span class="kbd">→</span></td>
+                            <td>Frame backward/forward</td>
+                        </tr>
+                        <tr>
+                            <td><span class="kbd">Home</span> / <span class="kbd">End</span></td>
+                            <td>Go to start/end</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-box tip">
+                        <h4>Next Steps</h4>
+                        <p>Now that you understand the basics, explore the rest of this manual to learn about advanced
+                            features, professional workflows, and detailed page documentation. Chapter 3 provides a
+                            comprehensive interface overview.</p>
+                    </div>
+                </section>
+            </section>
+
+
+            <!-- PART II: USER INTERFACE -->
+            <section id="part2" class="part-section">
+                <h1 class="part-title">Part II: User Interface</h1>
+
+                <!-- CHAPTER 3: INTERFACE OVERVIEW -->
+                <section id="ch3">
+                    <h2>Chapter 3: Interface Overview</h2>
+
+                    <h3>3.1 Main Window Layout</h3>
+                    <p>The Veriflow main window is designed for professional efficiency with a clean, organized
+                        layout optimized for both video and audio workflows.</p>
+
+                    <h4>Window Components</h4>
+                    <ul>
+                        <li><strong>Menu Bar (Top):</strong> File, Edit, View, Help menus with full keyboard access</li>
+                        <li><strong>Main Content Area (Center):</strong> Displays the active page with all its controls
+                            and features</li>
+                        <li><strong>Navigation Bar (Bottom):</strong> Six page buttons (F1-F6) plus profile toggle
+                            (VIDEO/AUDIO)</li>
+                        <li><strong>Status Bar (Bottom):</strong> Session name, application status, and system
+                            information</li>
+                    </ul>
+
+                    <h3>3.2 Menu Bar Reference</h3>
+
+                    <h4>File Menu</h4>
+                    <table>
+                        <tr>
+                            <th>Command</th>
+                            <th>Shortcut</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>New Session</td>
+                            <td><span class="kbd">Ctrl+N</span></td>
+                            <td>Create new empty session</td>
+                        </tr>
+                        <tr>
+                            <td>Open Session</td>
+                            <td><span class="kbd">Ctrl+O</span></td>
+                            <td>Load existing .vfsession file</td>
+                        </tr>
+                        <tr>
+                            <td>Save Session</td>
+                            <td><span class="kbd">Ctrl+S</span></td>
+                            <td>Save current session</td>
+                        </tr>
+                        <tr>
+                            <td>Save Session As</td>
+                            <td><span class="kbd">Ctrl+Shift+S</span></td>
+                            <td>Save with new filename</td>
+                        </tr>
+                        <tr>
+                            <td>Exit</td>
+                            <td><span class="kbd">Alt+F4</span></td>
+                            <td>Close application</td>
+                        </tr>
+                    </table>
+
+                    <h4>View Menu</h4>
+                    <table>
+                        <tr>
+                            <th>Command</th>
+                            <th>Shortcut</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>Secure Copy</td>
+                            <td><span class="kbd">F1</span></td>
+                            <td>Navigate to Secure Copy page</td>
+                        </tr>
+                        <tr>
+                            <td>Media</td>
+                            <td><span class="kbd">F2</span></td>
+                            <td>Navigate to Media page</td>
+                        </tr>
+                        <tr>
+                            <td>Player</td>
+                            <td><span class="kbd">F3</span></td>
+                            <td>Navigate to Player page</td>
+                        </tr>
+                        <tr>
+                            <td>Sync</td>
+                            <td><span class="kbd">F4</span></td>
+                            <td>Navigate to Sync page</td>
+                        </tr>
+                        <tr>
+                            <td>Transcode</td>
+                            <td><span class="kbd">F5</span></td>
+                            <td>Navigate to Transcode page</td>
+                        </tr>
+                        <tr>
+                            <td>Report</td>
+                            <td><span class="kbd">F6</span></td>
+                            <td>Navigate to Report Page</td>
+                        </tr>
+                    </table>
+
+                    <h4>Help Menu</h4>
+                    <table>
+                        <tr>
+                            <th>Command</th>
+                            <th>Shortcut</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>View Help</td>
+                            <td><span class="kbd">F12</span></td>
+                            <td>Open this user manual</td>
+                        </tr>
+                        <tr>
+                            <td>Open Log Folder</td>
+                            <td>-</td>
+                            <td>Open application log directory</td>
+                        </tr>
+                        <tr>
+                            <td>About Veriflow</td>
+                            <td>-</td>
+                            <td>Display version and license info</td>
+                        </tr>
+                    </table>
+
+                    <h3>3.3 Navigation Bar</h3>
+                    <p>The bottom navigation bar provides instant access to all six pages. The active page is
+                        highlighted with the current profile color (blue for Video, red for Audio).</p>
+
+                    <div class="info-box tip">
+                        <h4>Navigation Tips</h4>
+                        <ul>
+                            <li>Use F1-F6 keys for fastest page switching</li>
+                            <li>Current page is always highlighted</li>
+                            <li>Profile toggle (VIDEO/AUDIO) is always visible</li>
+                            <li>Press <span class="kbd">Ctrl+Tab</span> to toggle profiles</li>
+                        </ul>
+                    </div>
+
+                    <h3>3.4 Keyboard Navigation</h3>
+                    <p>Veriflow is fully keyboard-accessible for professional efficiency:</p>
+                    <ul>
+                        <li><strong>Alt key:</strong> Access menu bar (Alt+F for File, Alt+V for View, etc.)</li>
+                        <li><strong>Tab key:</strong> Navigate between controls on current page</li>
+                        <li><strong>Enter key:</strong> Activate focused button or control</li>
+                        <li><strong>Escape key:</strong> Cancel dialogs or close windows</li>
+                        <li><strong>Arrow keys:</strong> Navigate lists, adjust sliders, frame step in Player</li>
+                    </ul>
+                </section>
+
+                <!-- CHAPTER 4: CORE CONCEPTS -->
+                <section id="ch4">
+                    <h2>Chapter 4: Core Concepts</h2>
+
+                    <h3>4.1 Sessions Explained</h3>
+                    <p>Sessions are the foundation of Veriflow's project organization. A session saves your complete
+                        workspace state including:</p>
+                    <ul>
+                        <li>All loaded media files (references, not copies)</li>
+                        <li>Report data and metadata</li>
+                        <li>Logged clips and EDL information</li>
+                        <li>Sync analysis results</li>
+                        <li>Transcode queue and settings</li>
+                        <li>Current profile (Audio/Video)</li>
+                        <li>Page-specific settings and states</li>
+                    </ul>
+
+                    <h4>Session File Format</h4>
+                    <p>Sessions are saved as <code>.vfsession</code> files in JSON format. These files are:</p>
+                    <ul>
+                        <li><strong>Human-readable:</strong> Can be opened in text editor if needed</li>
+                        <li><strong>Portable:</strong> Can be shared between computers (file paths may need adjustment)
+                        </li>
+                        <li><strong>Version-controlled:</strong> Can be tracked in Git or other VCS</li>
+                        <li><strong>Lightweight:</strong> Typically 10-100 KB depending on content</li>
+                    </ul>
+
+                    <h4>Session Best Practices</h4>
+                    <div class="info-box">
+                        <ul>
+                            <li>Create one session per project or shoot day</li>
+                            <li>Use descriptive names: "ProjectName_Date_Description.vfsession"</li>
+                            <li>Save sessions in a dedicated folder, not with media files</li>
+                            <li>Save regularly (Ctrl+S) to preserve your work</li>
+                            <li>Keep session files backed up separately from media</li>
+                        </ul>
+                    </div>
+
+                    <h3>4.2 Audio vs Video Profiles</h3>
+                    <p>Veriflow features a dual-profile system that optimizes the interface and features for
+                        different workflows.</p>
+
+                    <h4>VIDEO Profile (Blue)</h4>
+                    <p><strong>Optimized for:</strong> Video-centric workflows, DIT operations, camera department</p>
+                    <p><strong>Key Features:</strong></p>
+                    <ul>
+                        <li>Video playback with frame-accurate control</li>
+                        <li>Logged clips list with in/out points</li>
+                        <li>EDL (Edit Decision List) generation</li>
+                        <li>Camera Report generation (PDF)</li>
+                        <li>Video metadata display (codec, resolution, frame rate)</li>
+                        <li>Blue accent color throughout UI</li>
+                    </ul>
+
+                    <h4>AUDIO Profile (Red)</h4>
+                    <p><strong>Optimized for:</strong> Audio-centric workflows, sound recording, post-production sound
+                    </p>
+                    <p><strong>Key Features:</strong></p>
+                    <ul>
+                        <li>Multi-track audio display (up to 32 tracks)</li>
+                        <li>Per-track controls (mute, solo, volume, pan)</li>
+                        <li>VU meters for level monitoring</li>
+                        <li>Waveform visualization</li>
+                        <li>Sound Report generation (PDF)</li>
+                        <li>Audio metadata display (sample rate, bit depth, channels)</li>
+                        <li>Red accent color throughout UI</li>
+                    </ul>
+
+                    <h4>Switching Profiles</h4>
+                    <p>Toggle between profiles using:</p>
+                    <ul>
+                        <li>Keyboard: <span class="kbd">Ctrl</span> + <span class="kbd">Tab</span></li>
+                        <li>Mouse: Click VIDEO or AUDIO button in navigation bar</li>
+                    </ul>
+                    <p>The UI instantly adapts to the selected profile. Your session remembers which profile was active.
+                    </p>
+
+                    <h3>4.3 File Management Philosophy</h3>
+                    <p>Veriflow follows professional data management principles:</p>
+
+                    <h4>Non-Destructive Operations</h4>
+                    <p>Veriflow never modifies your original media files. All operations are:</p>
+                    <ul>
+                        <li><strong>Read-only:</strong> Original files remain untouched</li>
+                        <li><strong>Reference-based:</strong> Sessions store file paths, not file copies</li>
+                        <li><strong>Safe:</strong> No risk of accidental data loss or corruption</li>
+                    </ul>
+
+                    <h4>Hash Verification</h4>
+                    <p>The Secure Copy feature uses xxHash64 for cryptographic verification:</p>
+                    <ul>
+                        <li>Source file hash is calculated before copy</li>
+                        <li>Destination file hash is calculated after copy</li>
+                        <li>Hashes are compared to ensure perfect copy</li>
+                        <li>Any mismatch triggers an error alert</li>
+                    </ul>
+
+                    <h4>Metadata Handling</h4>
+                    <p>Veriflow reads and displays embedded metadata from:</p>
+                    <ul>
+                        <li><strong>Video files:</strong> Codec, resolution, frame rate, timecode, camera settings</li>
+                        <li><strong>Audio files:</strong> BWF metadata, iXML, sample rate, bit depth, track names</li>
+                        <li><strong>Container metadata:</strong> Creation date, duration, file size</li>
+                    </ul>
+
+                    <h3>4.4 Project Organization Best Practices</h3>
+
+                    <h4>Recommended Folder Structure</h4>
+                    <pre><code>Project_Name/
+├── Original_Media/
+│   ├── Card_01/
+│   ├── Card_02/
+│   └── ...
+├── Backup_A/
+│   └── (mirror of Original_Media)
+├── Backup_B/
+│   └── (mirror of Original_Media)
+├── Transcodes/
+│   ├── Proxies/
+│   └── Deliverables/
+├── Reports/
+│   ├── Camera_Reports/
+│   └── Sound_Reports/
+└── Sessions/
+    ├── Day01.vfsession
+    ├── Day02.vfsession
+    └── ...</code></pre>
+
+                    <h4>Workflow Organization</h4>
+                    <ol>
+                        <li><strong>Ingest:</strong> Copy media to Original_Media and both backups using Secure Copy
+                        </li>
+                        <li><strong>Verify:</strong> Check all files copied successfully with hash verification</li>
+                        <li><strong>Organize:</strong> Create session, load media, add metadata</li>
+                        <li><strong>Review:</strong> Use Player to review footage/audio</li>
+                        <li><strong>Report:</strong> Generate Camera/Sound reports</li>
+                        <li><strong>Deliver:</strong> Transcode if needed, export reports</li>
+                        <li><strong>Archive:</strong> Save session, backup all data</li>
+                    </ol>
+                </section>
+            </section>
+
+<!-- PART III: PAGES IN-DEPTH -->
+<section id="part3" class="part-section">
+    <h1 class="part-title">Part III: Pages In-Depth</h1>
+
+    <!-- CHAPTER 5: SECURE COPY PAGE -->
+    <section id="ch5">
+        <h2>Chapter 5: Secure Copy Page</h2>
+
+        <h3>5.1 Overview and Purpose</h3>
+        <p>The Secure Copy page is Veriflow's professional data integrity solution for copying media files to dual
+            destinations with cryptographic hash verification.</p>
+
+        <h4>Key Capabilities</h4>
+        <ul>
+            <li>Simultaneous copy to two independent destinations</li>
+            <li>xxHash64 cryptographic verification</li>
+            <li>Real-time progress monitoring</li>
+            <li>Automatic error detection and reporting</li>
+            <li>Support for files and entire folder structures</li>
+        </ul>
+
+        <h3>5.2 Interface Elements</h3>
+
+        <h4>Source Section</h4>
+        <ul>
+            <li><strong>OPEN Button:</strong> Opens file/folder browser</li>
+            <li><strong>Source Path Display:</strong> Shows full path</li>
+            <li><strong>Source Info:</strong> Total size and file count</li>
+        </ul>
+
+        <h4>Destination Sections (A and B)</h4>
+        <ul>
+            <li><strong>LINK Button:</strong> Select destination folder</li>
+            <li><strong>Path Display:</strong> Shows destination path</li>
+            <li><strong>Available Space:</strong> Free space indicator</li>
+            <li><strong>Status:</strong> Progress and verification status</li>
+        </ul>
+
+        <h3>5.3 Hash Verification</h3>
+        <p>Veriflow uses xxHash64 for fast, reliable file verification:</p>
+        <ol>
+            <li>Calculate hash of source file</li>
+            <li>Copy file to destination(s)</li>
+            <li>Calculate hash of copied file(s)</li>
+            <li>Compare hashes to ensure perfect copy</li>
+        </ol>
+
+        <div class="info-box">
+            <h4>Why Hash Verification Matters</h4>
+            <p>Traditional copying only checks file size. Hash verification ensures <strong>bit-perfect</strong> copies
+                by comparing actual file contents.</p>
+        </div>
+
+        <h3>5.4 Workflow</h3>
+        <ol>
+            <li>Click <strong>OPEN</strong> and select source file/folder</li>
+            <li>Click <strong>LINK A</strong> and choose primary destination</li>
+            <li>Click <strong>LINK B</strong> and choose secondary destination</li>
+            <li>Verify sufficient space on both destinations</li>
+            <li>Click <strong>START COPY</strong></li>
+            <li>Monitor progress and wait for completion</li>
+            <li>Verify green checkmarks (✓) on both destinations</li>
+        </ol>
+
+        <h3>5.5 Best Practices</h3>
+        <div class="info-box warning">
+            <h4>Critical: Use Separate Physical Drives</h4>
+            <p>Destinations A and B <strong>must</strong> be on separate physical drives for true redundancy.</p>
+        </div>
+
+        <ul>
+            <li>Always use dual destinations</li>
+            <li>Verify drive health before copying</li>
+            <li>Don't remove source until both copies verified</li>
+            <li>Monitor the entire process</li>
+            <li>Check final verification results</li>
+        </ul>
+
+        <h3>5.6 Troubleshooting</h3>
+
+        <p><strong>Slow Copy Speed:</strong></p>
+        <ul>
+            <li>Use USB 3.0+ ports and cables</li>
+            <li>Close unnecessary applications</li>
+            <li>Check drive health</li>
+        </ul>
+
+        <p><strong>Hash Mismatch:</strong></p>
+        <ul>
+            <li>Delete corrupted copy and retry</li>
+            <li>Check drive health and cables</li>
+            <li>Test with different USB port</li>
+        </ul>
+    </section>
+</section><!-- CHAPTER 6: MEDIA PAGE -->
+<section id="ch6">
+    <h2>Chapter 6: Media Page</h2>
+
+    <h3>6.1 Overview and Purpose</h3>
+    <p>The Media page is Veriflow's file browser and media management interface. It provides a three-panel layout for
+        navigating your file system, browsing media files, and viewing comprehensive metadata.</p>
+
+    <h3>6.2 Interface Layout</h3>
+
+    <h4>Left Panel: Explorer</h4>
+    <p>Tree view of your file system:</p>
+    <ul>
+        <li>All drives (local, external, network)</li>
+        <li>Expandable folder structure</li>
+        <li>Quick navigation to common locations</li>
+    </ul>
+
+    <h4>Center Panel: File Browser</h4>
+    <p>Grid or list view of files in selected folder:</p>
+    <ul>
+        <li><strong>Grid View:</strong> Thumbnails with file names</li>
+        <li><strong>List View:</strong> Detailed file information (name, size, date, duration)</li>
+        <li><strong>Sorting:</strong> Click column headers to sort</li>
+        <li><strong>Filtering:</strong> Show only specific file types</li>
+    </ul>
+
+    <h4>Right Panel: Metadata</h4>
+    <p>Comprehensive metadata display for selected file:</p>
+    <ul>
+        <li><strong>General Info:</strong> Filename, size, creation date</li>
+        <li><strong>Video Info:</strong> Codec, resolution, frame rate, duration</li>
+        <li><strong>Audio Info:</strong> Sample rate, bit depth, channels, codec</li>
+        <li><strong>Technical Info:</strong> Bitrate, container format, timecode</li>
+    </ul>
+
+    <h3>6.3 File Operations</h3>
+
+    <h4>Loading Files to Player</h4>
+    <ul>
+        <li><strong>Double-click:</strong> Load file to Player page</li>
+        <li><strong>Right-click → Load to Player:</strong> Same as double-click</li>
+        <li><strong>Drag and drop:</strong> (if enabled)</li>
+    </ul>
+
+    <h4>Context Menu Options</h4>
+    <p>Right-click on any file to access:</p>
+    <ul>
+        <li><strong>Load to Player:</strong> Open in Player page</li>
+        <li><strong>Add to Transcode Queue:</strong> Queue for transcoding</li>
+        <li><strong>Add to Report:</strong> Include in Camera/Sound report</li>
+        <li><strong>Show in Explorer:</strong> Open file location in Windows Explorer</li>
+        <li><strong>Copy Path:</strong> Copy full file path to clipboard</li>
+    </ul>
+
+    <h3>6.4 Supported File Formats</h3>
+
+    <h4>Video Formats</h4>
+    <table>
+        <tr>
+            <th>Format</th>
+            <th>Extensions</th>
+            <th>Common Use</th>
+        </tr>
+        <tr>
+            <td>MP4</td>
+            <td>.mp4, .m4v</td>
+            <td>Universal distribution</td>
+        </tr>
+        <tr>
+            <td>MOV</td>
+            <td>.mov</td>
+            <td>Apple ProRes, camera originals</td>
+        </tr>
+        <tr>
+            <td>MXF</td>
+            <td>.mxf</td>
+            <td>Professional broadcast</td>
+        </tr>
+        <tr>
+            <td>AVI</td>
+            <td>.avi</td>
+            <td>Legacy formats</td>
+        </tr>
+        <tr>
+            <td>MKV</td>
+            <td>.mkv</td>
+            <td>Open container format</td>
+        </tr>
+    </table>
+
+    <h4>Audio Formats</h4>
+    <table>
+        <tr>
+            <th>Format</th>
+            <th>Extensions</th>
+            <th>Common Use</th>
+        </tr>
+        <tr>
+            <td>WAV</td>
+            <td>.wav</td>
+            <td>Uncompressed PCM, BWF metadata</td>
+        </tr>
+        <tr>
+            <td>MP3</td>
+            <td>.mp3</td>
+            <td>Compressed audio</td>
+        </tr>
+        <tr>
+            <td>AAC</td>
+            <td>.aac, .m4a</td>
+            <td>Modern compressed audio</td>
+        </tr>
+        <tr>
+            <td>FLAC</td>
+            <td>.flac</td>
+            <td>Lossless compression</td>
+        </tr>
+    </table>
+
+    <h3>6.5 Metadata Display</h3>
+
+    <h4>Video File Metadata</h4>
+    <p>When a video file is selected, the metadata panel shows:</p>
+    <ul>
+        <li><strong>Codec:</strong> H.264, H.265, ProRes, DNxHD, etc.</li>
+        <li><strong>Resolution:</strong> 1920x1080, 3840x2160, etc.</li>
+        <li><strong>Frame Rate:</strong> 23.976, 24, 25, 29.97, 30, 50, 60 fps</li>
+        <li><strong>Duration:</strong> Total runtime</li>
+        <li><strong>Bitrate:</strong> Average bitrate in Mbps</li>
+        <li><strong>Timecode:</strong> Start timecode (if embedded)</li>
+    </ul>
+
+    <h4>Audio File Metadata</h4>
+    <p>When an audio file is selected:</p>
+    <ul>
+        <li><strong>Sample Rate:</strong> 44.1, 48, 96, 192 kHz</li>
+        <li><strong>Bit Depth:</strong> 16, 24, 32-bit</li>
+        <li><strong>Channels:</strong> Mono, Stereo, 5.1, 7.1, or custom</li>
+        <li><strong>Duration:</strong> Total runtime</li>
+        <li><strong>BWF Metadata:</strong> Description, originator, date (if present)</li>
+        <li><strong>iXML:</strong> Track names, scene/take info (if present)</li>
+    </ul>
+
+    <h3>6.6 Navigation Tips</h3>
+
+    <ul>
+        <li><strong>Keyboard Navigation:</strong> Use arrow keys to navigate file list</li>
+        <li><strong>Quick Search:</strong> Start typing to filter files by name</li>
+        <li><strong>Favorites:</strong> Bookmark frequently used folders</li>
+        <li><strong>Recent Locations:</strong> Quick access to recently browsed folders</li>
+    </ul>
+
+    <div class="info-box tip">
+        <h4>Workflow Tip</h4>
+        <p>Use the Media page as your central hub for file management. Browse, preview metadata, then send files to
+            Player, Transcode, or Report as needed.</p>
+    </div>
+</section>
+
+<!-- CHAPTER 7: PLAYER PAGE -->
+<section id="ch7">
+    <h2>Chapter 7: Player Page</h2>
+
+    <h3>7.1 Overview and Purpose</h3>
+    <p>The Player page provides professional media playback with frame-accurate control. It adapts to the current
+        profile (Video or Audio) to provide optimized features for each workflow.</p>
+
+    <h3>7.2 Video Profile Mode</h3>
+
+    <h4>Video Viewport</h4>
+    <ul>
+        <li>Displays video with aspect ratio preservation</li>
+        <li>Scales to fit available space</li>
+        <li>Maintains pixel accuracy</li>
+    </ul>
+
+    <h4>Playback Controls</h4>
+    <table>
+        <tr>
+            <th>Control</th>
+            <th>Shortcut</th>
+            <th>Function</th>
+        </tr>
+        <tr>
+            <td>Play/Pause</td>
+            <td><span class="kbd">Space</span></td>
+            <td>Toggle playback</td>
+        </tr>
+        <tr>
+            <td>Stop</td>
+            <td><span class="kbd">Enter</span></td>
+            <td>Stop and return to start</td>
+        </tr>
+        <tr>
+            <td>Frame Back</td>
+            <td><span class="kbd">←</span></td>
+            <td>Step one frame backward</td>
+        </tr>
+        <tr>
+            <td>Frame Forward</td>
+            <td><span class="kbd">→</span></td>
+            <td>Step one frame forward</td>
+        </tr>
+        <tr>
+            <td>Go to Start</td>
+            <td><span class="kbd">Home</span></td>
+            <td>Jump to first frame</td>
+        </tr>
+        <tr>
+            <td>Go to End</td>
+            <td><span class="kbd">End</span></td>
+            <td>Jump to last frame</td>
+        </tr>
+    </table>
+
+    <h4>Timecode Display</h4>
+    <p>Shows current position in multiple formats:</p>
+    <ul>
+        <li><strong>Timecode:</strong> HH:MM:SS:FF (if embedded)</li>
+        <li><strong>Runtime:</strong> HH:MM:SS.mmm</li>
+        <li><strong>Frame Number:</strong> Current frame / total frames</li>
+    </ul>
+
+    <h4>Logged Clips (Video Profile)</h4>
+    <p>Create and manage logged clips:</p>
+    <ul>
+        <li><strong>Mark In:</strong> Set clip start point</li>
+        <li><strong>Mark Out:</strong> Set clip end point</li>
+        <li><strong>Log Clip:</strong> Save in/out points to list</li>
+        <li><strong>Export EDL:</strong> Generate Edit Decision List from logged clips</li>
+    </ul>
+
+    <h3>7.3 Audio Profile Mode</h3>
+
+    <h4>Waveform Display</h4>
+    <p>Visual representation of audio:</p>
+    <ul>
+        <li>All tracks displayed simultaneously</li>
+        <li>Zoom in/out for detail</li>
+        <li>Playhead shows current position</li>
+        <li>Color-coded by track</li>
+    </ul>
+
+    <h4>Multi-Track Interface</h4>
+    <p>Up to 32 tracks with individual controls:</p>
+    <ul>
+        <li><strong>Mute:</strong> Silence individual track</li>
+        <li><strong>Solo:</strong> Hear only selected track(s)</li>
+        <li><strong>Volume:</strong> Adjust track level (-∞ to +12 dB)</li>
+        <li><strong>Pan:</strong> Left/Center/Right positioning</li>
+    </ul>
+
+    <h4>VU Meters</h4>
+    <p>Real-time level monitoring:</p>
+    <ul>
+        <li>Peak level indicators</li>
+        <li>Clip detection (red warning)</li>
+        <li>Per-track metering</li>
+        <li>Master output meter</li>
+    </ul>
+
+    <h3>7.4 Metadata Display</h3>
+
+    <p>Right panel shows comprehensive file information:</p>
+    <ul>
+        <li><strong>General Info:</strong> Filename, size, date</li>
+        <li><strong>Recording Info:</strong> Scene, take, notes (if embedded)</li>
+        <li><strong>Technical Info:</strong> Codec, sample rate, bit depth, channels</li>
+    </ul>
+
+    <h3>7.5 Keyboard Shortcuts</h3>
+
+    <table>
+        <tr>
+            <th>Shortcut</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <td><span class="kbd">Space</span></td>
+            <td>Play/Pause</td>
+        </tr>
+        <tr>
+            <td><span class="kbd">Enter</span></td>
+            <td>Stop</td>
+        </tr>
+        <tr>
+            <td><span class="kbd">←</span></td>
+            <td>Frame/Second backward</td>
+        </tr>
+        <tr>
+            <td><span class="kbd">→</span></td>
+            <td>Frame/Second forward</td>
+        </tr>
+        <tr>
+            <td><span class="kbd">Home</span></td>
+            <td>Go to start</td>
+        </tr>
+        <tr>
+            <td><span class="kbd">End</span></td>
+            <td>Go to end</td>
+        </tr>
+        <tr>
+            <td><span class="kbd">I</span></td>
+            <td>Mark In (Video profile)</td>
+        </tr>
+        <tr>
+            <td><span class="kbd">O</span></td>
+            <td>Mark Out (Video profile)</td>
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <h4>Professional Playback</h4>
+        <p>The Player page is designed for critical review. Frame-accurate navigation in Video mode and multi-track
+            control in Audio mode provide the precision needed for professional workflows.</p>
+    </div>
+</section>
+
+<!-- CHAPTER 8: SYNC PAGE -->
+<section id="ch8">
+    <h2>Chapter 8: Sync Page</h2>
+
+    <h3>8.1 Overview and Purpose</h3>
+    <p>The Sync page uses FFT-based cross-correlation analysis to automatically detect time offsets between audio files.
+        This is essential for synchronizing separately recorded audio with video or aligning multiple audio sources.</p>
+
+    <h3>8.2 How Audio Sync Works</h3>
+
+    <h4>FFT Cross-Correlation</h4>
+    <p>Veriflow uses advanced signal processing to find time alignment:</p>
+    <ol>
+        <li><strong>Convert to Frequency Domain:</strong> FFT analysis of both audio files</li>
+        <li><strong>Cross-Correlation:</strong> Mathematical comparison to find best alignment</li>
+        <li><strong>Peak Detection:</strong> Identify time offset with highest correlation</li>
+        <li><strong>Sub-Frame Accuracy:</strong> Precise offset calculation</li>
+    </ol>
+
+    <h3>8.3 Interface Elements</h3>
+
+    <h4>Reference Audio Section</h4>
+    <ul>
+        <li><strong>Load Reference:</strong> Select the audio file to sync against</li>
+        <li><strong>Waveform Display:</strong> Visual representation of reference</li>
+        <li><strong>File Info:</strong> Duration, sample rate, channels</li>
+    </ul>
+
+    <h4>Files to Sync Section</h4>
+    <ul>
+        <li><strong>Add Files:</strong> Select one or more files to synchronize</li>
+        <li><strong>File List:</strong> Shows all files queued for analysis</li>
+        <li><strong>Remove:</strong> Remove files from sync queue</li>
+    </ul>
+
+    <h4>Results Section</h4>
+    <p>After analysis, displays for each file:</p>
+    <ul>
+        <li><strong>Offset:</strong> Time difference (e.g., +2.345 seconds)</li>
+        <li><strong>Confidence:</strong> Correlation strength (0-100%)</li>
+        <li><strong>Status:</strong> Success, Failed, or In Progress</li>
+    </ul>
+
+    <h3>8.4 Workflow</h3>
+
+    <ol>
+        <li><strong>Load Reference Audio</strong>
+            <ul>
+                <li>Click <strong>LOAD REFERENCE</strong></li>
+                <li>Select your reference audio file</li>
+                <li>This is typically the camera audio or master recording</li>
+            </ul>
+        </li>
+        <li><strong>Add Files to Sync</strong>
+            <ul>
+                <li>Click <strong>ADD FILES</strong></li>
+                <li>Select files to synchronize (can select multiple)</li>
+                <li>These are typically separate recorder files</li>
+            </ul>
+        </li>
+        <li><strong>Start Analysis</strong>
+            <ul>
+                <li>Click <strong>ANALYZE</strong></li>
+                <li>Wait for processing (progress shown per file)</li>
+                <li>Analysis time depends on file duration and sample rate</li>
+            </ul>
+        </li>
+        <li><strong>Review Results</strong>
+            <ul>
+                <li>Check offset values</li>
+                <li>Verify confidence scores (>80% is good)</li>
+                <li>Note any failed analyses</li>
+            </ul>
+        </li>
+        <li><strong>Export or Apply</strong>
+            <ul>
+                <li><strong>Export Results:</strong> Save offset data to CSV/text</li>
+                <li><strong>Apply Sync:</strong> (if feature available)</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>8.5 Understanding Results</h3>
+
+    <h4>Offset Interpretation</h4>
+    <table>
+        <tr>
+            <th>Offset</th>
+            <th>Meaning</th>
+        </tr>
+        <tr>
+            <td>+2.5 seconds</td>
+            <td>File starts 2.5 seconds AFTER reference</td>
+        </tr>
+        <tr>
+            <td>-1.3 seconds</td>
+            <td>File starts 1.3 seconds BEFORE reference</td>
+        </tr>
+        <tr>
+            <td>0.0 seconds</td>
+            <td>File is perfectly aligned with reference</td>
+        </tr>
+    </table>
+
+    <h4>Confidence Scores</h4>
+    <ul>
+        <li><strong>90-100%:</strong> Excellent - very reliable sync</li>
+        <li><strong>80-89%:</strong> Good - reliable sync</li>
+        <li><strong>70-79%:</strong> Fair - verify manually</li>
+        <li><strong>
+                <70%:< /strong> Poor - may be incorrect, check manually</li>
+    </ul>
+
+    <h3>8.6 Troubleshooting Sync Issues</h3>
+
+    <p><strong>Low Confidence Scores:</strong></p>
+    <ul>
+        <li>Files may not have overlapping audio content</li>
+        <li>Audio quality too different (e.g., camera mic vs. boom)</li>
+        <li>Excessive background noise</li>
+        <li>Files from different takes/scenes</li>
+    </ul>
+
+    <p><strong>Analysis Fails:</strong></p>
+    <ul>
+        <li>Ensure files have audio content (not silent)</li>
+        <li>Check sample rates are compatible</li>
+        <li>Verify files are not corrupted</li>
+        <li>Try shorter file segments if very long</li>
+    </ul>
+
+    <div class="info-box tip">
+        <h4>Best Results</h4>
+        <p>For best sync results:</p>
+        <ul>
+            <li>Use files with clear, distinct audio events (claps, dialogue)</li>
+            <li>Ensure reference and sync files overlap in time</li>
+            <li>Higher sample rates provide more accuracy</li>
+            <li>Minimize background noise differences</li>
+        </ul>
+    </div>
+</section>
+
+<!-- CHAPTER 9: TRANSCODE PAGE -->
+<section id="ch9">
+    <h2>Chapter 9: Transcode Page</h2>
+
+    <h3>9.1 Overview and Purpose</h3>
+    <p>The Transcode page provides batch media conversion with support for multiple formats, codecs, and quality
+        settings. Essential for creating proxies, deliverables, or format conversions.</p>
+
+    <h3>9.2 Interface Elements</h3>
+
+    <h4>Queue Section</h4>
+    <ul>
+        <li><strong>File List:</strong> Shows all files queued for transcoding</li>
+        <li><strong>Status:</strong> Waiting, Processing, Complete, or Failed</li>
+        <li><strong>Progress:</strong> Percentage complete for active transcodes</li>
+        <li><strong>Remove:</strong> Remove files from queue</li>
+    </ul>
+
+    <h4>Settings Section</h4>
+    <ul>
+        <li><strong>Output Format:</strong> MP4, MOV, MXF, WAV, etc.</li>
+        <li><strong>Video Codec:</strong> H.264, H.265, ProRes, DNxHD</li>
+        <li><strong>Audio Codec:</strong> AAC, PCM, MP3</li>
+        <li><strong>Resolution:</strong> Original, 1080p, 720p, 480p, custom</li>
+        <li><strong>Quality:</strong> High, Medium, Low, or custom bitrate</li>
+        <li><strong>Output Folder:</strong> Destination for transcoded files</li>
+    </ul>
+
+    <h3>9.3 Supported Formats</h3>
+
+    <h4>Input Formats</h4>
+    <p>Veriflow can transcode from:</p>
+    <ul>
+        <li><strong>Video:</strong> MP4, MOV, MXF, AVI, MKV, and most camera formats</li>
+        <li><strong>Audio:</strong> WAV, MP3, AAC, FLAC, and embedded audio tracks</li>
+    </ul>
+
+    <h4>Output Formats</h4>
+    <table>
+        <tr>
+            <th>Format</th>
+            <th>Best For</th>
+            <th>Codecs Available</th>
+        </tr>
+        <tr>
+            <td>MP4</td>
+            <td>Universal distribution</td>
+            <td>H.264, H.265, AAC</td>
+        </tr>
+        <tr>
+            <td>MOV</td>
+            <td>Professional editing</td>
+            <td>ProRes, DNxHD, PCM</td>
+        </tr>
+        <tr>
+            <td>WAV</td>
+            <td>Audio deliverables</td>
+            <td>PCM (16/24/32-bit)</td>
+        </tr>
+        <tr>
+            <td>MP3</td>
+            <td>Compressed audio</td>
+            <td>MP3 (various bitrates)</td>
+        </tr>
+    </table>
+
+    <h3>9.4 Workflow</h3>
+
+    <ol>
+        <li><strong>Add Files to Queue</strong>
+            <ul>
+                <li>Click <strong>ADD FILES</strong> or drag files to queue</li>
+                <li>Can add multiple files for batch processing</li>
+                <li>Files from Media page can be sent directly</li>
+            </ul>
+        </li>
+        <li><strong>Configure Settings</strong>
+            <ul>
+                <li>Select output format</li>
+                <li>Choose codec and quality</li>
+                <li>Set resolution (if different from source)</li>
+                <li>Select output folder</li>
+            </ul>
+        </li>
+        <li><strong>Start Transcoding</strong>
+            <ul>
+                <li>Click <strong>START TRANSCODE</strong></li>
+                <li>Files process sequentially</li>
+                <li>Progress shown in real-time</li>
+            </ul>
+        </li>
+        <li><strong>Monitor Progress</strong>
+            <ul>
+                <li>Watch per-file progress bars</li>
+                <li>Check estimated time remaining</li>
+                <li>Can cancel individual files or entire queue</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>9.5 Quality Settings</h3>
+
+    <h4>Video Quality Presets</h4>
+    <table>
+        <tr>
+            <th>Preset</th>
+            <th>Bitrate (1080p)</th>
+            <th>Use Case</th>
+        </tr>
+        <tr>
+            <td>High</td>
+            <td>15-25 Mbps</td>
+            <td>Archival, mastering</td>
+        </tr>
+        <tr>
+            <td>Medium</td>
+            <td>8-12 Mbps</td>
+            <td>General distribution</td>
+        </tr>
+        <tr>
+            <td>Low</td>
+            <td>3-5 Mbps</td>
+            <td>Web, mobile, proxies</td>
+        </tr>
+    </table>
+
+    <h4>Audio Quality Settings</h4>
+    <ul>
+        <li><strong>PCM:</strong> Uncompressed (16/24/32-bit)</li>
+        <li><strong>AAC:</strong> 128-320 kbps</li>
+        <li><strong>MP3:</strong> 128-320 kbps</li>
+    </ul>
+
+    <h3>9.6 Common Transcode Scenarios</h3>
+
+    <p><strong>Creating Proxies:</strong></p>
+    <ul>
+        <li>Format: MP4</li>
+        <li>Codec: H.264</li>
+        <li>Resolution: 720p or 1080p</li>
+        <li>Quality: Low to Medium</li>
+    </ul>
+
+    <p><strong>Deliverables:</strong></p>
+    <ul>
+        <li>Format: MP4 or MOV</li>
+        <li>Codec: H.264 or ProRes</li>
+        <li>Resolution: As specified</li>
+        <li>Quality: High</li>
+    </ul>
+
+    <p><strong>Audio Extraction:</strong></p>
+    <ul>
+        <li>Format: WAV</li>
+        <li>Codec: PCM 24-bit</li>
+        <li>Sample Rate: 48 kHz (or original)</li>
+    </ul>
+
+    <div class="info-box warning">
+        <h4>Performance Note</h4>
+        <p>Transcoding is CPU-intensive. Processing time depends on:</p>
+        <ul>
+            <li>Source file duration and resolution</li>
+            <li>Output codec complexity (H.265 slower than H.264)</li>
+            <li>System CPU performance</li>
+            <li>Number of files in queue</li>
+        </ul>
+        <p>Expect 0.5-2x realtime speed depending on settings.</p>
+    </div>
+</section>
+
+<!-- CHAPTER 10: REPORT PAGE -->
+<section id="ch10">
+    <h2>Chapter 10: Report Page</h2>
+
+    <h3>10.1 Overview and Purpose</h3>
+    <p>The Report page generates professional PDF reports that adapt to the current profile: Camera Reports in Video
+        mode, Sound Reports in Audio mode.</p>
+
+    <h3>10.2 Camera Report (Video Profile)</h3>
+
+    <h4>Header Information</h4>
+    <p>Fill in production details:</p>
+    <ul>
+        <li><strong>Project:</strong> Production name</li>
+        <li><strong>Date:</strong> Shoot date</li>
+        <li><strong>Director:</strong> Director name</li>
+        <li><strong>DOP:</strong> Director of Photography</li>
+        <li><strong>Operator:</strong> Camera operator</li>
+        <li><strong>Data Manager:</strong> DIT/Data manager name</li>
+    </ul>
+
+    <h4>File List</h4>
+    <p>Table showing all media files with:</p>
+    <ul>
+        <li><strong>Scene:</strong> Scene number (editable)</li>
+        <li><strong>Take:</strong> Take number (editable)</li>
+        <li><strong>Filename:</strong> Original filename</li>
+        <li><strong>Timecode:</strong> Start timecode</li>
+        <li><strong>Duration:</strong> Clip length</li>
+        <li><strong>FPS:</strong> Frame rate</li>
+        <li><strong>Resolution:</strong> Video resolution</li>
+        <li><strong>Codec:</strong> Video codec</li>
+        <li><strong>Notes:</strong> Custom notes (editable)</li>
+    </ul>
+
+    <h3>10.3 Sound Report (Audio Profile)</h3>
+
+    <h4>Header Information</h4>
+    <ul>
+        <li><strong>Project:</strong> Production name</li>
+        <li><strong>Date:</strong> Recording date</li>
+        <li><strong>Location:</strong> Recording location</li>
+        <li><strong>Sound Mixer:</strong> Sound recordist name</li>
+        <li><strong>Boom Operator:</strong> Boom op name</li>
+    </ul>
+
+    <h4>File List</h4>
+    <p>Table showing all audio files with:</p>
+    <ul>
+        <li><strong>Scene:</strong> Scene number (editable)</li>
+        <li><strong>Take:</strong> Take number (editable)</li>
+        <li><strong>Filename:</strong> Original filename</li>
+        <li><strong>Timecode:</strong> Start timecode</li>
+        <li><strong>Duration:</strong> Recording length</li>
+        <li><strong>Sample Rate:</strong> 48kHz, 96kHz, etc.</li>
+        <li><strong>Bit Depth:</strong> 16, 24, 32-bit</li>
+        <li><strong>Tracks:</strong> Number of channels</li>
+        <li><strong>Circle:</strong> Mark important takes</li>
+        <li><strong>Notes:</strong> Custom notes (editable)</li>
+    </ul>
+
+    <h3>10.4 Workflow</h3>
+
+    <ol>
+        <li><strong>Add Files to Report</strong>
+            <ul>
+                <li>Files loaded in session appear automatically</li>
+                <li>Or manually add from Media page</li>
+            </ul>
+        </li>
+        <li><strong>Fill Header Information</strong>
+            <ul>
+                <li>Enter production details in header fields</li>
+                <li>All fields are saved with session</li>
+            </ul>
+        </li>
+        <li><strong>Edit File Information</strong>
+            <ul>
+                <li>Click cells to edit Scene/Take numbers</li>
+                <li>Add notes for each file</li>
+                <li>Circle important takes (Sound Report)</li>
+            </ul>
+        </li>
+        <li><strong>Export PDF</strong>
+            <ul>
+                <li>Click <strong>EXPORT PDF</strong></li>
+                <li>Choose save location and filename</li>
+                <li>PDF is generated and ready to share</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>10.5 PDF Output</h3>
+
+    <h4>Report Features</h4>
+    <ul>
+        <li><strong>Professional Layout:</strong> Industry-standard format</li>
+        <li><strong>Veriflow Branding:</strong> Logo and application info</li>
+        <li><strong>Multi-Page:</strong> Automatically paginated for large file lists</li>
+        <li><strong>Print-Ready:</strong> Optimized for A4/Letter paper</li>
+        <li><strong>Shareable:</strong> Standard PDF format, universally compatible</li>
+    </ul>
+
+    <h4>Report Uses</h4>
+    <ul>
+        <li>Daily production reports</li>
+        <li>Client deliverables</li>
+        <li>Archive documentation</li>
+        <li>Post-production reference</li>
+        <li>Legal/insurance documentation</li>
+    </ul>
+
+    <div class="info-box tip">
+        <h4>Best Practice</h4>
+        <p>Generate reports at the end of each shoot day while information is fresh. Include detailed notes for any
+            issues, special requirements, or important takes. These reports become invaluable during post-production and
+            archival.</p>
+    </div>
+</section>
+
+<!-- PART IV: WORKFLOWS & TECHNIQUES -->
+<section id="part4" class="part-section">
+    <h1 class="part-title">Part IV: Workflows & Techniques</h1>
+
+    <!-- CHAPTER 11: PROFESSIONAL WORKFLOWS -->
+    <section id="ch11">
+        <h2>Chapter 11: Professional Workflows</h2>
+
+        <h3>11.1 DIT Workflow (Complete)</h3>
+
+        <h4>On-Set Data Management</h4>
+        <p>Complete workflow for Digital Imaging Technicians managing camera media on set:</p>
+
+        <p><strong>Step 1: Pre-Production Setup</strong></p>
+        <ol>
+            <li>Prepare backup drives (2x capacity of expected daily footage)</li>
+            <li>Label drives clearly (Primary, Secondary, Date)</li>
+            <li>Format drives (exFAT for cross-platform compatibility)</li>
+            <li>Create folder structure for the project</li>
+            <li>Test all hardware (card readers, drives, cables)</li>
+        </ol>
+
+        <p><strong>Step 2: Daily Ingest Workflow</strong></p>
+        <ol>
+            <li><strong>Receive Camera Card</strong>
+                <ul>
+                    <li>Verify card is not write-protected</li>
+                    <li>Note card number and camera source</li>
+                    <li>Insert into card reader</li>
+                </ul>
+            </li>
+            <li><strong>Secure Copy (F1)</strong>
+                <ul>
+                    <li>Open Secure Copy page</li>
+                    <li>Select camera card as source</li>
+                    <li>Link Primary backup drive (Destination A)</li>
+                    <li>Link Secondary backup drive (Destination B)</li>
+                    <li>Start copy and monitor progress</li>
+                    <li>Verify green checkmarks on both destinations</li>
+                </ul>
+            </li>
+            <li><strong>Verification</strong>
+                <ul>
+                    <li>Check file counts match source</li>
+                    <li>Verify total data size matches</li>
+                    <li>Spot-check random files in Player</li>
+                    <li>Document any errors or warnings</li>
+                </ul>
+            </li>
+            <li><strong>Media Review (F2-F3)</strong>
+                <ul>
+                    <li>Browse copied files in Media page</li>
+                    <li>Load files to Player for quality check</li>
+                    <li>Note any technical issues (focus, exposure, artifacts)</li>
+                    <li>Communicate issues to camera department</li>
+                </ul>
+            </li>
+            <li><strong>Report Generation (F6)</strong>
+                <ul>
+                    <li>Open Report page (ensure Video profile)</li>
+                    <li>Fill in production details</li>
+                    <li>Edit scene/take numbers</li>
+                    <li>Add notes for each clip</li>
+                    <li>Export Camera Report PDF</li>
+                    <li>Distribute to production, director, editor</li>
+                </ul>
+            </li>
+            <li><strong>Session Save</strong>
+                <ul>
+                    <li>Save session with descriptive name (e.g., "ShootDay1_2025-12-21.vfsession")</li>
+                    <li>Store session file with project documentation</li>
+                </ul>
+            </li>
+            <li><strong>Card Return</strong>
+                <ul>
+                    <li>Only after both backups verified</li>
+                    <li>Return card to camera department</li>
+                    <li>Log card as "backed up and verified"</li>
+                </ul>
+            </li>
+        </ol>
+
+        <p><strong>Step 3: End of Day</strong></p>
+        <ul>
+            <li>Generate final daily report with all cards</li>
+            <li>Verify all backup drives are complete</li>
+            <li>Store drives securely (separate locations if possible)</li>
+            <li>Update production database/spreadsheet</li>
+            <li>Prepare drives for next day</li>
+        </ul>
+
+        <h3>11.2 Sound Recordist Workflow</h3>
+
+        <h4>Daily Audio Management</h4>
+
+        <p><strong>Step 1: Recording Setup</strong></p>
+        <ul>
+            <li>Configure recorder for project specs (48kHz/24-bit typical)</li>
+            <li>Set up track naming conventions</li>
+            <li>Enable BWF metadata and timecode</li>
+            <li>Prepare backup media (SD cards, drives)</li>
+        </ul>
+
+        <p><strong>Step 2: Post-Recording Workflow</strong></p>
+        <ol>
+            <li><strong>Secure Copy</strong>
+                <ul>
+                    <li>Copy recorder files to dual destinations</li>
+                    <li>Verify hash checksums</li>
+                    <li>Maintain folder structure from recorder</li>
+                </ul>
+            </li>
+            <li><strong>Quality Check (Audio Profile)</strong>
+                <ul>
+                    <li>Switch to Audio profile (Ctrl+Tab)</li>
+                    <li>Load files in Player (F3)</li>
+                    <li>Check all tracks for audio presence</li>
+                    <li>Verify levels (no clipping, adequate signal)</li>
+                    <li>Check for noise, interference, dropouts</li>
+                </ul>
+            </li>
+            <li><strong>Sync Analysis (if applicable)</strong>
+                <ul>
+                    <li>Use Sync page (F4) to align with camera audio</li>
+                    <li>Document sync offsets for post-production</li>
+                    <li>Export sync data</li>
+                </ul>
+            </li>
+            <li><strong>Sound Report Generation</strong>
+                <ul>
+                    <li>Open Report page (Audio profile)</li>
+                    <li>Fill in production details</li>
+                    <li>Edit scene/take information</li>
+                    <li>Circle important takes</li>
+                    <li>Add notes (wild tracks, room tone, etc.)</li>
+                    <li>Export Sound Report PDF</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>11.3 Post-Production Workflow</h3>
+
+        <h4>Media Preparation for Editing</h4>
+
+        <p><strong>Proxy Creation</strong></p>
+        <ol>
+            <li>Load high-resolution source files</li>
+            <li>Open Transcode page (F5)</li>
+            <li>Add files to queue</li>
+            <li>Configure settings:
+                <ul>
+                    <li>Format: MP4</li>
+                    <li>Codec: H.264</li>
+                    <li>Resolution: 1080p or 720p</li>
+                    <li>Quality: Low-Medium</li>
+                </ul>
+            </li>
+            <li>Set output folder (e.g., "Proxies")</li>
+            <li>Start transcode</li>
+            <li>Deliver proxies to editorial</li>
+        </ol>
+
+        <p><strong>Audio Sync for Editorial</strong></p>
+        <ol>
+            <li>Load camera files with reference audio</li>
+            <li>Use Sync page to analyze against production sound</li>
+            <li>Export sync offset data</li>
+            <li>Provide to editorial for automated sync in NLE</li>
+        </ol>
+
+        <h3>11.4 Multi-Camera Shoots</h3>
+
+        <h4>Managing Multiple Camera Sources</h4>
+
+        <p><strong>Organization Strategy</strong></p>
+        <pre><code>Project/
+├── Camera_A/
+│   ├── Card_01/
+│   ├── Card_02/
+│   └── ...
+├── Camera_B/
+│   ├── Card_01/
+│   ├── Card_02/
+│   └── ...
+└── Camera_C/
+    └── ...</code></pre>
+
+        <p><strong>Workflow</strong></p>
+        <ul>
+            <li>Process each camera's cards separately</li>
+            <li>Maintain clear folder structure</li>
+            <li>Generate separate reports per camera (or combined)</li>
+            <li>Use consistent naming: CamA_Card01, CamB_Card01, etc.</li>
+            <li>Cross-reference timecode for multi-cam sync</li>
+        </ul>
+
+        <h3>11.5 Archive Workflows</h3>
+
+        <h4>Long-Term Storage</h4>
+
+        <p><strong>Archive Best Practices</strong></p>
+        <ul>
+            <li><strong>Multiple Copies:</strong> Maintain at least 3 copies (3-2-1 rule)</li>
+            <li><strong>Different Media:</strong> Use different drive types (HDD, LTO tape, cloud)</li>
+            <li><strong>Verification:</strong> Periodically verify archive integrity</li>
+            <li><strong>Documentation:</strong> Keep all reports and session files with archives</li>
+            <li><strong>Metadata:</strong> Preserve all embedded metadata</li>
+        </ul>
+
+        <p><strong>Archive Folder Structure</strong></p>
+        <pre><code>Archive/
+├── ProjectName_2025/
+│   ├── Original_Media/
+│   │   ├── Camera/
+│   │   └── Sound/
+│   ├── Transcodes/
+│   ├── Reports/
+│   │   ├── Camera_Reports/
+│   │   └── Sound_Reports/
+│   ├── Sessions/
+│   └── Documentation/</code></pre>
+    </section>
+
+    <!-- CHAPTER 12: SESSION MANAGEMENT -->
+    <section id="ch12">
+        <h2>Chapter 12: Session Management</h2>
+
+        <h3>12.1 Understanding Sessions</h3>
+
+        <p>Sessions are Veriflow's project files that save your complete workspace state. Think of them as project files
+            in an NLE - they don't contain media, but reference it and store all your work.</p>
+
+        <h4>What Sessions Store</h4>
+        <ul>
+            <li><strong>File References:</strong> Paths to all loaded media files</li>
+            <li><strong>Report Data:</strong> All header info, scene/take numbers, notes</li>
+            <li><strong>Logged Clips:</strong> In/out points, EDL data (Video profile)</li>
+            <li><strong>Sync Results:</strong> Audio sync offset data</li>
+            <li><strong>Transcode Queue:</strong> Files queued and settings</li>
+            <li><strong>Profile State:</strong> Current Audio/Video profile</li>
+            <li><strong>UI State:</strong> Page-specific settings</li>
+        </ul>
+
+        <h3>12.2 Creating Sessions</h3>
+
+        <h4>New Session</h4>
+        <ol>
+            <li>Click <strong>File → New Session</strong> (or <span class="kbd">Ctrl+N</span>)</li>
+            <li>All pages reset to default state</li>
+            <li>Status bar shows "Untitled Session"</li>
+            <li>Begin working with your media</li>
+        </ol>
+
+        <h4>When to Create New Session</h4>
+        <ul>
+            <li>Start of each shoot day</li>
+            <li>New project or client</li>
+            <li>Different phase of production</li>
+            <li>Separate camera/sound workflows</li>
+        </ul>
+
+        <h3>12.3 Saving Sessions</h3>
+
+        <h4>Save Session</h4>
+        <ul>
+            <li><strong>First Save:</strong> <span class="kbd">Ctrl+S</span> opens Save dialog</li>
+            <li><strong>Subsequent Saves:</strong> <span class="kbd">Ctrl+S</span> saves to existing file</li>
+            <li><strong>Save As:</strong> <span class="kbd">Ctrl+Shift+S</span> to save with new name</li>
+        </ul>
+
+        <h4>Naming Conventions</h4>
+        <p>Use descriptive, consistent names:</p>
+        <ul>
+            <li><code>ProjectName_Date_Description.vfsession</code></li>
+            <li><code>FilmTitle_Day01_2025-12-21.vfsession</code></li>
+            <li><code>CommercialClient_ShootA_CameraReports.vfsession</code></li>
+            <li><code>Documentary_Interview01_Sound.vfsession</code></li>
+        </ul>
+
+        <h3>12.4 Opening Sessions</h3>
+
+        <h4>Open Existing Session</h4>
+        <ol>
+            <li>Click <strong>File → Open Session</strong> (<span class="kbd">Ctrl+O</span>)</li>
+            <li>Navigate to .vfsession file</li>
+            <li>Click <strong>Open</strong></li>
+            <li>Veriflow restores complete workspace state</li>
+        </ol>
+
+        <h4>What Happens on Open</h4>
+        <ul>
+            <li>All file references are loaded</li>
+            <li>Report data is restored</li>
+            <li>Profile switches to saved state</li>
+            <li>Page states are restored</li>
+            <li>If media files moved, Veriflow prompts to relocate</li>
+        </ul>
+
+        <h3>12.5 Session File Structure</h3>
+
+        <h4>File Format</h4>
+        <p>Sessions are saved as JSON (JavaScript Object Notation):</p>
+        <ul>
+            <li><strong>Human-readable:</strong> Can open in text editor</li>
+            <li><strong>Structured:</strong> Organized data hierarchy</li>
+            <li><strong>Portable:</strong> Works across Windows versions</li>
+            <li><strong>Version-controlled:</strong> Can track in Git</li>
+        </ul>
+
+        <h4>Example Session Structure</h4>
+        <pre><code>{
+  "version": "1.0",
+  "profile": "Video",
+  "mediaFiles": [...],
+  "reportData": {...},
+  "loggedClips": [...],
+  "syncResults": [...],
+  "transcodeQueue": [...]
+}</code></pre>
+
+        <h3>12.6 Session Templates</h3>
+
+        <h4>Creating Templates</h4>
+        <p>Save commonly used configurations as templates:</p>
+        <ol>
+            <li>Create new session</li>
+            <li>Configure report headers with standard info</li>
+            <li>Set up preferred transcode settings</li>
+            <li>Save as template (e.g., "Template_CameraReport.vfsession")</li>
+            <li>Store in Templates folder</li>
+        </ol>
+
+        <h4>Using Templates</h4>
+        <ol>
+            <li>Open template file</li>
+            <li>Immediately Save As with new name</li>
+            <li>Begin working (template remains unchanged)</li>
+        </ol>
+
+        <h3>12.7 Backup Strategies</h3>
+
+        <h4>Session Backup Best Practices</h4>
+        <ul>
+            <li><strong>Save Frequently:</strong> <span class="kbd">Ctrl+S</span> after significant work</li>
+            <li><strong>Separate Location:</strong> Don't store sessions with media files</li>
+            <li><strong>Cloud Backup:</strong> Sessions are small, easy to backup to cloud</li>
+            <li><strong>Version Control:</strong> Use Git for session version history</li>
+            <li><strong>Archive with Project:</strong> Include sessions in final project archive</li>
+        </ul>
+
+        <h4>Recommended Backup Structure</h4>
+        <pre><code>Backups/
+├── Sessions/
+│   ├── Current/
+│   │   └── Project_Latest.vfsession
+│   └── Archive/
+│       ├── Project_2025-12-21.vfsession
+│       ├── Project_2025-12-22.vfsession
+│       └── ...</code></pre>
+
+        <h3>12.8 Collaboration Workflows</h3>
+
+        <h4>Sharing Sessions</h4>
+        <p>Sessions can be shared between team members:</p>
+        <ul>
+            <li><strong>Portable Paths:</strong> Use relative paths when possible</li>
+            <li><strong>Network Shares:</strong> Store media on network, share session files</li>
+            <li><strong>Path Relocation:</strong> Veriflow can relocate missing files</li>
+            <li><strong>Documentation:</strong> Include notes about file locations</li>
+        </ul>
+
+        <div class="info-box tip">
+            <h4>Pro Tip: Daily Session Workflow</h4>
+            <p>Create a new session each shoot day, named with date. At end of day, save final version and archive. This
+                creates a clear timeline of your work and makes it easy to return to specific days.</p>
+        </div>
+    </section>
+
+    <!-- CHAPTER 13: PROFILE SYSTEM -->
+    <section id="ch13">
+        <h2>Chapter 13: Audio/Video Profile System</h2>
+
+        <h3>13.1 Profile Concept</h3>
+
+        <p>Veriflow's dual-profile system optimizes the interface and features for different workflows. Instead of
+            cluttering the UI with all features at once, profiles adapt the application to your current task.</p>
+
+        <h4>Why Profiles?</h4>
+        <ul>
+            <li><strong>Focused Interface:</strong> Only relevant features visible</li>
+            <li><strong>Optimized Workflows:</strong> Tools arranged for specific tasks</li>
+            <li><strong>Reduced Complexity:</strong> Simpler, cleaner UI</li>
+            <li><strong>Professional Efficiency:</strong> Faster access to needed features</li>
+        </ul>
+
+        <h3>13.2 VIDEO Profile Deep Dive</h3>
+
+        <h4>When to Use Video Profile</h4>
+        <ul>
+            <li>DIT workflows</li>
+            <li>Camera department operations</li>
+            <li>Video-centric post-production</li>
+            <li>Multi-camera shoots</li>
+            <li>Generating camera reports</li>
+        </ul>
+
+        <h4>Video Profile Features</h4>
+
+        <p><strong>Player Page (F3)</strong></p>
+        <ul>
+            <li>Video viewport with playback</li>
+            <li>Frame-accurate navigation</li>
+            <li>Timecode display</li>
+            <li>Logged clips list</li>
+            <li>Mark In/Out functionality</li>
+            <li>EDL export capability</li>
+        </ul>
+
+        <p><strong>Report Page (F6)</strong></p>
+        <ul>
+            <li>Camera Report layout</li>
+            <li>Video-specific metadata (codec, resolution, FPS)</li>
+            <li>Scene/Take/Roll organization</li>
+            <li>Camera operator fields</li>
+        </ul>
+
+        <p><strong>UI Appearance</strong></p>
+        <ul>
+            <li>Blue accent color throughout</li>
+            <li>VIDEO button highlighted in nav bar</li>
+            <li>Video-centric terminology</li>
+        </ul>
+
+        <h3>13.3 AUDIO Profile Deep Dive</h3>
+
+        <h4>When to Use Audio Profile</h4>
+        <ul>
+            <li>Sound recording workflows</li>
+            <li>Audio post-production</li>
+            <li>Multi-track audio management</li>
+            <li>Sound report generation</li>
+            <li>Audio-only projects</li>
+        </ul>
+
+        <h4>Audio Profile Features</h4>
+
+        <p><strong>Player Page (F3)</strong></p>
+        <ul>
+            <li>Waveform display (all tracks)</li>
+            <li>Multi-track controls (up to 32 tracks)</li>
+            <li>Per-track mute/solo</li>
+            <li>Volume and pan controls</li>
+            <li>VU meters with peak detection</li>
+            <li>Audio-specific metadata display</li>
+        </ul>
+
+        <p><strong>Report Page (F6)</strong></p>
+        <ul>
+            <li>Sound Report layout</li>
+            <li>Audio-specific metadata (sample rate, bit depth, channels)</li>
+            <li>Track information</li>
+            <li>Circle takes functionality</li>
+            <li>Sound mixer fields</li>
+        </ul>
+
+        <p><strong>UI Appearance</strong></p>
+        <ul>
+            <li>Red accent color throughout</li>
+            <li>AUDIO button highlighted in nav bar</li>
+            <li>Audio-centric terminology</li>
+        </ul>
+
+        <h3>13.4 Switching Profiles</h3>
+
+        <h4>How to Switch</h4>
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td>Keyboard</td>
+                <td><span class="kbd">Ctrl</span> + <span class="kbd">Tab</span></td>
+            </tr>
+            <tr>
+                <td>Mouse</td>
+                <td>Click VIDEO or AUDIO button in navigation bar</td>
+            </tr>
+        </table>
+
+        <h4>What Happens When Switching</h4>
+        <ul>
+            <li>UI instantly adapts to new profile</li>
+            <li>Accent colors change (blue ↔ red)</li>
+            <li>Player page layout changes</li>
+            <li>Report page layout changes</li>
+            <li>Current session remembers profile choice</li>
+            <li>Media files remain loaded</li>
+        </ul>
+
+        <h3>13.5 Profile-Specific Workflows</h3>
+
+        <h4>Video Profile Workflow Example</h4>
+        <ol>
+            <li>Ensure VIDEO profile active (blue indicator)</li>
+            <li>Copy camera cards via Secure Copy</li>
+            <li>Browse files in Media page</li>
+            <li>Review footage in Player (frame-accurate)</li>
+            <li>Log important clips with In/Out points</li>
+            <li>Generate Camera Report</li>
+            <li>Export EDL for editorial</li>
+        </ol>
+
+        <h4>Audio Profile Workflow Example</h4>
+        <ol>
+            <li>Switch to AUDIO profile (Ctrl+Tab, red indicator)</li>
+            <li>Copy sound recorder files via Secure Copy</li>
+            <li>Browse files in Media page</li>
+            <li>Review audio in Player (multi-track view)</li>
+            <li>Check levels, solo tracks, verify quality</li>
+            <li>Use Sync page to align with camera audio</li>
+            <li>Generate Sound Report with circled takes</li>
+        </ol>
+
+        <h3>13.6 Mixed Workflows</h3>
+
+        <h4>When to Switch Profiles</h4>
+        <p>Some projects require both profiles:</p>
+
+        <p><strong>Scenario: DIT with Separate Sound</strong></p>
+        <ol>
+            <li><strong>Video Profile:</strong> Process camera cards, generate camera reports</li>
+            <li><strong>Switch to Audio Profile:</strong> Process sound files, generate sound reports</li>
+            <li><strong>Use Sync Page:</strong> Align audio with video</li>
+            <li>Save session with both workflows documented</li>
+        </ol>
+
+        <div class="info-box">
+            <h4>Profile Persistence</h4>
+            <p>Your session remembers which profile was active. When you reopen a session, Veriflow automatically
+                switches to the saved profile, maintaining your workflow context.</p>
+        </div>
+    </section>
+
+    <!-- CHAPTER 14: ADVANCED TECHNIQUES -->
+    <section id="ch14">
+        <h2>Chapter 14: Advanced Techniques</h2>
+
+        <h3>14.1 Keyboard Shortcuts Mastery</h3>
+
+        <h4>Essential Shortcuts for Speed</h4>
+
+        <p><strong>Navigation (Always Available)</strong></p>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">F1</span>-<span class="kbd">F6</span></td>
+                <td>Jump to specific page</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">Tab</span></td>
+                <td>Toggle Audio/Video profile</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">F12</span></td>
+                <td>Open help manual</td>
+            </tr>
+        </table>
+
+        <p><strong>Session Management</strong></p>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">N</span></td>
+                <td>New session</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">O</span></td>
+                <td>Open session</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">S</span></td>
+                <td>Save session</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">S</span></td>
+                <td>Save As</td>
+            </tr>
+        </table>
+
+        <p><strong>Player Controls</strong></p>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">Space</span></td>
+                <td>Play/Pause</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Enter</span></td>
+                <td>Stop</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">←</span> / <span class="kbd">→</span></td>
+                <td>Frame/second step</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Home</span> / <span class="kbd">End</span></td>
+                <td>Go to start/end</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">I</span></td>
+                <td>Mark In (Video)</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">O</span></td>
+                <td>Mark Out (Video)</td>
+            </tr>
+        </table>
+
+        <h3>14.2 Batch Operations</h3>
+
+        <h4>Efficient Multi-File Processing</h4>
+
+        <p><strong>Batch Transcoding</strong></p>
+        <ul>
+            <li>Select multiple files in Media page</li>
+            <li>Right-click → Add to Transcode Queue</li>
+            <li>Configure settings once</li>
+            <li>Process all files with same settings</li>
+            <li>Queue processes sequentially</li>
+        </ul>
+
+        <p><strong>Batch Sync Analysis</strong></p>
+        <ul>
+            <li>Load one reference audio file</li>
+            <li>Add multiple files to sync</li>
+            <li>Analyze all at once</li>
+            <li>Export all results to CSV</li>
+        </ul>
+
+        <h3>14.3 Custom Configurations</h3>
+
+        <h4>Optimizing for Your Workflow</h4>
+
+        <p><strong>Report Templates</strong></p>
+        <ul>
+            <li>Create session with standard report headers</li>
+            <li>Save as template</li>
+            <li>Reuse for consistent reporting</li>
+        </ul>
+
+        <p><strong>Transcode Presets</strong></p>
+        <ul>
+            <li>Configure frequently used transcode settings</li>
+            <li>Document settings for team consistency</li>
+            <li>Use same settings across projects</li>
+        </ul>
+
+        <h3>14.4 Performance Optimization</h3>
+
+        <h4>Maximizing Speed</h4>
+
+        <p><strong>Hardware Optimization</strong></p>
+        <ul>
+            <li><strong>SSD for Working Files:</strong> Faster playback and analysis</li>
+            <li><strong>USB 3.0+ Connections:</strong> Faster copy speeds</li>
+            <li><strong>Adequate RAM:</strong> 16GB+ for smooth operation</li>
+            <li><strong>Multi-Core CPU:</strong> Better transcode performance</li>
+        </ul>
+
+        <p><strong>Workflow Optimization</strong></p>
+        <ul>
+            <li>Close unnecessary applications during copy/transcode</li>
+            <li>Use keyboard shortcuts for faster navigation</li>
+            <li>Organize files before importing</li>
+            <li>Use batch operations when possible</li>
+        </ul>
+
+        <h3>14.5 Integration with Other Tools</h3>
+
+        <h4>Veriflow in the Production Pipeline</h4>
+
+        <p><strong>NLE Integration</strong></p>
+        <ul>
+            <li>Export EDLs from Player page (Video profile)</li>
+            <li>Import EDLs into Premiere, Resolve, Avid</li>
+            <li>Use sync offset data for automated sync</li>
+            <li>Provide reports to editorial team</li>
+        </ul>
+
+        <p><strong>DAW Integration</strong></p>
+        <ul>
+            <li>Export sync data for Pro Tools, Nuendo</li>
+            <li>Provide sound reports to sound editorial</li>
+            <li>Use transcode for format conversion</li>
+        </ul>
+
+        <p><strong>Asset Management</strong></p>
+        <ul>
+            <li>Use reports for database entry</li>
+            <li>Export metadata for MAM systems</li>
+            <li>Maintain session files as project documentation</li>
+        </ul>
+
+        <div class="info-box tip">
+            <h4>Pro Workflow: The Complete Pipeline</h4>
+            <ol>
+                <li><strong>On Set:</strong> Veriflow for secure copy and verification</li>
+                <li><strong>DIT Cart:</strong> Veriflow for QC, reports, proxy creation</li>
+                <li><strong>Editorial:</strong> Import EDLs and sync data from Veriflow</li>
+                <li><strong>Archive:</strong> Veriflow reports as project documentation</li>
+            </ol>
+            <p>This creates a complete, documented workflow from capture to archive.</p>
+        </div>
+    </section>
+</section>
+
+<!-- PART V: TECHNICAL REFERENCE -->
+<section id="part5" class="part-section">
+    <h1 class="part-title">Part V: Technical Reference</h1>
+
+    <!-- CHAPTER 15: FILE FORMATS & CODECS -->
+    <section id="ch15">
+        <h2>Chapter 15: File Formats & Codecs</h2>
+
+        <h3>15.1 Video Formats</h3>
+
+        <h4>MP4 (MPEG-4 Part 14)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .mp4, .m4v</li>
+            <li><strong>Container Type:</strong> MPEG-4</li>
+            <li><strong>Common Codecs:</strong> H.264, H.265 (HEVC)</li>
+            <li><strong>Audio Codecs:</strong> AAC, MP3</li>
+            <li><strong>Use Cases:</strong> Universal distribution, web delivery, mobile playback</li>
+            <li><strong>Pros:</strong> Widely compatible, good compression, streaming support</li>
+            <li><strong>Cons:</strong> Lossy compression, limited professional codec support</li>
+        </ul>
+
+        <h4>MOV (QuickTime)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .mov</li>
+            <li><strong>Container Type:</strong> QuickTime</li>
+            <li><strong>Common Codecs:</strong> ProRes, H.264, H.265, DNxHD</li>
+            <li><strong>Audio Codecs:</strong> PCM, AAC</li>
+            <li><strong>Use Cases:</strong> Professional editing, camera originals, mastering</li>
+            <li><strong>Pros:</strong> Supports professional codecs, extensive metadata, timecode</li>
+            <li><strong>Cons:</strong> Larger file sizes, less universal than MP4</li>
+        </ul>
+
+        <h4>MXF (Material Exchange Format)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .mxf</li>
+            <li><strong>Container Type:</strong> SMPTE standard</li>
+            <li><strong>Common Codecs:</strong> DNxHD, XDCAM, AVC-Intra</li>
+            <li><strong>Use Cases:</strong> Broadcast, professional workflows, archival</li>
+            <li><strong>Pros:</strong> Industry standard, extensive metadata, frame-accurate</li>
+            <li><strong>Cons:</strong> Complex format, limited consumer support</li>
+        </ul>
+
+        <h4>AVI (Audio Video Interleave)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .avi</li>
+            <li><strong>Container Type:</strong> Microsoft RIFF</li>
+            <li><strong>Common Codecs:</strong> DV, MJPEG, various legacy codecs</li>
+            <li><strong>Use Cases:</strong> Legacy systems, DV tape capture</li>
+            <li><strong>Pros:</strong> Simple structure, widely supported historically</li>
+            <li><strong>Cons:</strong> Outdated, limited modern codec support, large files</li>
+        </ul>
+
+        <h4>MKV (Matroska)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .mkv</li>
+            <li><strong>Container Type:</strong> Matroska</li>
+            <li><strong>Common Codecs:</strong> H.264, H.265, VP9, AV1</li>
+            <li><strong>Use Cases:</strong> Open-source projects, archival, multi-track</li>
+            <li><strong>Pros:</strong> Open format, supports unlimited tracks, extensive features</li>
+            <li><strong>Cons:</strong> Limited professional tool support</li>
+        </ul>
+
+        <h3>15.2 Video Codecs</h3>
+
+        <h4>H.264 (AVC)</h4>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>Full Name</td>
+                <td>Advanced Video Coding</td>
+            </tr>
+            <tr>
+                <td>Compression</td>
+                <td>Lossy, highly efficient</td>
+            </tr>
+            <tr>
+                <td>Bit Depth</td>
+                <td>8-bit, 10-bit (High 10 profile)</td>
+            </tr>
+            <tr>
+                <td>Max Resolution</td>
+                <td>8K (limited support)</td>
+            </tr>
+            <tr>
+                <td>Use Cases</td>
+                <td>Distribution, streaming, proxies</td>
+            </tr>
+            <tr>
+                <td>Pros</td>
+                <td>Universal support, good quality/size ratio</td>
+            </tr>
+            <tr>
+                <td>Cons</td>
+                <td>CPU-intensive encoding, lossy</td>
+            </tr>
+        </table>
+
+        <h4>H.265 (HEVC)</h4>
+        <table>
+            <tr>
+                <th>Attribute</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>Full Name</td>
+                <td>High Efficiency Video Coding</td>
+            </tr>
+            <tr>
+                <td>Compression</td>
+                <td>Lossy, ~50% better than H.264</td>
+            </tr>
+            <tr>
+                <td>Bit Depth</td>
+                <td>8-bit, 10-bit, 12-bit</td>
+            </tr>
+            <tr>
+                <td>Max Resolution</td>
+                <td>8K</td>
+            </tr>
+            <tr>
+                <td>Use Cases</td>
+                <td>4K/8K distribution, HDR content</td>
+            </tr>
+            <tr>
+                <td>Pros</td>
+                <td>Better compression, HDR support</td>
+            </tr>
+            <tr>
+                <td>Cons</td>
+                <td>Very CPU-intensive, licensing costs</td>
+            </tr>
+        </table>
+
+        <h4>Apple ProRes</h4>
+        <table>
+            <tr>
+                <th>Variant</th>
+                <th>Bit Rate (1080p)</th>
+                <th>Use Case</th>
+            </tr>
+            <tr>
+                <td>ProRes Proxy</td>
+                <td>~45 Mbps</td>
+                <td>Offline editing</td>
+            </tr>
+            <tr>
+                <td>ProRes LT</td>
+                <td>~100 Mbps</td>
+                <td>General editing</td>
+            </tr>
+            <tr>
+                <td>ProRes 422</td>
+                <td>~147 Mbps</td>
+                <td>Professional editing</td>
+            </tr>
+            <tr>
+                <td>ProRes 422 HQ</td>
+                <td>~220 Mbps</td>
+                <td>High-quality mastering</td>
+            </tr>
+            <tr>
+                <td>ProRes 4444</td>
+                <td>~330 Mbps</td>
+                <td>Alpha channel, VFX</td>
+            </tr>
+            <tr>
+                <td>ProRes 4444 XQ</td>
+                <td>~500 Mbps</td>
+                <td>Maximum quality</td>
+            </tr>
+        </table>
+
+        <h4>DNxHD/DNxHR (Avid)</h4>
+        <ul>
+            <li><strong>DNxHD:</strong> HD resolutions (1080p and below)</li>
+            <li><strong>DNxHR:</strong> UHD/4K and higher resolutions</li>
+            <li><strong>Variants:</strong> LB, SQ, HQ, HQX, 444</li>
+            <li><strong>Use Cases:</strong> Avid workflows, professional editing</li>
+            <li><strong>Pros:</strong> Efficient, widely supported in pro tools</li>
+        </ul>
+
+        <h3>15.3 Audio Formats</h3>
+
+        <h4>WAV (Waveform Audio File Format)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .wav</li>
+            <li><strong>Compression:</strong> Uncompressed PCM (typically)</li>
+            <li><strong>Sample Rates:</strong> 44.1, 48, 96, 192 kHz</li>
+            <li><strong>Bit Depths:</strong> 16, 24, 32-bit (float or integer)</li>
+            <li><strong>Channels:</strong> Mono, stereo, multi-channel</li>
+            <li><strong>Metadata:</strong> BWF (Broadcast Wave Format) extension</li>
+            <li><strong>Use Cases:</strong> Professional audio, mastering, archival</li>
+        </ul>
+
+        <h4>BWF (Broadcast Wave Format)</h4>
+        <p>BWF is an extension of WAV that adds professional metadata:</p>
+        <ul>
+            <li><strong>Description:</strong> File description text</li>
+            <li><strong>Originator:</strong> Creator/organization</li>
+            <li><strong>Originator Reference:</strong> Unique identifier</li>
+            <li><strong>Origination Date/Time:</strong> Creation timestamp</li>
+            <li><strong>Time Reference:</strong> Sample-accurate timestamp</li>
+            <li><strong>Coding History:</strong> Processing history</li>
+        </ul>
+
+        <h4>MP3 (MPEG-1 Audio Layer 3)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .mp3</li>
+            <li><strong>Compression:</strong> Lossy</li>
+            <li><strong>Bit Rates:</strong> 128-320 kbps (typical)</li>
+            <li><strong>Use Cases:</strong> Distribution, web, mobile</li>
+            <li><strong>Pros:</strong> Universal support, small files</li>
+            <li><strong>Cons:</strong> Lossy, not suitable for mastering</li>
+        </ul>
+
+        <h4>AAC (Advanced Audio Coding)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .aac, .m4a</li>
+            <li><strong>Compression:</strong> Lossy, better than MP3</li>
+            <li><strong>Bit Rates:</strong> 128-320 kbps</li>
+            <li><strong>Use Cases:</strong> Modern distribution, streaming</li>
+            <li><strong>Pros:</strong> Better quality than MP3 at same bitrate</li>
+        </ul>
+
+        <h4>FLAC (Free Lossless Audio Codec)</h4>
+        <ul>
+            <li><strong>Extension:</strong> .flac</li>
+            <li><strong>Compression:</strong> Lossless (~50% size reduction)</li>
+            <li><strong>Use Cases:</strong> Archival, high-quality distribution</li>
+            <li><strong>Pros:</strong> Lossless, open format, good compression</li>
+        </ul>
+
+        <h3>15.4 Resolution Standards</h3>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Resolution</th>
+                <th>Aspect Ratio</th>
+                <th>Pixels</th>
+            </tr>
+            <tr>
+                <td>SD (480p)</td>
+                <td>720x480</td>
+                <td>4:3 or 16:9</td>
+                <td>0.3 MP</td>
+            </tr>
+            <tr>
+                <td>HD (720p)</td>
+                <td>1280x720</td>
+                <td>16:9</td>
+                <td>0.9 MP</td>
+            </tr>
+            <tr>
+                <td>Full HD (1080p)</td>
+                <td>1920x1080</td>
+                <td>16:9</td>
+                <td>2.1 MP</td>
+            </tr>
+            <tr>
+                <td>2K DCI</td>
+                <td>2048x1080</td>
+                <td>1.9:1</td>
+                <td>2.2 MP</td>
+            </tr>
+            <tr>
+                <td>UHD (4K)</td>
+                <td>3840x2160</td>
+                <td>16:9</td>
+                <td>8.3 MP</td>
+            </tr>
+            <tr>
+                <td>4K DCI</td>
+                <td>4096x2160</td>
+                <td>1.9:1</td>
+                <td>8.8 MP</td>
+            </tr>
+            <tr>
+                <td>8K UHD</td>
+                <td>7680x4320</td>
+                <td>16:9</td>
+                <td>33.2 MP</td>
+            </tr>
+        </table>
+
+        <h3>15.5 Frame Rates</h3>
+
+        <table>
+            <tr>
+                <th>Frame Rate</th>
+                <th>Common Use</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>23.976 fps</td>
+                <td>Film look (NTSC)</td>
+                <td>24/1.001, most common for cinema</td>
+            </tr>
+            <tr>
+                <td>24 fps</td>
+                <td>True cinema</td>
+                <td>Traditional film frame rate</td>
+            </tr>
+            <tr>
+                <td>25 fps</td>
+                <td>PAL standard</td>
+                <td>Europe, Australia, parts of Asia</td>
+            </tr>
+            <tr>
+                <td>29.97 fps</td>
+                <td>NTSC standard</td>
+                <td>30/1.001, North America, Japan</td>
+            </tr>
+            <tr>
+                <td>30 fps</td>
+                <td>True 30</td>
+                <td>Some digital cameras</td>
+            </tr>
+            <tr>
+                <td>50 fps</td>
+                <td>PAL high frame rate</td>
+                <td>Slow motion, sports</td>
+            </tr>
+            <tr>
+                <td>59.94 fps</td>
+                <td>NTSC high frame rate</td>
+                <td>60/1.001, slow motion</td>
+            </tr>
+            <tr>
+                <td>60 fps</td>
+                <td>True 60</td>
+                <td>High frame rate, gaming</td>
+            </tr>
+            <tr>
+                <td>120+ fps</td>
+                <td>High-speed</td>
+                <td>Slow motion capture</td>
+            </tr>
+        </table>
+
+        <h3>15.6 Sample Rates</h3>
+
+        <table>
+            <tr>
+                <th>Sample Rate</th>
+                <th>Use Case</th>
+                <th>Nyquist Frequency</th>
+            </tr>
+            <tr>
+                <td>44.1 kHz</td>
+                <td>CD audio, music distribution</td>
+                <td>22.05 kHz</td>
+            </tr>
+            <tr>
+                <td>48 kHz</td>
+                <td>Professional video, broadcast</td>
+                <td>24 kHz</td>
+            </tr>
+            <tr>
+                <td>96 kHz</td>
+                <td>High-resolution audio, mastering</td>
+                <td>48 kHz</td>
+            </tr>
+            <tr>
+                <td>192 kHz</td>
+                <td>Audiophile, archival</td>
+                <td>96 kHz</td>
+            </tr>
+        </table>
+
+        <div class="info-box">
+            <h4>Format Selection Guide</h4>
+            <p><strong>For Editing:</strong> ProRes 422 or DNxHD (lossless intermediate)</p>
+            <p><strong>For Distribution:</strong> H.264 MP4 (universal compatibility)</p>
+            <p><strong>For Archival:</strong> Original camera files + ProRes 4444 masters</p>
+            <p><strong>For Audio:</strong> 48kHz/24-bit WAV (professional standard)</p>
+        </div>
+    </section>
+
+    <!-- CHAPTER 16: KEYBOARD SHORTCUTS REFERENCE -->
+    <section id="ch16">
+        <h2>Chapter 16: Keyboard Shortcuts Reference</h2>
+
+        <h3>16.1 Global Shortcuts</h3>
+
+        <h4>Navigation</h4>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">F1</span></td>
+                <td>Go to Secure Copy page</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">F2</span></td>
+                <td>Go to Media page</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">F3</span></td>
+                <td>Go to Player page</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">F4</span></td>
+                <td>Go to Sync page</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">F5</span></td>
+                <td>Go to Transcode page</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">F6</span></td>
+                <td>Go to Report page</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span> + <span class="kbd">Tab</span></td>
+                <td>Toggle Audio/Video profile</td>
+            </tr>
+        </table>
+
+        <h4>Session Management</h4>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span> + <span class="kbd">N</span></td>
+                <td>New Session</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span> + <span class="kbd">O</span></td>
+                <td>Open Session</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span> + <span class="kbd">S</span></td>
+                <td>Save Session</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">S</span></td>
+                <td>Save Session As</td>
+            </tr>
+        </table>
+
+        <h4>Application</h4>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">F12</span></td>
+                <td>Open Help Manual</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Alt</span> + <span class="kbd">F4</span></td>
+                <td>Exit Application</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Esc</span></td>
+                <td>Cancel/Close dialog</td>
+            </tr>
+        </table>
+
+        <h3>16.2 Player Page Shortcuts</h3>
+
+        <h4>Playback Control</h4>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">Space</span></td>
+                <td>Play/Pause</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Enter</span></td>
+                <td>Stop (return to start)</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">←</span></td>
+                <td>Step backward (frame or second)</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">→</span></td>
+                <td>Step forward (frame or second)</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Home</span></td>
+                <td>Go to start</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">End</span></td>
+                <td>Go to end</td>
+            </tr>
+        </table>
+
+        <h4>Video Profile Only</h4>
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">I</span></td>
+                <td>Mark In point</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">O</span></td>
+                <td>Mark Out point</td>
+            </tr>
+        </table>
+
+        <h3>16.3 Menu Access</h3>
+
+        <table>
+            <tr>
+                <th>Shortcut</th>
+                <th>Menu</th>
+            </tr>
+            <tr>
+                <td><span class="kbd">Alt</span> + <span class="kbd">F</span></td>
+                <td>File menu</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Alt</span> + <span class="kbd">E</span></td>
+                <td>Edit menu</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Alt</span> + <span class="kbd">V</span></td>
+                <td>View menu</td>
+            </tr>
+            <tr>
+                <td><span class="kbd">Alt</span> + <span class="kbd">H</span></td>
+                <td>Help menu</td>
+            </tr>
+        </table>
+
+        <h3>16.4 Quick Reference Card</h3>
+
+        <div class="info-box">
+            <h4>Most Used Shortcuts</h4>
+            <table>
+                <tr>
+                    <th>Task</th>
+                    <th>Shortcut</th>
+                </tr>
+                <tr>
+                    <td>Switch pages</td>
+                    <td><span class="kbd">F1</span>-<span class="kbd">F6</span></td>
+                </tr>
+                <tr>
+                    <td>Toggle profile</td>
+                    <td><span class="kbd">Ctrl</span>+<span class="kbd">Tab</span></td>
+                </tr>
+                <tr>
+                    <td>Save session</td>
+                    <td><span class="kbd">Ctrl</span>+<span class="kbd">S</span></td>
+                </tr>
+                <tr>
+                    <td>Play/Pause</td>
+                    <td><span class="kbd">Space</span></td>
+                </tr>
+                <tr>
+                    <td>Help</td>
+                    <td><span class="kbd">F12</span></td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- CHAPTER 17: MENU REFERENCE -->
+    <section id="ch17">
+        <h2>Chapter 17: Menu Reference</h2>
+
+        <h3>17.1 File Menu</h3>
+
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Shortcut</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>New Session</td>
+                <td><span class="kbd">Ctrl+N</span></td>
+                <td>Create new empty session, reset all pages</td>
+            </tr>
+            <tr>
+                <td>Open Session</td>
+                <td><span class="kbd">Ctrl+O</span></td>
+                <td>Load existing .vfsession file</td>
+            </tr>
+            <tr>
+                <td>Save Session</td>
+                <td><span class="kbd">Ctrl+S</span></td>
+                <td>Save current session to file</td>
+            </tr>
+            <tr>
+                <td>Save Session As</td>
+                <td><span class="kbd">Ctrl+Shift+S</span></td>
+                <td>Save session with new filename</td>
+            </tr>
+            <tr>
+                <td>Exit</td>
+                <td><span class="kbd">Alt+F4</span></td>
+                <td>Close Veriflow application</td>
+            </tr>
+        </table>
+
+        <h3>17.2 View Menu</h3>
+
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Shortcut</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Secure Copy</td>
+                <td><span class="kbd">F1</span></td>
+                <td>Navigate to Secure Copy page</td>
+            </tr>
+            <tr>
+                <td>Media</td>
+                <td><span class="kbd">F2</span></td>
+                <td>Navigate to Media page</td>
+            </tr>
+            <tr>
+                <td>Player</td>
+                <td><span class="kbd">F3</span></td>
+                <td>Navigate to Player page</td>
+            </tr>
+            <tr>
+                <td>Sync</td>
+                <td><span class="kbd">F4</span></td>
+                <td>Navigate to Sync page</td>
+            </tr>
+            <tr>
+                <td>Transcode</td>
+                <td><span class="kbd">F5</span></td>
+                <td>Navigate to Transcode page</td>
+            </tr>
+            <tr>
+                <td>Report</td>
+                <td><span class="kbd">F6</span></td>
+                <td>Navigate to Report page</td>
+            </tr>
+        </table>
+
+        <h3>17.3 Help Menu</h3>
+
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Shortcut</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>View Help</td>
+                <td><span class="kbd">F12</span></td>
+                <td>Open this comprehensive user manual</td>
+            </tr>
+            <tr>
+                <td>Open Log Folder</td>
+                <td>-</td>
+                <td>Open application log directory in Windows Explorer</td>
+            </tr>
+            <tr>
+                <td>About Veriflow</td>
+                <td>-</td>
+                <td>Display version, license, and copyright information</td>
+            </tr>
+        </table>
+
+        <h3>17.4 Context Menus</h3>
+
+        <h4>Media Page File Context Menu</h4>
+        <p>Right-click on any file in Media page:</p>
+        <ul>
+            <li><strong>Load to Player:</strong> Open file in Player page</li>
+            <li><strong>Add to Transcode Queue:</strong> Queue file for transcoding</li>
+            <li><strong>Add to Report:</strong> Include file in current report</li>
+            <li><strong>Show in Explorer:</strong> Open file location in Windows Explorer</li>
+            <li><strong>Copy Path:</strong> Copy full file path to clipboard</li>
+        </ul>
+    </section>
+
+    <!-- CHAPTER 18: PREFERENCES & SETTINGS -->
+    <section id="ch18">
+        <h2>Chapter 18: Preferences & Settings</h2>
+
+        <h3>18.1 Application Preferences</h3>
+
+        <p>Veriflow stores preferences and settings in your user profile. These settings persist across sessions and
+            application restarts.</p>
+
+        <h4>Settings Location</h4>
+        <p>Application data is stored in:</p>
+        <pre><code>C:\Users\[YourUsername]\AppData\Local\Veriflow\</code></pre>
+
+        <h4>What's Stored</h4>
+        <ul>
+            <li><strong>Application Logs:</strong> Error and activity logs</li>
+            <li><strong>Recent Sessions:</strong> List of recently opened sessions</li>
+            <li><strong>Window Position:</strong> Last window size and position</li>
+            <li><strong>User Preferences:</strong> Application settings</li>
+        </ul>
+
+        <h3>18.2 Default Behaviors</h3>
+
+        <h4>On Application Start</h4>
+        <ul>
+            <li>Opens to Secure Copy page (F1)</li>
+            <li>Starts in Video profile (blue)</li>
+            <li>Shows "Untitled Session" in status bar</li>
+            <li>All pages in default state</li>
+        </ul>
+
+        <h4>Session Behavior</h4>
+        <ul>
+            <li>Sessions auto-save profile state (Audio/Video)</li>
+            <li>File references are stored as absolute paths</li>
+            <li>Missing files prompt for relocation on session open</li>
+            <li>Unsaved changes prompt on exit</li>
+        </ul>
+
+        <h3>18.3 File Handling</h3>
+
+        <h4>Supported File Operations</h4>
+        <ul>
+            <li><strong>Read-Only:</strong> Veriflow never modifies source files</li>
+            <li><strong>Non-Destructive:</strong> All operations preserve originals</li>
+            <li><strong>Metadata Reading:</strong> Reads embedded metadata without modification</li>
+        </ul>
+
+        <h4>File Association</h4>
+        <p>Veriflow associates with .vfsession files:</p>
+        <ul>
+            <li>Double-click .vfsession to open in Veriflow</li>
+            <li>Session files show Veriflow icon in Explorer</li>
+        </ul>
+
+        <h3>18.4 Performance Settings</h3>
+
+        <h4>Recommended System Configuration</h4>
+        <ul>
+            <li><strong>Working Drive:</strong> SSD for best performance</li>
+            <li><strong>RAM:</strong> 16GB+ for smooth operation</li>
+            <li><strong>CPU:</strong> Multi-core for transcode performance</li>
+            <li><strong>GPU:</strong> DirectX 11+ for video playback</li>
+        </ul>
+
+        <h4>Optimizing Performance</h4>
+        <ul>
+            <li>Close unnecessary applications during copy/transcode</li>
+            <li>Use local drives instead of network for active work</li>
+            <li>Ensure adequate free space on working drives</li>
+            <li>Keep Windows and drivers updated</li>
+        </ul>
+
+        <h3>18.5 Logging</h3>
+
+        <h4>Application Logs</h4>
+        <p>Veriflow maintains detailed logs for troubleshooting:</p>
+        <ul>
+            <li><strong>Location:</strong> AppData\Local\Veriflow\Logs</li>
+            <li><strong>Access:</strong> Help → Open Log Folder</li>
+            <li><strong>Contents:</strong> Errors, warnings, copy operations, verification results</li>
+            <li><strong>Retention:</strong> Logs are kept for 30 days</li>
+        </ul>
+
+        <h4>Log Information</h4>
+        <p>Logs contain:</p>
+        <ul>
+            <li>Application start/stop times</li>
+            <li>File operations (copy, verify, transcode)</li>
+            <li>Error messages and stack traces</li>
+            <li>Hash verification results</li>
+            <li>Performance metrics</li>
+        </ul>
+
+        <div class="info-box tip">
+            <h4>Troubleshooting with Logs</h4>
+            <p>If you encounter issues, check the log files for detailed error information. Logs can be shared with
+                support for troubleshooting assistance.</p>
+        </div>
+    </section>
+</section>
+
+<!-- PART VI: TROUBLESHOOTING & SUPPORT -->
+<section id="part6" class="part-section">
+    <h1 class="part-title">Part VI: Troubleshooting & Support</h1>
+
+    <!-- CHAPTER 19: COMMON ISSUES & SOLUTIONS -->
+    <section id="ch19">
+        <h2>Chapter 19: Common Issues & Solutions</h2>
+
+        <h3>19.1 Installation & Startup Issues</h3>
+
+        <h4>Application Won't Start</h4>
+        <p><strong>Symptoms:</strong> Double-clicking Veriflow icon does nothing, or application crashes immediately.
+        </p>
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li>Verify .NET 8 Runtime is installed (required dependency)</li>
+            <li>Check Windows Event Viewer for error details</li>
+            <li>Run as Administrator (right-click → Run as administrator)</li>
+            <li>Reinstall application</li>
+            <li>Check antivirus isn't blocking Veriflow</li>
+        </ol>
+
+        <h4>Missing .NET Runtime Error</h4>
+        <p><strong>Error Message:</strong> "This application requires .NET 8.0 Runtime"</p>
+        <p><strong>Solution:</strong></p>
+        <ol>
+            <li>Download .NET 8.0 Desktop Runtime from Microsoft</li>
+            <li>Install the runtime</li>
+            <li>Restart computer</li>
+            <li>Launch Veriflow</li>
+        </ol>
+
+        <h3>19.2 Secure Copy Issues</h3>
+
+        <h4>Copy Operation Freezes</h4>
+        <p><strong>Symptoms:</strong> Progress bar stops, no activity for several minutes.</p>
+        <p><strong>Diagnosis:</strong></p>
+        <ul>
+            <li>Check if drive activity LED is still blinking</li>
+            <li>Open Task Manager → Performance → Check disk activity</li>
+            <li>Wait 2-3 minutes (large files may appear frozen)</li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li>If truly frozen, click CANCEL and retry</li>
+            <li>Try different USB port (use motherboard ports, not hub)</li>
+            <li>Replace USB cable</li>
+            <li>Check drive health with manufacturer tools</li>
+            <li>Disable antivirus real-time scanning temporarily</li>
+        </ol>
+
+        <h4>Hash Verification Failures</h4>
+        <p><strong>Symptoms:</strong> Red X marks, "Hash mismatch" errors.</p>
+        <p><strong>Causes:</strong></p>
+        <ul>
+            <li>Failing source drive</li>
+            <li>Failing destination drive</li>
+            <li>Bad USB cable or connection</li>
+            <li>USB power issues</li>
+            <li>Drive disconnection during copy</li>
+        </ul>
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li><strong>Immediate:</strong> Delete corrupted files, retry copy</li>
+            <li><strong>Hardware:</strong>
+                <ul>
+                    <li>Replace USB cable</li>
+                    <li>Use different USB port</li>
+                    <li>Use powered USB hub</li>
+                    <li>Connect drives directly to motherboard ports</li>
+                </ul>
+            </li>
+            <li><strong>Drive Health:</strong>
+                <ul>
+                    <li>Run CHKDSK on drives</li>
+                    <li>Check SMART status</li>
+                    <li>Test with different drives</li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="info-box warning">
+            <h4>Critical: Repeated Hash Failures</h4>
+            <p>If hash verification fails repeatedly on the same files:</p>
+            <ul>
+                <li><strong>STOP using the suspect drive immediately</strong></li>
+                <li>The drive may be failing</li>
+                <li>Consult data recovery professional if data is critical</li>
+                <li>Replace drive before continuing production</li>
+            </ul>
+        </div>
+
+        <h4>Slow Copy Speed</h4>
+        <p><strong>Expected Speeds:</strong></p>
+        <ul>
+            <li>USB 2.0: 20-40 MB/s</li>
+            <li>USB 3.0: 100-150 MB/s</li>
+            <li>USB 3.1/3.2: 400-1000 MB/s</li>
+        </ul>
+        <p><strong>If speeds are much lower:</strong></p>
+        <ol>
+            <li>Verify USB 3.0+ port (blue connector)</li>
+            <li>Use USB 3.0+ cable</li>
+            <li>Close background applications</li>
+            <li>Disable antivirus scanning temporarily</li>
+            <li>Check drive isn't fragmented (HDD only)</li>
+            <li>Update USB drivers</li>
+        </ol>
+
+        <h3>19.3 Media & Player Issues</h3>
+
+        <h4>File Won't Load in Player</h4>
+        <p><strong>Symptoms:</strong> Error message when trying to load file, or player shows black screen.</p>
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li>Verify file isn't corrupted (try in VLC or other player)</li>
+            <li>Check file format is supported (see Chapter 15)</li>
+            <li>Ensure file isn't locked by another application</li>
+            <li>Try copying file to local drive first</li>
+            <li>Check application logs for specific error</li>
+        </ol>
+
+        <h4>No Audio Playback</h4>
+        <p><strong>Symptoms:</strong> Video plays but no sound, or audio file shows waveform but silent.</p>
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li>Check Windows volume mixer (Veriflow not muted)</li>
+            <li>Verify correct audio output device selected in Windows</li>
+            <li>Check track isn't muted in Player (Audio profile)</li>
+            <li>Verify file actually contains audio (check in Media page metadata)</li>
+            <li>Try different audio file to isolate issue</li>
+        </ol>
+
+        <h4>Choppy Video Playback</h4>
+        <p><strong>Symptoms:</strong> Video stutters, drops frames, or plays slowly.</p>
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li>Close unnecessary applications</li>
+            <li>Copy file to local SSD before playback</li>
+            <li>Update graphics drivers</li>
+            <li>Reduce video resolution (4K/8K may struggle on older hardware)</li>
+            <li>Check CPU usage in Task Manager</li>
+        </ol>
+
+        <h3>19.4 Sync Page Issues</h3>
+
+        <h4>Low Confidence Scores</h4>
+        <p><strong>Symptoms:</strong> Sync analysis completes but confidence < 70%.</p>
+                <p><strong>Causes:</strong></p>
+                <ul>
+                    <li>Files don't overlap in time</li>
+                    <li>Very different audio quality (camera mic vs boom)</li>
+                    <li>Excessive background noise</li>
+                    <li>Files from different takes/scenes</li>
+                </ul>
+                <p><strong>Solutions:</strong></p>
+                <ol>
+                    <li>Verify files are from same take/scene</li>
+                    <li>Check files have overlapping audio content</li>
+                    <li>Try shorter file segments</li>
+                    <li>Manually verify sync with Player</li>
+                </ol>
+
+                <h4>Sync Analysis Fails</h4>
+                <p><strong>Error Messages:</strong> "Analysis failed", "Unable to process"</p>
+                <p><strong>Solutions:</strong></p>
+                <ol>
+                    <li>Ensure files contain actual audio (not silent)</li>
+                    <li>Check files aren't corrupted</li>
+                    <li>Verify compatible sample rates</li>
+                    <li>Try with shorter file duration</li>
+                    <li>Check application logs for details</li>
+                </ol>
+
+                <h3>19.5 Transcode Issues</h3>
+
+                <h4>Transcode Fails</h4>
+                <p><strong>Symptoms:</strong> File shows "Failed" status in queue.</p>
+                <p><strong>Solutions:</strong></p>
+                <ol>
+                    <li>Check source file isn't corrupted</li>
+                    <li>Verify sufficient disk space on output drive</li>
+                    <li>Ensure output folder exists and is writable</li>
+                    <li>Try different codec/format combination</li>
+                    <li>Check logs for specific error message</li>
+                </ol>
+
+                <h4>Very Slow Transcode</h4>
+                <p><strong>Expected:</strong> 0.5-2x realtime depending on codec and system.</p>
+                <p><strong>If much slower:</strong></p>
+                <ol>
+                    <li>Close all other applications</li>
+                    <li>Check CPU isn't thermal throttling</li>
+                    <li>H.265 is slower than H.264 (expected)</li>
+                    <li>Higher quality settings take longer (expected)</li>
+                    <li>Ensure adequate cooling for CPU</li>
+                </ol>
+
+                <h3>19.6 Report Issues</h3>
+
+                <h4>PDF Export Fails</h4>
+                <p><strong>Symptoms:</strong> Error when clicking "Export PDF".</p>
+                <p><strong>Solutions:</strong></p>
+                <ol>
+                    <li>Verify output folder exists and is writable</li>
+                    <li>Close any PDF readers that might lock the file</li>
+                    <li>Choose different output location</li>
+                    <li>Check disk space on output drive</li>
+                    <li>Check application logs</li>
+                </ol>
+
+                <h4>Missing Data in Report</h4>
+                <p><strong>Symptoms:</strong> Report shows blank fields or missing files.</p>
+                <p><strong>Solutions:</strong></p>
+                <ol>
+                    <li>Verify files are loaded in session</li>
+                    <li>Check correct profile is active (Video/Audio)</li>
+                    <li>Fill in header information before export</li>
+                    <li>Save session and reopen</li>
+                </ol>
+
+                <h3>19.7 Session Issues</h3>
+
+                <h4>Can't Open Session File</h4>
+                <p><strong>Symptoms:</strong> Error when opening .vfsession file.</p>
+                <p><strong>Solutions:</strong></p>
+                <ol>
+                    <li>Verify file isn't corrupted (check file size > 0)</li>
+                    <li>Ensure file has .vfsession extension</li>
+                    <li>Try opening with File → Open Session</li>
+                    <li>Check file permissions</li>
+                    <li>Restore from backup if available</li>
+                </ol>
+
+                <h4>Missing Files on Session Open</h4>
+                <p><strong>Symptoms:</strong> "Files not found" dialog when opening session.</p>
+                <p><strong>Cause:</strong> Media files moved or drives not connected.</p>
+                <p><strong>Solutions:</strong></p>
+                <ol>
+                    <li>Connect all drives referenced in session</li>
+                    <li>Use "Locate" button to find moved files</li>
+                    <li>Point to new location if files were moved</li>
+                    <li>Update session and save</li>
+                </ol>
+
+                <h3>19.8 Performance Issues</h3>
+
+                <h4>Application Runs Slowly</h4>
+                <p><strong>General Performance Tips:</strong></p>
+                <ol>
+                    <li>Close unnecessary applications</li>
+                    <li>Ensure adequate RAM (16GB+ recommended)</li>
+                    <li>Use SSD for working files</li>
+                    <li>Update graphics drivers</li>
+                    <li>Disable Windows visual effects</li>
+                    <li>Check for Windows updates</li>
+                </ol>
+
+                <h4>High CPU Usage</h4>
+                <p><strong>Normal during:</strong></p>
+                <ul>
+                    <li>Transcoding (expected 80-100%)</li>
+                    <li>Sync analysis (expected 50-100%)</li>
+                    <li>Hash verification (expected 20-40%)</li>
+                </ul>
+                <p><strong>If high when idle:</strong></p>
+                <ol>
+                    <li>Check Task Manager for other processes</li>
+                    <li>Scan for malware</li>
+                    <li>Update Windows</li>
+                    <li>Restart application</li>
+                </ol>
+    </section>
+
+    <!-- CHAPTER 20: GETTING SUPPORT -->
+    <section id="ch20">
+        <h2>Chapter 20: Getting Support</h2>
+
+        <h3>20.1 Self-Help Resources</h3>
+
+        <h4>This Manual</h4>
+        <p>This comprehensive user manual covers all features and common issues. Use the table of contents or search
+            function to find specific topics.</p>
+        <ul>
+            <li><strong>Access:</strong> Press <span class="kbd">F12</span> anytime</li>
+            <li><strong>Search:</strong> Use browser search (Ctrl+F) to find keywords</li>
+            <li><strong>Navigation:</strong> Click links in table of contents</li>
+        </ul>
+
+        <h4>Application Logs</h4>
+        <p>Check logs for detailed error information:</p>
+        <ol>
+            <li>Click <strong>Help → Open Log Folder</strong></li>
+            <li>Open most recent log file in text editor</li>
+            <li>Look for ERROR or WARNING entries</li>
+            <li>Note timestamp and error message</li>
+        </ol>
+
+        <h3>20.2 Reporting Issues</h3>
+
+        <h4>Before Reporting</h4>
+        <p>Gather this information:</p>
+        <ul>
+            <li><strong>Veriflow Version:</strong> Help → About Veriflow</li>
+            <li><strong>Windows Version:</strong> Settings → System → About</li>
+            <li><strong>Error Message:</strong> Exact text of any error</li>
+            <li><strong>Steps to Reproduce:</strong> What you did before error occurred</li>
+            <li><strong>Log Files:</strong> Recent log entries</li>
+            <li><strong>Screenshots:</strong> If UI issue, capture screenshot</li>
+        </ul>
+
+        <h4>What to Include in Bug Report</h4>
+        <ol>
+            <li><strong>Summary:</strong> Brief description of issue</li>
+            <li><strong>Expected Behavior:</strong> What should happen</li>
+            <li><strong>Actual Behavior:</strong> What actually happens</li>
+            <li><strong>Steps to Reproduce:</strong>
+                <ol>
+                    <li>Step 1...</li>
+                    <li>Step 2...</li>
+                    <li>Error occurs</li>
+                </ol>
+            </li>
+            <li><strong>System Info:</strong> OS, Veriflow version</li>
+            <li><strong>Attachments:</strong> Logs, screenshots</li>
+        </ol>
+
+        <h3>20.3 Feature Requests</h3>
+
+        <h4>Suggesting New Features</h4>
+        <p>We welcome feature suggestions! When requesting features:</p>
+        <ul>
+            <li><strong>Describe Use Case:</strong> What problem does it solve?</li>
+            <li><strong>Workflow Context:</strong> How would you use it?</li>
+            <li><strong>Examples:</strong> Similar features in other tools</li>
+            <li><strong>Priority:</strong> How important is this to your workflow?</li>
+        </ul>
+
+        <h3>20.4 Community Resources</h3>
+
+        <h4>Best Practices</h4>
+        <p>Learn from professional users:</p>
+        <ul>
+            <li>Share workflow tips</li>
+            <li>Discuss integration with other tools</li>
+            <li>Exchange session templates</li>
+            <li>Report optimization techniques</li>
+        </ul>
+
+        <h3>20.5 Updates & Releases</h3>
+
+        <h4>Checking for Updates</h4>
+        <p>Stay current with latest features and fixes:</p>
+        <ul>
+            <li>Check Help → About for current version</li>
+            <li>Visit project website for latest release</li>
+            <li>Review release notes before updating</li>
+        </ul>
+
+        <h4>Update Best Practices</h4>
+        <ol>
+            <li>Save all open sessions</li>
+            <li>Close Veriflow</li>
+            <li>Install update</li>
+            <li>Restart computer</li>
+            <li>Test with non-critical session first</li>
+        </ol>
+
+        <h3>20.6 Backup & Recovery</h3>
+
+        <h4>Protecting Your Work</h4>
+        <p><strong>Session Files:</strong></p>
+        <ul>
+            <li>Save sessions frequently (<span class="kbd">Ctrl+S</span>)</li>
+            <li>Keep session backups in separate location</li>
+            <li>Use version control (Git) for session files</li>
+            <li>Archive sessions with completed projects</li>
+        </ul>
+
+        <p><strong>Media Files:</strong></p>
+        <ul>
+            <li>Always use dual-destination copy</li>
+            <li>Verify both copies before deleting source</li>
+            <li>Keep backups on separate physical drives</li>
+            <li>Follow 3-2-1 backup rule (3 copies, 2 media types, 1 offsite)</li>
+        </ul>
+
+        <h4>Disaster Recovery</h4>
+        <p>If you lose session files:</p>
+        <ol>
+            <li>Check session backup location</li>
+            <li>Look for auto-save files (if feature exists)</li>
+            <li>Recreate session from media files and reports</li>
+            <li>Use file metadata to rebuild information</li>
+        </ol>
+
+        <div class="info-box tip">
+            <h4>Professional Support Tip</h4>
+            <p>For production-critical issues:</p>
+            <ul>
+                <li>Have backup workflow ready (manual copy, other tools)</li>
+                <li>Test Veriflow thoroughly before critical shoots</li>
+                <li>Keep previous stable version available</li>
+                <li>Document your workflow for team continuity</li>
+            </ul>
+        </div>
+
+        <h3>20.7 System Requirements Reminder</h3>
+
+        <h4>Minimum Requirements</h4>
+        <ul>
+            <li><strong>OS:</strong> Windows 10 (64-bit) or later</li>
+            <li><strong>Processor:</strong> Intel Core i5 or AMD equivalent</li>
+            <li><strong>RAM:</strong> 8 GB</li>
+            <li><strong>Storage:</strong> 500 MB for application</li>
+            <li><strong>Runtime:</strong> .NET 8.0 Desktop Runtime</li>
+        </ul>
+
+        <h4>Recommended for Professional Use</h4>
+        <ul>
+            <li><strong>OS:</strong> Windows 11 (64-bit)</li>
+            <li><strong>Processor:</strong> Intel Core i7/i9 or AMD Ryzen 7/9</li>
+            <li><strong>RAM:</strong> 16-32 GB</li>
+            <li><strong>Storage:</strong> 1 TB+ SSD for working files</li>
+            <li><strong>GPU:</strong> DirectX 11+ compatible</li>
+            <li><strong>Connectivity:</strong> USB 3.1+ ports</li>
+        </ul>
+    </section>
+</section>
+
+<!-- APPENDICES -->
+<section id="appendices" class="part-section">
+    <h1 class="part-title">Appendices</h1>
+
+    <!-- APPENDIX A: GLOSSARY -->
+    <section id="appendix-a">
+        <h2>Appendix A: Glossary</h2>
+
+        <dl>
+            <dt>AAC (Advanced Audio Coding)</dt>
+            <dd>Lossy audio compression format, successor to MP3 with better quality at same bitrate.</dd>
+
+            <dt>AVC (Advanced Video Coding)</dt>
+            <dd>Also known as H.264, widely used video compression standard.</dd>
+
+            <dt>Bit Depth</dt>
+            <dd>Number of bits used to represent each audio sample. Common values: 16-bit, 24-bit, 32-bit. Higher =
+                better dynamic range.</dd>
+
+            <dt>Bitrate</dt>
+            <dd>Data rate of compressed media, measured in Mbps (megabits per second). Higher = better quality, larger
+                files.</dd>
+
+            <dt>BWF (Broadcast Wave Format)</dt>
+            <dd>Professional extension of WAV format that includes extensive metadata fields.</dd>
+
+            <dt>Checksum</dt>
+            <dd>Mathematical value calculated from file data, used to verify file integrity. See also: Hash.</dd>
+
+            <dt>Codec</dt>
+            <dd>Compressor/Decompressor - algorithm used to encode and decode media. Examples: H.264, ProRes, AAC.</dd>
+
+            <dt>Container Format</dt>
+            <dd>File format that holds video, audio, and metadata. Examples: MP4, MOV, MXF.</dd>
+
+            <dt>DIT (Digital Imaging Technician)</dt>
+            <dd>On-set professional responsible for camera data management, quality control, and media backup.</dd>
+
+            <dt>DNxHD/DNxHR</dt>
+            <dd>Avid's professional video codecs. DNxHD for HD, DNxHR for UHD/4K and higher.</dd>
+
+            <dt>EDL (Edit Decision List)</dt>
+            <dd>Text file containing edit points (in/out, timecode) for use in NLE systems.</dd>
+
+            <dt>FFT (Fast Fourier Transform)</dt>
+            <dd>Mathematical algorithm used to convert audio from time domain to frequency domain, used in sync
+                analysis.</dd>
+
+            <dt>Frame Rate (FPS)</dt>
+            <dd>Frames per second - how many images displayed per second. Common: 23.976, 24, 25, 29.97, 30, 60 fps.
+            </dd>
+
+            <dt>Hash</dt>
+            <dd>Unique digital fingerprint of a file. Used to verify perfect copies. Veriflow uses xxHash64.</dd>
+
+            <dt>HEVC (High Efficiency Video Coding)</dt>
+            <dd>Also known as H.265, successor to H.264 with ~50% better compression.</dd>
+
+            <dt>iXML</dt>
+            <dd>Metadata standard for production audio, includes scene/take info, track names, notes.</dd>
+
+            <dt>Lossless</dt>
+            <dd>Compression that preserves all original data. Examples: ProRes, FLAC, WAV.</dd>
+
+            <dt>Lossy</dt>
+            <dd>Compression that discards some data to achieve smaller files. Examples: H.264, MP3, AAC.</dd>
+
+            <dt>NLE (Non-Linear Editor)</dt>
+            <dd>Video editing software. Examples: Premiere Pro, DaVinci Resolve, Avid Media Composer.</dd>
+
+            <dt>PCM (Pulse Code Modulation)</dt>
+            <dd>Uncompressed digital audio format, used in WAV files.</dd>
+
+            <dt>ProRes</dt>
+            <dd>Apple's professional video codec family, widely used in post-production.</dd>
+
+            <dt>Proxy</dt>
+            <dd>Lower-resolution copy of media file for faster editing. Typically H.264 720p or 1080p.</dd>
+
+            <dt>Sample Rate</dt>
+            <dd>Number of audio samples per second, measured in kHz. Common: 44.1, 48, 96, 192 kHz.</dd>
+
+            <dt>Session</dt>
+            <dd>Veriflow project file (.vfsession) that stores workspace state, file references, and metadata.</dd>
+
+            <dt>Timecode</dt>
+            <dd>Time reference embedded in media, format: HH:MM:SS:FF (hours:minutes:seconds:frames).</dd>
+
+            <dt>Transcode</dt>
+            <dd>Convert media from one format/codec to another.</dd>
+
+            <dt>xxHash64</dt>
+            <dd>Fast, non-cryptographic hash function used by Veriflow for file verification.</dd>
+        </dl>
+    </section>
+
+    <!-- APPENDIX B: SUPPORTED FORMATS -->
+    <section id="appendix-b">
+        <h2>Appendix B: Supported Formats</h2>
+
+        <h3>Video Formats (Input)</h3>
+        <table>
+            <tr>
+                <th>Format</th>
+                <th>Extensions</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>MP4</td>
+                <td>.mp4, .m4v</td>
+                <td>H.264, H.265 codecs</td>
+            </tr>
+            <tr>
+                <td>MOV</td>
+                <td>.mov</td>
+                <td>ProRes, H.264, DNxHD</td>
+            </tr>
+            <tr>
+                <td>MXF</td>
+                <td>.mxf</td>
+                <td>Professional broadcast</td>
+            </tr>
+            <tr>
+                <td>AVI</td>
+                <td>.avi</td>
+                <td>Legacy formats</td>
+            </tr>
+            <tr>
+                <td>MKV</td>
+                <td>.mkv</td>
+                <td>Open container</td>
+            </tr>
+        </table>
+
+        <h3>Audio Formats (Input)</h3>
+        <table>
+            <tr>
+                <th>Format</th>
+                <th>Extensions</th>
+                <th>Notes</th>
+            </tr>
+            <tr>
+                <td>WAV</td>
+                <td>.wav</td>
+                <td>PCM, BWF metadata support</td>
+            </tr>
+            <tr>
+                <td>MP3</td>
+                <td>.mp3</td>
+                <td>Compressed audio</td>
+            </tr>
+            <tr>
+                <td>AAC</td>
+                <td>.aac, .m4a</td>
+                <td>Modern compressed</td>
+            </tr>
+            <tr>
+                <td>FLAC</td>
+                <td>.flac</td>
+                <td>Lossless compression</td>
+            </tr>
+        </table>
+
+        <h3>Transcode Output Formats</h3>
+        <table>
+            <tr>
+                <th>Container</th>
+                <th>Video Codecs</th>
+                <th>Audio Codecs</th>
+            </tr>
+            <tr>
+                <td>MP4</td>
+                <td>H.264, H.265</td>
+                <td>AAC</td>
+            </tr>
+            <tr>
+                <td>MOV</td>
+                <td>ProRes, H.264, DNxHD</td>
+                <td>PCM, AAC</td>
+            </tr>
+            <tr>
+                <td>WAV</td>
+                <td>N/A</td>
+                <td>PCM (16/24/32-bit)</td>
+            </tr>
+            <tr>
+                <td>MP3</td>
+                <td>N/A</td>
+                <td>MP3</td>
+            </tr>
+        </table>
+
+        <h3>Session Format</h3>
+        <ul>
+            <li><strong>Extension:</strong> .vfsession</li>
+            <li><strong>Format:</strong> JSON (text-based)</li>
+            <li><strong>Compatibility:</strong> Veriflow 1.0+</li>
+        </ul>
+
+        <h3>Report Format</h3>
+        <ul>
+            <li><strong>Extension:</strong> .pdf</li>
+            <li><strong>Format:</strong> PDF (Portable Document Format)</li>
+            <li><strong>Version:</strong> PDF 1.4+</li>
+        </ul>
+    </section>
+
+    <!-- APPENDIX C: SYSTEM REQUIREMENTS -->
+    <section id="appendix-c">
+        <h2>Appendix C: System Requirements</h2>
+
+        <h3>Minimum Requirements</h3>
+        <table>
+            <tr>
+                <th>Component</th>
+                <th>Requirement</th>
+            </tr>
+            <tr>
+                <td>Operating System</td>
+                <td>Windows 10 (64-bit) or later</td>
+            </tr>
+            <tr>
+                <td>Processor</td>
+                <td>Intel Core i5 (6th gen) or AMD Ryzen 5</td>
+            </tr>
+            <tr>
+                <td>RAM</td>
+                <td>8 GB</td>
+            </tr>
+            <tr>
+                <td>Graphics</td>
+                <td>DirectX 11 compatible GPU</td>
+            </tr>
+            <tr>
+                <td>Storage</td>
+                <td>500 MB for application</td>
+            </tr>
+            <tr>
+                <td>Display</td>
+                <td>1280x720 minimum resolution</td>
+            </tr>
+            <tr>
+                <td>Runtime</td>
+                <td>.NET 8.0 Desktop Runtime</td>
+            </tr>
+        </table>
+
+        <h3>Recommended for Professional Use</h3>
+        <table>
+            <tr>
+                <th>Component</th>
+                <th>Recommendation</th>
+            </tr>
+            <tr>
+                <td>Operating System</td>
+                <td>Windows 11 (64-bit)</td>
+            </tr>
+            <tr>
+                <td>Processor</td>
+                <td>Intel Core i7/i9 (10th gen+) or AMD Ryzen 7/9</td>
+            </tr>
+            <tr>
+                <td>RAM</td>
+                <td>16-32 GB DDR4</td>
+            </tr>
+            <tr>
+                <td>Graphics</td>
+                <td>DirectX 12 compatible, 4GB+ VRAM</td>
+            </tr>
+            <tr>
+                <td>Storage</td>
+                <td>1 TB+ NVMe SSD for working files</td>
+            </tr>
+            <tr>
+                <td>Display</td>
+                <td>1920x1080 or higher</td>
+            </tr>
+            <tr>
+                <td>USB</td>
+                <td>USB 3.1 Gen 2 or Thunderbolt ports</td>
+            </tr>
+        </table>
+
+        <h3>Storage Recommendations</h3>
+
+        <h4>For DIT Workflows</h4>
+        <ul>
+            <li><strong>Working Drive:</strong> 2-4 TB NVMe SSD</li>
+            <li><strong>Backup Drives:</strong> 2x 4-8 TB external SSD or HDD</li>
+            <li><strong>Card Readers:</strong> USB 3.0+ multi-card reader</li>
+        </ul>
+
+        <h4>For Sound Recording</h4>
+        <ul>
+            <li><strong>Working Drive:</strong> 1-2 TB SSD</li>
+            <li><strong>Backup Drives:</strong> 2x 2-4 TB external drives</li>
+        </ul>
+
+        <h3>Network Requirements (Optional)</h3>
+        <ul>
+            <li><strong>For Network Storage:</strong> 1 GbE minimum, 10 GbE recommended</li>
+            <li><strong>For Collaboration:</strong> Shared network drive access</li>
+        </ul>
+
+        <h3>Software Dependencies</h3>
+        <ul>
+            <li><strong>Required:</strong> .NET 8.0 Desktop Runtime (included in installer)</li>
+            <li><strong>Recommended:</strong> Latest Windows updates</li>
+            <li><strong>Recommended:</strong> Updated GPU drivers</li>
+        </ul>
+    </section>
+
+    <!-- APPENDIX D: KEYBOARD SHORTCUTS QUICK REFERENCE -->
+    <section id="appendix-d">
+        <h2>Appendix D: Keyboard Shortcuts Quick Reference</h2>
+
+        <h3>Essential Shortcuts</h3>
+        <table>
+            <tr>
+                <th>Action</th>
+                <th>Shortcut</th>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Navigation</strong></td>
+            </tr>
+            <tr>
+                <td>Secure Copy page</td>
+                <td><span class="kbd">F1</span></td>
+            </tr>
+            <tr>
+                <td>Media page</td>
+                <td><span class="kbd">F2</span></td>
+            </tr>
+            <tr>
+                <td>Player page</td>
+                <td><span class="kbd">F3</span></td>
+            </tr>
+            <tr>
+                <td>Sync page</td>
+                <td><span class="kbd">F4</span></td>
+            </tr>
+            <tr>
+                <td>Transcode page</td>
+                <td><span class="kbd">F5</span></td>
+            </tr>
+            <tr>
+                <td>Report page</td>
+                <td><span class="kbd">F6</span></td>
+            </tr>
+            <tr>
+                <td>Toggle Audio/Video profile</td>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">Tab</span></td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Session</strong></td>
+            </tr>
+            <tr>
+                <td>New Session</td>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">N</span></td>
+            </tr>
+            <tr>
+                <td>Open Session</td>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">O</span></td>
+            </tr>
+            <tr>
+                <td>Save Session</td>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">S</span></td>
+            </tr>
+            <tr>
+                <td>Save Session As</td>
+                <td><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">S</span></td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Player</strong></td>
+            </tr>
+            <tr>
+                <td>Play/Pause</td>
+                <td><span class="kbd">Space</span></td>
+            </tr>
+            <tr>
+                <td>Stop</td>
+                <td><span class="kbd">Enter</span></td>
+            </tr>
+            <tr>
+                <td>Frame/Second Back</td>
+                <td><span class="kbd">←</span></td>
+            </tr>
+            <tr>
+                <td>Frame/Second Forward</td>
+                <td><span class="kbd">→</span></td>
+            </tr>
+            <tr>
+                <td>Go to Start</td>
+                <td><span class="kbd">Home</span></td>
+            </tr>
+            <tr>
+                <td>Go to End</td>
+                <td><span class="kbd">End</span></td>
+            </tr>
+            <tr>
+                <td>Mark In (Video)</td>
+                <td><span class="kbd">I</span></td>
+            </tr>
+            <tr>
+                <td>Mark Out (Video)</td>
+                <td><span class="kbd">O</span></td>
+            </tr>
+            <tr>
+                <td colspan="2"><strong>Application</strong></td>
+            </tr>
+            <tr>
+                <td>Help Manual</td>
+                <td><span class="kbd">F12</span></td>
+            </tr>
+            <tr>
+                <td>Exit</td>
+                <td><span class="kbd">Alt</span>+<span class="kbd">F4</span></td>
+            </tr>
+        </table>
+
+        <div class="info-box tip">
+            <h4>Print This Page</h4>
+            <p>Print this appendix for a quick reference card to keep near your workstation.</p>
+        </div>
+    </section>
+
+    <!-- APPENDIX E: ERROR MESSAGES -->
+    <section id="appendix-e">
+        <h2>Appendix E: Common Error Messages</h2>
+
+        <h3>Copy & Verification Errors</h3>
+
+        <h4>"Insufficient space on destination"</h4>
+        <p><strong>Cause:</strong> Destination drive doesn't have enough free space.</p>
+        <p><strong>Solution:</strong> Free up space or choose different destination.</p>
+
+        <h4>"Hash verification failed"</h4>
+        <p><strong>Cause:</strong> Copied file doesn't match source (corruption during copy).</p>
+        <p><strong>Solution:</strong> Delete corrupted file, retry copy. Check cables and drives.</p>
+
+        <h4>"Access denied"</h4>
+        <p><strong>Cause:</strong> Insufficient permissions on source or destination.</p>
+        <p><strong>Solution:</strong> Run as administrator or check folder permissions.</p>
+
+        <h4>"File in use by another process"</h4>
+        <p><strong>Cause:</strong> Source file is locked by another application.</p>
+        <p><strong>Solution:</strong> Close applications using the file.</p>
+
+        <h3>Media & Playback Errors</h3>
+
+        <h4>"Unable to load media file"</h4>
+        <p><strong>Cause:</strong> File corrupted, unsupported format, or locked.</p>
+        <p><strong>Solution:</strong> Verify file in other player, check format support.</p>
+
+        <h4>"Codec not supported"</h4>
+        <p><strong>Cause:</strong> File uses unsupported codec.</p>
+        <p><strong>Solution:</strong> Transcode to supported format (H.264, ProRes).</p>
+
+        <h4>"No audio device found"</h4>
+        <p><strong>Cause:</strong> No audio output device available.</p>
+        <p><strong>Solution:</strong> Check Windows audio settings, connect speakers/headphones.</p>
+
+        <h3>Sync Errors</h3>
+
+        <h4>"Sync analysis failed"</h4>
+        <p><strong>Cause:</strong> Files incompatible, corrupted, or no overlapping audio.</p>
+        <p><strong>Solution:</strong> Verify files are from same take, contain audio.</p>
+
+        <h4>"Low confidence result"</h4>
+        <p><strong>Cause:</strong> Poor audio match between files.</p>
+        <p><strong>Solution:</strong> Verify files overlap in time, manually check sync.</p>
+
+        <h3>Transcode Errors</h3>
+
+        <h4>"Transcode failed"</h4>
+        <p><strong>Cause:</strong> Source file issue, insufficient space, or codec error.</p>
+        <p><strong>Solution:</strong> Check source file, verify disk space, try different codec.</p>
+
+        <h4>"Output folder not writable"</h4>
+        <p><strong>Cause:</strong> No write permission on output folder.</p>
+        <p><strong>Solution:</strong> Choose different folder or fix permissions.</p>
+
+        <h3>Session Errors</h3>
+
+        <h4>"Unable to open session file"</h4>
+        <p><strong>Cause:</strong> File corrupted or incompatible version.</p>
+        <p><strong>Solution:</strong> Restore from backup or create new session.</p>
+
+        <h4>"Media files not found"</h4>
+        <p><strong>Cause:</strong> Referenced files moved or drives disconnected.</p>
+        <p><strong>Solution:</strong> Connect drives or relocate files.</p>
+
+        <h3>System Errors</h3>
+
+        <h4>"This application requires .NET 8.0 Runtime"</h4>
+        <p><strong>Cause:</strong> Required runtime not installed.</p>
+        <p><strong>Solution:</strong> Download and install .NET 8.0 Desktop Runtime from Microsoft.</p>
+
+        <h4>"Out of memory"</h4>
+        <p><strong>Cause:</strong> Insufficient RAM for operation.</p>
+        <p><strong>Solution:</strong> Close other applications, add more RAM, process smaller files.</p>
+
+        <div class="info-box">
+            <h4>If Error Not Listed</h4>
+            <p>Check application logs (Help → Open Log Folder) for detailed error information. Include log details when
+                reporting issues.</p>
+        </div>
+    </section>
+</section>
+
+            <div class="info-box warning" style="margin-top: 60px;">
+                <h4>?? Manual Completion Status - Phase 1</h4>
+                <p><strong>Completed:</strong> Chapters 1-18 (Parts I-V complete!)</p>
+                <p><strong>Next:</strong> Phase 4 - Chapters 19-20 (Troubleshooting & Support)</p>
+            </div>
+
+
+            <!-- Footer -->
+            <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #3E3E42; color: #666;">
+                <p>Veriflow 1.0 (Beta) - Complete User Manual | © 2025 Veriflow</p>
+                <p>Professional Media Verification & Workflow Management Tool</p>
+            </footer>
+        </main>
+    </div>
+</body>
+
+</html>

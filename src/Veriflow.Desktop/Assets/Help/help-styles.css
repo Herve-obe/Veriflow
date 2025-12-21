@@ -1,0 +1,246 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1E1E1E;
+    color: #E0E0E0;
+    line-height: 1.6;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar Navigation */
+.sidebar {
+    width: 280px;
+    background-color: #252526;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid #3E3E42;
+}
+
+.sidebar h2 {
+    color: #1A4CB1;
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1A4CB1;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar nav li {
+    margin-bottom: 8px;
+}
+
+.sidebar nav a {
+    color: #CCCCCC;
+    text-decoration: none;
+    display: block;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.sidebar nav a:hover {
+    background-color: #2A2D2E;
+    color: #FFFFFF;
+}
+
+.sidebar nav a.active {
+    background-color: #1A4CB1;
+    color: #FFFFFF;
+}
+
+.sidebar nav ul ul {
+    margin-left: 15px;
+    margin-top: 5px;
+}
+
+.sidebar nav ul ul a {
+    font-size: 13px;
+    color: #999999;
+}
+
+/* Main Content */
+.content {
+    flex: 1;
+    padding: 40px 60px;
+    overflow-y: auto;
+    max-width: 900px;
+}
+
+.content h1 {
+    color: #FFFFFF;
+    font-size: 32px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 3px solid #1A4CB1;
+    padding-bottom: 15px;
+}
+
+.content h2 {
+    color: #1A4CB1;
+    font-size: 24px;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    padding-top: 20px;
+}
+
+.content h3 {
+    color: #4A9EFF;
+    font-size: 18px;
+    margin-top: 25px;
+    margin-bottom: 12px;
+}
+
+.content h4 {
+    color: #CCCCCC;
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.content p {
+    margin-bottom: 15px;
+    color: #CCCCCC;
+}
+
+.content ul, .content ol {
+    margin-bottom: 15px;
+    padding-left: 25px;
+}
+
+.content li {
+    margin-bottom: 8px;
+    color: #CCCCCC;
+}
+
+.content a {
+    color: #4A9EFF;
+    text-decoration: none;
+}
+
+.content a:hover {
+    text-decoration: underline;
+}
+
+/* Code blocks */
+.content code {
+    background-color: #2D2D30;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    color: #CE9178;
+}
+
+.content pre {
+    background-color: #2D2D30;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    border-left: 3px solid #1A4CB1;
+}
+
+.content pre code {
+    background: none;
+    padding: 0;
+    color: #D4D4D4;
+}
+
+/* Tables */
+.content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #252526;
+}
+
+.content th {
+    background-color: #1A4CB1;
+    color: #FFFFFF;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.content td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #3E3E42;
+}
+
+.content tr:hover {
+    background-color: #2A2D2E;
+}
+
+/* Info boxes */
+.info-box {
+    background-color: #2D2D30;
+    border-left: 4px solid #1A4CB1;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+
+.info-box.warning {
+    border-left-color: #E64B3D;
+}
+
+.info-box.tip {
+    border-left-color: #4CAF50;
+}
+
+.info-box h4 {
+    margin-top: 0;
+    color: #FFFFFF;
+}
+
+/* Keyboard shortcuts */
+.kbd {
+    display: inline-block;
+    padding: 3px 8px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    color: #FFFFFF;
+    background-color: #3E3E42;
+    border: 1px solid #5A5A5A;
+    border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1E1E1E;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3E3E42;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4A4A4A;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Section spacing */
+section {
+    margin-bottom: 50px;
+}

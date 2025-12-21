@@ -877,46 +877,14 @@ namespace Veriflow.Desktop.ViewModels
         {
             try
             {
-                var docsFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "docs");
-                var helpPath = Path.Combine(docsFolder, "Veriflow_User_Guide.pdf");
-                
-                // Create docs folder if it doesn't exist
-                if (!Directory.Exists(docsFolder))
-                {
-                    Directory.CreateDirectory(docsFolder);
-                }
-
-                // Generate PDF if it doesn't exist
-                if (!File.Exists(helpPath))
-                {
-                    var result = MessageBox.Show(
-                        "User guide PDF not found. Would you like to generate it now?\n\nThis will create a basic user guide.",
-                        "Generate User Guide",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question);
-
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        Services.DocumentationService.GenerateUserGuidePDF(helpPath);
-                        MessageBox.Show(
-                            "User guide generated successfully!",
-                            "Success",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
-                // Open PDF
-                Process.Start(new ProcessStartInfo(helpPath) { UseShellExecute = true });
+                var helpWindow = new Views.HelpWindow();
+                helpWindow.Owner = Application.Current.MainWindow;
+                helpWindow.Show();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Error opening help documentation:\n{ex.Message}",
+                    $"Error opening help window:\n{ex.Message}",
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
