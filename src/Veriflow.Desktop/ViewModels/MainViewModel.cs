@@ -114,6 +114,10 @@ namespace Veriflow.Desktop.ViewModels
         public ICommand ViewHelpCommand { get; }
         public ICommand ShowKeyboardShortcutsCommand { get; }
         public ICommand OpenLogFolderCommand { get; }
+        
+        // Recent Files
+        [ObservableProperty]
+        private System.Collections.ObjectModel.ObservableCollection<RecentFileEntry> _recentFiles = new();
 
         public MainViewModel()
         {
@@ -325,6 +329,12 @@ namespace Veriflow.Desktop.ViewModels
 
             // Expose CommandHistory to ReportsViewModel
             _reportsViewModel.ExecuteCommandCallback = (cmd) => _commandHistory.ExecuteCommand(cmd);
+            
+            // Load recent files
+            LoadRecentFiles();
+            
+            // Subscribe to recent files changes
+            Services.RecentFilesService.Instance.RecentFilesChanged += OnRecentFilesChanged;
         }
 
         private void NavigateTo(PageType page)
@@ -592,8 +602,102 @@ namespace Veriflow.Desktop.ViewModels
         public bool IsAudioActive => CurrentAppMode == AppMode.Audio;
         public bool IsVideoActive => CurrentAppMode == AppMode.Video;
 
+        // ========================================================================
+        // RECENT FILES
+        // ========================================================================
+
+        private void LoadRecentFiles()
+        {
+            var files = Services.RecentFilesService.Instance.GetRecentFiles();
+            RecentFiles.Clear();
+            foreach (var file in files)
+            {
+                RecentFiles.Add(file);
+            }
+        }
+
+        private void OnRecentFilesChanged(object? sender, EventArgs e)
+        {
+            // Update on UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                LoadRecentFiles();
+            });
+        }
+
+        [RelayCommand]
+        private void OpenRecentFile(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            {
+                // File no longer exists, it will be filtered out automatically on next load
+                MessageBox.Show(
+                    $"File not found:\n{filePath}",
+                    "File Not Found",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                
+                // Refresh the list to remove non-existent files
+                LoadRecentFiles();
+                return;
+            }
+
+            // Determine file type and open in appropriate player
+            var extension = Path.GetExtension(filePath).ToLower();
+
+            // Audio extensions
+            var audioExtensions = new[] { ".wav", ".mp3", ".m4a", ".aac", ".aiff", ".aif", ".flac", ".ogg", ".opus", ".ac3" };
+
+            if (audioExtensions.Contains(extension))
+            {
+                // Switch to audio mode and open in audio player
+                SwitchToAudio();
+                ShowPlayer();
+
+                if (CurrentView is AudioPlayerViewModel audioPlayer)
+                {
+                    _ = audioPlayer.LoadAudio(filePath);
+                }
+            }
+            else
+            {
+                // Assume video, switch to video mode and open in video player
+                SwitchToVideo();
+                ShowPlayer();
+
+                if (CurrentView is VideoPlayerViewModel videoPlayer)
+                {
+                    _ = videoPlayer.LoadVideo(filePath);
+                }
+            }
+        }
+
+        private void SwitchToAudio()
+        {
+            if (CurrentAppMode != AppMode.Audio)
+            {
+                SwitchToAudioCommand.Execute(null);
+            }
+        }
+
+        private void SwitchToVideo()
+        {
+            if (CurrentAppMode != AppMode.Video)
+            {
+                SwitchToVideoCommand.Execute(null);
+            }
+        }
+
+        private void ShowPlayer()
+        {
+            NavigateTo(PageType.Player);
+        }
+
         public void Dispose()
         {
+            // Unsubscribe from recent files
+            Services.RecentFilesService.Instance.RecentFilesChanged -= OnRecentFilesChanged;
+            
             // Dispose ViewModels with IDisposable (those with timers and media resources)
             _audioViewModel?.Dispose();
             _videoPlayerViewModel?.Dispose();

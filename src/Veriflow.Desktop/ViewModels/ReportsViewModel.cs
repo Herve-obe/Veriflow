@@ -265,9 +265,49 @@ namespace Veriflow.Desktop.ViewModels
         }
 
         [RelayCommand]
-        private void AddFiles()
+        private async System.Threading.Tasks.Task AddFiles()
         {
-            // TODO: Implement file picker
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Multiselect = true,
+                Title = CurrentReportType == ReportType.Audio ? "Select Audio Files" : "Select Video Files",
+                Filter = CurrentReportType == ReportType.Audio 
+                    ? "Audio Files (*.wav;*.mp3;*.aac;*.flac;*.m4a)|*.wav;*.mp3;*.aac;*.flac;*.m4a|All Files (*.*)|*.*"
+                    : "Video Files (*.mp4;*.mov;*.mxf;*.avi;*.mkv)|*.mp4;*.mov;*.mxf;*.avi;*.mkv|All Files (*.*)|*.*"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                var mediaItems = new List<MediaItemViewModel>();
+                
+                foreach (var filePath in dialog.FileNames)
+                {
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        var fileInfo = new System.IO.FileInfo(filePath);
+                        var mediaItem = new MediaItemViewModel(fileInfo);
+                        
+                        // Load metadata asynchronously
+                        await mediaItem.LoadMetadata();
+                        
+                        mediaItems.Add(mediaItem);
+                    }
+                }
+
+                if (mediaItems.Any())
+                {
+                    if (!IsReportActive)
+                    {
+                        // Create new report with selected files
+                        CreateReport(mediaItems, CurrentReportType);
+                    }
+                    else
+                    {
+                        // Add to existing report
+                        AddToReport(mediaItems);
+                    }
+                }
+            }
         }
 
         [RelayCommand(CanExecute = nameof(HasMedia))]

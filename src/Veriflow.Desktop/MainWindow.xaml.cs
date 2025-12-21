@@ -11,9 +11,22 @@ namespace Veriflow.Desktop;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    public MainWindow(Models.AppSettings settings)
     {
         InitializeComponent();
+        
+        // Restore window state from settings
+        if (settings.WindowWidth > 0 && settings.WindowHeight > 0)
+        {
+            Width = settings.WindowWidth;
+            Height = settings.WindowHeight;
+        }
+        
+        if (settings.WindowMaximized)
+        {
+            WindowState = WindowState.Maximized;
+        }
+        
         DataContext = new MainViewModel();
         
         // Load icon programmatically to prevent random taskbar icon issues
@@ -156,6 +169,28 @@ public partial class MainWindow : Window
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
         base.OnClosing(e);
+        
+        // Save window state before closing
+        try
+        {
+            var settings = Services.SettingsService.Instance.GetSettings();
+            
+            // Save actual window dimensions (not maximized dimensions)
+            if (WindowState == WindowState.Normal)
+            {
+                settings.WindowWidth = ActualWidth;
+                settings.WindowHeight = ActualHeight;
+            }
+            
+            settings.WindowMaximized = WindowState == WindowState.Maximized;
+            
+            Services.SettingsService.Instance.SaveSettings(settings);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to save window state: {ex.Message}");
+            // Don't block closing if save fails
+        }
         
         // Dispose MainViewModel and all its child ViewModels
         // This stops all timers and releases media resources

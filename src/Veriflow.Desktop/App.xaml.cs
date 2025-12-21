@@ -29,7 +29,10 @@ public partial class App : Application
             // Initialize Video Engine (LibVLC) - Single instance
             Services.VideoEngineService.Instance.Initialize();
 
-            var mainWindow = new MainWindow();
+            // Load application settings
+            var settings = Services.SettingsService.Instance.GetSettings();
+
+            var mainWindow = new MainWindow(settings);
             mainWindow.Show();
         }
         catch (Exception ex)

@@ -18,7 +18,7 @@ namespace Veriflow.Desktop.Models
         // Window State
         public double WindowWidth { get; set; } = 1280;
         public double WindowHeight { get; set; } = 720;
-        public bool WindowMaximized { get; set; } = false;
+        public bool WindowMaximized { get; set; } = true; // Default to maximized on first run
 
         // Theme Settings (for future use)
         public string ThemeName { get; set; } = "Dark";

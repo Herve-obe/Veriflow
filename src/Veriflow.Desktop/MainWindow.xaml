@@ -7,7 +7,6 @@
         xmlns:local="clr-namespace:Veriflow.Desktop.Views"
         mc:Ignorable="d"
         Title="Veriflow" Height="800" Width="1200"
-        WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         TextElement.FontFamily="Segoe UI"
         Background="{Binding ApplicationBackground}">
@@ -65,6 +64,31 @@
                 <MenuItem Header="New Session" InputGestureText="Ctrl+N" Command="{Binding NewSessionCommand}"/>
                 <MenuItem Header="Open Session..." InputGestureText="Ctrl+O" Command="{Binding OpenSessionCommand}"/>
                 <MenuItem Header="Save Session" InputGestureText="Ctrl+S" Command="{Binding SaveSessionCommand}"/>
+                <Separator/>
+                
+                <!-- Recent Files Submenu -->
+                <MenuItem Header="Recent Files" ItemsSource="{Binding RecentFiles}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="{Binding DisplayName}"/>
+                            <Setter Property="Command" Value="{Binding DataContext.OpenRecentFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            <Setter Property="CommandParameter" Value="{Binding FilePath}"/>
+                            <Setter Property="ToolTip" Value="{Binding FilePath}"/>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem">
+                            <Style.Triggers>
+                                <!-- Show "No recent files" when empty -->
+                                <DataTrigger Binding="{Binding RecentFiles.Count}" Value="0">
+                                    <Setter Property="Header" Value="Recent Files (None)"/>
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+                
                 <Separator/>
                 <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}"/>
                 <Separator/>

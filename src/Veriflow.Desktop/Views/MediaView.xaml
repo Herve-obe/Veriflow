@@ -204,6 +204,27 @@
                     </StackPanel>
                 </Grid>
 
+                <!-- Progress Indicator -->
+                <Grid Margin="0,0,0,10" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Text="{Binding BusyMessage}" 
+                               Foreground="{StaticResource Brush.Text.Secondary}" 
+                               FontSize="12" 
+                               Margin="0,0,0,5"
+                               HorizontalAlignment="Center"/>
+                    
+                    <ProgressBar Grid.Row="1" 
+                                 IsIndeterminate="True" 
+                                 Height="3" 
+                                 Background="{StaticResource Brush.Panel}"
+                                 Foreground="{DynamicResource Brush.Accent}"
+                                 BorderThickness="0"/>
+                </Grid>
+
                 <!-- MODE 1: GRID VIEW (Icon Grid) -->
                 <ListBox Grid.Row="1" ItemsSource="{Binding FileList}" 
                          SelectedItem="{Binding SelectedMedia}"
