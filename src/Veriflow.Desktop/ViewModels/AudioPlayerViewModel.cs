@@ -646,6 +646,84 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
+        // --- FRAME NAVIGATION COMMANDS (Same as Video Player) ---
+
+        [RelayCommand]
+        private void PreviousFrame()
+        {
+            if (_inputStream != null && IsAudioLoaded)
+            {
+                // Calculate Frame Duration in seconds (1 / FPS)
+                double secondsPerFrame = 1.0 / _fps;
+                
+                var currentTime = _inputStream.GetPosition();
+                var targetTime = currentTime.Subtract(TimeSpan.FromSeconds(secondsPerFrame));
+                
+                // Clamp to 0
+                if (targetTime < TimeSpan.Zero) targetTime = TimeSpan.Zero;
+                
+                _inputStream.SetPosition(targetTime);
+                PlaybackPosition = targetTime.TotalSeconds;
+                CurrentTimeDisplay = FormatTimecode(targetTime);
+            }
+        }
+
+        [RelayCommand]
+        private void NextFrame()
+        {
+            if (_inputStream != null && IsAudioLoaded)
+            {
+                // Calculate Frame Duration in seconds (1 / FPS)
+                double secondsPerFrame = 1.0 / _fps;
+                
+                var currentTime = _inputStream.GetPosition();
+                var targetTime = currentTime.Add(TimeSpan.FromSeconds(secondsPerFrame));
+                
+                // Clamp to length
+                var length = _inputStream.GetLength();
+                if (targetTime > length) targetTime = length;
+                
+                _inputStream.SetPosition(targetTime);
+                PlaybackPosition = targetTime.TotalSeconds;
+                CurrentTimeDisplay = FormatTimecode(targetTime);
+            }
+        }
+
+        [RelayCommand]
+        private void Rewind()
+        {
+            if (_inputStream != null && IsAudioLoaded)
+            {
+                var currentTime = _inputStream.GetPosition();
+                var targetTime = currentTime.Subtract(TimeSpan.FromSeconds(5)); // 5 second jump
+                
+                // Clamp to 0
+                if (targetTime < TimeSpan.Zero) targetTime = TimeSpan.Zero;
+                
+                _inputStream.SetPosition(targetTime);
+                PlaybackPosition = targetTime.TotalSeconds;
+                CurrentTimeDisplay = FormatTimecode(targetTime);
+            }
+        }
+
+        [RelayCommand]
+        private void Forward()
+        {
+            if (_inputStream != null && IsAudioLoaded)
+            {
+                var currentTime = _inputStream.GetPosition();
+                var targetTime = currentTime.Add(TimeSpan.FromSeconds(5)); // 5 second jump
+                
+                // Clamp to length
+                var length = _inputStream.GetLength();
+                if (targetTime > length) targetTime = length;
+                
+                _inputStream.SetPosition(targetTime);
+                PlaybackPosition = targetTime.TotalSeconds;
+                CurrentTimeDisplay = FormatTimecode(targetTime);
+            }
+        }
+
         // --- FILE NAVIGATION COMMANDS ---
 
         [RelayCommand(CanExecute = nameof(CanNavigatePrevious))]

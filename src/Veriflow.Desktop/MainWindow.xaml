@@ -33,10 +33,6 @@
         <!-- Profile Toggle -->
         <KeyBinding Key="Tab" Modifiers="Ctrl" Command="{Binding ToggleAudioVideoModeCommand}"/>
         
-        <!-- Player Navigation (Previous/Next) - Binds to CurrentView which is the active PlayerViewModel -->
-        <KeyBinding Key="Left" Modifiers="Ctrl" Command="{Binding CurrentView.NavigatePreviousCommand}"/>
-        <KeyBinding Key="Right" Modifiers="Ctrl" Command="{Binding CurrentView.NavigateNextCommand}"/>
-        
         <!-- Help Menu -->
         <KeyBinding Key="F12" Command="{Binding ViewHelpCommand}"/>
     </Window.InputBindings>

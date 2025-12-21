@@ -28,13 +28,17 @@
         <KeyBinding Key="Space" Command="{Binding TogglePlayPauseCommand}"/>
         <KeyBinding Key="Return" Command="{Binding StopCommand}"/>
         
-        <!-- Standard Video Navigation -->
-        <KeyBinding Key="Left" Command="{Binding PreviousFrameCommand}"/> <!-- Single Step Fallback -->
-        <KeyBinding Key="Right" Command="{Binding NextFrameCommand}"/>    <!-- Single Step Fallback -->
+        <!-- Frame Navigation (Single Step) -->
+        <KeyBinding Key="Left" Command="{Binding PreviousFrameCommand}"/>
+        <KeyBinding Key="Right" Command="{Binding NextFrameCommand}"/>
         
         <!-- Large Jumps -->
         <KeyBinding Key="Left" Modifiers="Shift" Command="{Binding RewindCommand}"/>
         <KeyBinding Key="Right" Modifiers="Shift" Command="{Binding ForwardCommand}"/>
+        
+        <!-- File Navigation (Previous/Next) -->
+        <KeyBinding Key="Left" Modifiers="Ctrl" Command="{Binding NavigatePreviousCommand}"/>
+        <KeyBinding Key="Right" Modifiers="Ctrl" Command="{Binding NavigateNextCommand}"/>
         
         <!-- Logging Shortcuts -->
         <KeyBinding Key="I" Command="{Binding SetInCommand}"/>
