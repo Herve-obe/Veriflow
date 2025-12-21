@@ -4152,6 +4152,16 @@
 
     <!-- JavaScript for Enhanced Functionality -->
     <script>
+        // Prevent WebView2 from showing URL in status bar
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('mouseenter', function (e) {
+                window.status = '';
+            });
+            link.addEventListener('mouseleave', function (e) {
+                window.status = '';
+            });
+        });
+
         // Smooth scrolling for all anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {

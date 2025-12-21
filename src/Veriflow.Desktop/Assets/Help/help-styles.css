@@ -7,6 +7,20 @@ body {
     line-height: 1.6;
 }
 
+/* Hide URL tooltip/status bar on link hover */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+/* Prevent browser from showing link destination */
+a[href]::after {
+    content: none !important;
+}
+
 .container {
     display: flex;
     height: 100vh;

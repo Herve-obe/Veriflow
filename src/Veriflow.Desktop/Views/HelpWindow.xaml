@@ -6,11 +6,124 @@
         Height="700" 
         Width="1000"
         WindowStartupLocation="CenterOwner"
-        Background="#1E1E1E">
+        WindowStyle="None"
+        AllowsTransparency="False"
+        ResizeMode="CanResize"
+        Background="{StaticResource Brush.Background}">
     
-    <Grid>
-        <wv2:WebView2 x:Name="WebView" 
-                      Source="about:blank"
-                      DefaultBackgroundColor="#1E1E1E"/>
-    </Grid>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      ResizeBorderThickness="5"
+                      GlassFrameThickness="0"
+                      CornerRadius="0"/>
+    </WindowChrome.WindowChrome>
+    
+    <Border BorderBrush="{StaticResource Brush.Border}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Custom Title Bar -->
+            <Border Grid.Row="0" Background="{StaticResource Brush.Panel}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Title -->
+                    <TextBlock Grid.Column="0" 
+                               Text="Veriflow User Guide" 
+                               VerticalAlignment="Center" 
+                               Margin="10,0"
+                               Foreground="{StaticResource Brush.Text}"
+                               FontSize="12"/>
+                    
+                    <!-- Window Buttons -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <!-- Minimize Button -->
+                        <Button Content="─" 
+                                Width="46" Height="32"
+                                Style="{StaticResource {x:Type Button}}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="{StaticResource Brush.Text}"
+                                FontSize="14"
+                                Click="MinimizeButton_Click"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="{StaticResource Brush.Control.Hover}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        
+                        <!-- Maximize/Restore Button -->
+                        <Button x:Name="MaximizeButton" Content="☐" 
+                                Width="46" Height="32"
+                                Style="{StaticResource {x:Type Button}}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="{StaticResource Brush.Text}"
+                                FontSize="14"
+                                Click="MaximizeButton_Click"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="{StaticResource Brush.Control.Hover}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        
+                        <!-- Close Button -->
+                        <Button Content="✕" 
+                                Width="46" Height="32"
+                                Style="{StaticResource {x:Type Button}}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="{StaticResource Brush.Text}"
+                                FontSize="14"
+                                Click="CloseButton_Click"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#E64B3D"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- WebView Content -->
+            <wv2:WebView2 x:Name="WebView" 
+                          Grid.Row="1"
+                          Source="about:blank"
+                          DefaultBackgroundColor="#1E1E1E"/>
+        </Grid>
+    </Border>
 </Window>

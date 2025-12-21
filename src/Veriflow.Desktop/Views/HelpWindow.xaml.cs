@@ -11,6 +11,9 @@ namespace Veriflow.Desktop.Views
         {
             InitializeComponent();
             InitializeWebView();
+            
+            // Update maximize button icon based on window state
+            StateChanged += (s, e) => UpdateMaximizeButtonIcon();
         }
 
         private async void InitializeWebView()
@@ -18,6 +21,10 @@ namespace Veriflow.Desktop.Views
             try
             {
                 await WebView.EnsureCoreWebView2Async(null);
+
+                // Disable status bar (prevents URL display on hover)
+                WebView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+                WebView.CoreWebView2.Settings.IsStatusBarEnabled = false;
 
                 // Get path to HTML file
                 var htmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Help", "UserGuide.html");
@@ -62,6 +69,37 @@ namespace Veriflow.Desktop.Views
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        // Window control button handlers
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                WindowState = WindowState.Normal;
+            }
+            else
+            {
+                WindowState = WindowState.Maximized;
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void UpdateMaximizeButtonIcon()
+        {
+            if (MaximizeButton != null)
+            {
+                MaximizeButton.Content = WindowState == WindowState.Maximized ? "❐" : "☐";
             }
         }
     }
