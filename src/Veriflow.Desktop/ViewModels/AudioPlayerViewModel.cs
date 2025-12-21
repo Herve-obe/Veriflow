@@ -88,6 +88,8 @@ namespace Veriflow.Desktop.ViewModels
         private bool _isPaused;
 
         // --- FILE NAVIGATION ---
+        private readonly FileNavigationService _fileNavigationService = new();
+        private static readonly string[] AudioExtensions = { ".wav", ".mp3", ".aif", ".aiff", ".flac", ".m4a", ".aac", ".ogg" };
         private List<string> _siblingFiles = new();
         private int _currentFileIndex = -1;
 
@@ -750,38 +752,11 @@ namespace Veriflow.Desktop.ViewModels
 
         private void UpdateSiblingFiles(string currentPath)
         {
-            try
-            {
-                var directory = System.IO.Path.GetDirectoryName(currentPath);
-                if (string.IsNullOrEmpty(directory) || !System.IO.Directory.Exists(directory))
-                {
-                    _siblingFiles.Clear();
-                    _currentFileIndex = -1;
-                    NavigatePreviousCommand.NotifyCanExecuteChanged();
-                    NavigateNextCommand.NotifyCanExecuteChanged();
-                    return;
-                }
-
-                // Get all audio files in the directory
-                var audioExtensions = new[] { ".wav", ".mp3", ".aif", ".aiff", ".flac", ".m4a", ".aac", ".ogg" };
-                var files = System.IO.Directory.GetFiles(directory)
-                    .Where(f => audioExtensions.Contains(System.IO.Path.GetExtension(f).ToLower()))
-                    .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-
-                _siblingFiles = files;
-                _currentFileIndex = files.FindIndex(f => f.Equals(currentPath, StringComparison.OrdinalIgnoreCase));
-
-                // Update command states
-                NavigatePreviousCommand.NotifyCanExecuteChanged();
-                NavigateNextCommand.NotifyCanExecuteChanged();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"UpdateSiblingFiles error: {ex.Message}");
-                _siblingFiles.Clear();
-                _currentFileIndex = -1;
-            }
+            (_siblingFiles, _currentFileIndex) = _fileNavigationService.GetSiblingFiles(currentPath, AudioExtensions);
+            
+            // Update command states
+            NavigatePreviousCommand.NotifyCanExecuteChanged();
+            NavigateNextCommand.NotifyCanExecuteChanged();
         }
     }
 }

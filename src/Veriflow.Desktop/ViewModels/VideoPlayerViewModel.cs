@@ -170,7 +170,9 @@ namespace Veriflow.Desktop.ViewModels
         public event Action? FlashMarkOutButton;
         public event Action? FlashTagClipButton;
 
-        // File Navigation
+        // --- FILE NAVIGATION ---
+        private readonly FileNavigationService _fileNavigationService = new();
+        private static readonly string[] VideoExtensions = { ".mov", ".mp4", ".mxf", ".avi", ".mkv", ".m4v", ".mpg", ".mpeg" };
         private List<string> _siblingFiles = new();
         private int _currentFileIndex = -1;
 
@@ -1132,15 +1134,9 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(CanNavigatePrevious))]
         private async Task NavigatePrevious()
         {
-            System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigatePrevious CALLED: currentIndex={_currentFileIndex}, siblingCount={_siblingFiles.Count}");
             if (_currentFileIndex > 0)
             {
-                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigatePrevious: Loading {_siblingFiles[_currentFileIndex - 1]}");
                 await LoadVideo(_siblingFiles[_currentFileIndex - 1]);
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigatePrevious: Cannot navigate (at first file)");
             }
         }
 
@@ -1149,15 +1145,9 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(CanNavigateNext))]
         private async Task NavigateNext()
         {
-            System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigateNext CALLED: currentIndex={_currentFileIndex}, siblingCount={_siblingFiles.Count}");
             if (_currentFileIndex < _siblingFiles.Count - 1)
             {
-                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigateNext: Loading {_siblingFiles[_currentFileIndex + 1]}");
                 await LoadVideo(_siblingFiles[_currentFileIndex + 1]);
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigateNext: Cannot navigate (at last file)");
             }
         }
 
@@ -1165,38 +1155,11 @@ namespace Veriflow.Desktop.ViewModels
 
         private void UpdateSiblingFiles(string currentPath)
         {
-            try
-            {
-                var directory = System.IO.Path.GetDirectoryName(currentPath);
-                if (string.IsNullOrEmpty(directory) || !System.IO.Directory.Exists(directory))
-                {
-                    _siblingFiles.Clear();
-                    _currentFileIndex = -1;
-                    NavigatePreviousCommand.NotifyCanExecuteChanged();
-                    NavigateNextCommand.NotifyCanExecuteChanged();
-                    return;
-                }
-
-                // Get all video files in the directory
-                var videoExtensions = new[] { ".mov", ".mp4", ".mxf", ".avi", ".mkv", ".m4v", ".mpg", ".mpeg" };
-                var files = System.IO.Directory.GetFiles(directory)
-                    .Where(f => videoExtensions.Contains(System.IO.Path.GetExtension(f).ToLower()))
-                    .OrderBy(f => f, StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-
-                _siblingFiles = files;
-                _currentFileIndex = files.FindIndex(f => f.Equals(currentPath, StringComparison.OrdinalIgnoreCase));
-
-                // Update command states
-                NavigatePreviousCommand.NotifyCanExecuteChanged();
-                NavigateNextCommand.NotifyCanExecuteChanged();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"UpdateSiblingFiles error: {ex.Message}");
-                _siblingFiles.Clear();
-                _currentFileIndex = -1;
-            }
+            (_siblingFiles, _currentFileIndex) = _fileNavigationService.GetSiblingFiles(currentPath, VideoExtensions);
+            
+            // Update command states
+            NavigatePreviousCommand.NotifyCanExecuteChanged();
+            NavigateNextCommand.NotifyCanExecuteChanged();
         }
 
         private string FormatTimecodeForEdl(TimeSpan ts)
