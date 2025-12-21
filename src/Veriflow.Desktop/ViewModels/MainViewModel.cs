@@ -84,6 +84,7 @@ namespace Veriflow.Desktop.ViewModels
         private readonly SyncViewModel _syncViewModel;
         private readonly ReportsViewModel _reportsViewModel;
         private readonly SessionViewModel _sessionViewModel;
+        private readonly Services.CommandHistory _commandHistory = new();
 
         public ICommand ShowPlayerCommand { get; }
         public ICommand ShowMediaCommand { get; }
@@ -597,25 +598,17 @@ namespace Veriflow.Desktop.ViewModels
         // EDIT MENU COMMANDS
         // ========================================================================
 
-        private bool CanUndo() => false; // TODO: Implement undo stack
-        private bool CanRedo() => false; // TODO: Implement redo stack
+        private bool CanUndo() => _commandHistory.CanUndo;
+        private bool CanRedo() => _commandHistory.CanRedo;
 
         private void Undo()
         {
-            MessageBox.Show(
-                "Undo functionality is not yet implemented.",
-                "Undo",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            _commandHistory.Undo();
         }
 
         private void Redo()
         {
-            MessageBox.Show(
-                "Redo functionality is not yet implemented.",
-                "Redo",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            _commandHistory.Redo();
         }
 
         private bool CanCutCopy()
