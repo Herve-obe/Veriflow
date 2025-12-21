@@ -28,9 +28,8 @@
         <KeyBinding Key="Space" Command="{Binding TogglePlayPauseCommand}"/>
         <KeyBinding Key="Return" Command="{Binding StopCommand}"/>
         
-        <!-- Frame Navigation (Single Step) -->
-        <KeyBinding Key="Left" Command="{Binding PreviousFrameCommand}"/>
-        <KeyBinding Key="Right" Command="{Binding NextFrameCommand}"/>
+        <!-- Frame Navigation handled by PreviewKeyDown/KeyUp jog system -->
+        <!-- Left/Right without modifiers removed to avoid conflict with jog -->
         
         <!-- Large Jumps -->
         <KeyBinding Key="Left" Modifiers="Shift" Command="{Binding RewindCommand}"/>

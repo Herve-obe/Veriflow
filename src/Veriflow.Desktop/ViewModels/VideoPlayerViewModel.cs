@@ -670,6 +670,8 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand]
         private void KeyDown(KeyEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Key={e.Key}, Modifiers={e.KeyboardDevice.Modifiers}, IsRepeat={e.IsRepeat}");
+            
             // Ignore OS key repeat to maintain our own timer-based cadence
             if (e.IsRepeat)
             {
@@ -680,16 +682,19 @@ namespace Veriflow.Desktop.ViewModels
             // Ignore arrow keys when Ctrl is pressed (for Previous/Next navigation)
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Ctrl detected, letting InputBindings handle it");
                 return; // Let InputBindings handle Ctrl+Arrow
             }
 
             if (e.Key == Key.Right)
             {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Starting jog RIGHT");
                 StartJog(1);
                 e.Handled = true;
             }
             else if (e.Key == Key.Left)
             {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Starting jog LEFT");
                 StartJog(-1);
                 e.Handled = true;
             }
@@ -698,14 +703,18 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand]
         private void KeyUp(KeyEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyUp: Key={e.Key}, Modifiers={e.KeyboardDevice.Modifiers}");
+            
             // Ignore arrow keys when Ctrl is pressed (for Previous/Next navigation)
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyUp: Ctrl detected, letting InputBindings handle it");
                 return; // Let InputBindings handle Ctrl+Arrow
             }
 
             if (e.Key == Key.Right || e.Key == Key.Left)
             {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyUp: Stopping jog");
                 StopJog();
                 e.Handled = true;
             }
@@ -1140,9 +1149,15 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(CanNavigatePrevious))]
         private async Task NavigatePrevious()
         {
+            System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigatePrevious CALLED: currentIndex={_currentFileIndex}, siblingCount={_siblingFiles.Count}");
             if (_currentFileIndex > 0)
             {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigatePrevious: Loading {_siblingFiles[_currentFileIndex - 1]}");
                 await LoadVideo(_siblingFiles[_currentFileIndex - 1]);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigatePrevious: Cannot navigate (at first file)");
             }
         }
 
@@ -1151,9 +1166,15 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(CanNavigateNext))]
         private async Task NavigateNext()
         {
+            System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigateNext CALLED: currentIndex={_currentFileIndex}, siblingCount={_siblingFiles.Count}");
             if (_currentFileIndex < _siblingFiles.Count - 1)
             {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigateNext: Loading {_siblingFiles[_currentFileIndex + 1]}");
                 await LoadVideo(_siblingFiles[_currentFileIndex + 1]);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] NavigateNext: Cannot navigate (at last file)");
             }
         }
 
