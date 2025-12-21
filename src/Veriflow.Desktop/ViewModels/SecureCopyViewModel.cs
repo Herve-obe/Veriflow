@@ -26,6 +26,21 @@ namespace Veriflow.Desktop.ViewModels
 
         // --- PROPERTIES ---
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsOffloadMode))]
+        private bool _isVerifyMode;
+
+        public bool IsOffloadMode => !IsVerifyMode;
+
+        [RelayCommand] private void SwitchToOffload() => IsVerifyMode = false;
+        [RelayCommand] private void SwitchToVerify() => IsVerifyMode = true;
+
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(StartVerifyCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ResetAllCommand))]
+        private string? _verifyPath;
+
         // FIX 1: REMOVE ATTRIBUTES & IMPLEMENT MANUAL NOTIFICATION
         [ObservableProperty]
         private bool _isBusy;
@@ -95,6 +110,88 @@ namespace Veriflow.Desktop.ViewModels
         }
 
         // --- COMMANDS ---
+
+        private bool CanVerify() => !IsBusy && !string.IsNullOrEmpty(VerifyPath) && Directory.Exists(VerifyPath);
+
+        [RelayCommand(CanExecute = nameof(CanVerify))]
+        private async Task StartVerify()
+        {
+            if (!CanVerify()) return;
+
+            IsBusy = true;
+            IsCancelling = false;
+            _cts = new CancellationTokenSource();
+            FilesCopiedCount = 0;
+            ErrorsCount = 0;
+            LogText = "Starting Verification...";
+            ProgressValue = 0;
+            TimeRemainingDisplay = "Calculating...";
+            CurrentHashDisplay = "xxHash64: -";
+
+            try
+            {
+                var mhlService = new MhlService();
+                var progress = new Progress<CopyProgress>(p =>
+                {
+                    ProgressValue = p.Percentage;
+                    CurrentSpeedDisplay = $"{p.TransferSpeedMbPerSec:F1} MB/s";
+                    TimeRemainingDisplay = "Verifying..."; 
+                    // Could add proper time calc here but simplistic for now
+                    LogText = p.Status;
+                });
+
+                var results = await mhlService.VerifyMhlAsync(VerifyPath!, progress, _cts.Token);
+                
+                // Process Results
+                int successCount = results.Count(r => r.Success);
+                int failCount = results.Count(r => !r.Success);
+                FilesCopiedCount = successCount;
+                ErrorsCount = failCount;
+
+                UpdateUI(() =>
+                {
+                    IsBusy = false;
+                    ProgressValue = 100;
+                    TimeRemainingDisplay = "00:00";
+                    
+                    if (failCount == 0 && successCount > 0)
+                    {
+                        LogText = "Verification Complete. All OK.";
+                        CurrentHashDisplay = "VERIFIED";
+                        ProMessageBox.Show($"Verification Success!\n\n{successCount} files verified matching MHL records.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else if (successCount == 0 && failCount == 0)
+                    {
+                         LogText = "No MHL or Files found.";
+                         ProMessageBox.Show("No MHL file found or no files matched.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    else
+                    {
+                        LogText = "Verification FAILED.";
+                        CurrentHashDisplay = "ERRORS FOUND";
+                        ProMessageBox.Show($"Verification Completed with ERRORS.\n\nMatches: {successCount}\nMismatches/Missing: {failCount}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                UpdateUI(() => LogText = "Verification Cancelled.");
+            }
+            catch (Exception ex)
+            {
+                UpdateUI(() => 
+                {
+                    LogText = $"Error: {ex.Message}";
+                    ErrorsCount++;
+                });
+            }
+            finally
+            {
+                IsBusy = false;
+                _cts?.Dispose();
+                _cts = null;
+            }
+        }
 
         private bool CanStart()
         {
@@ -418,13 +515,17 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(CanInteract))] private void ClearSource() => SourcePath = null;
         [RelayCommand(CanExecute = nameof(CanInteract))] private void ClearDest1() => Destination1Path = null;
         [RelayCommand(CanExecute = nameof(CanInteract))] private void ClearDest2() => Destination2Path = null;
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void ClearVerify() => VerifyPath = null;
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void PickVerify() { var p = PickFolder(); if (p != null) VerifyPath = p; }
+        [RelayCommand(CanExecute = nameof(CanInteract))] private void DropVerify(DragEventArgs e) => HandleDrop(e, p => VerifyPath = p);
 
         private bool CanReset()
         {
             return CanInteract() && 
                    (!string.IsNullOrEmpty(SourcePath) || 
                     !string.IsNullOrEmpty(Destination1Path) || 
-                    !string.IsNullOrEmpty(Destination2Path));
+                    !string.IsNullOrEmpty(Destination2Path) ||
+                    !string.IsNullOrEmpty(VerifyPath));
         }
 
         [RelayCommand(CanExecute = nameof(CanReset))]
@@ -433,6 +534,7 @@ namespace Veriflow.Desktop.ViewModels
             SourcePath = null;
             Destination1Path = null;
             Destination2Path = null;
+            VerifyPath = null;
             LogText = "Ready.";
             ProgressValue = 0;
             TimeRemainingDisplay = "--:--";
@@ -500,7 +602,8 @@ namespace Veriflow.Desktop.ViewModels
         {
             if (Directory.Exists(path))
             {
-                SourcePath = path;
+                if (IsVerifyMode) VerifyPath = path;
+                else SourcePath = path;
             }
         }
 

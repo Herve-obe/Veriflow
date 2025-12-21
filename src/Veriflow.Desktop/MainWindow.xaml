@@ -154,7 +154,7 @@
                                   Height="14" Width="14" Stretch="Uniform"/>
                         </RadioButton.Tag>
                     </RadioButton>
-                    <RadioButton Content="Audio" GroupName="AV" IsChecked="{Binding IsAudioActive, Mode=OneWay}" Style="{StaticResource AudioToggleStyle}" Margin="1,0,0,0"
+                    <RadioButton Content="Audio" GroupName="AV" IsChecked="{Binding IsAudioActive, Mode=OneWay}" Style="{StaticResource AudioToggleStyle}" Margin="10,0,0,0"
                                  Command="{Binding SwitchToAudioCommand}">
                         <RadioButton.Tag>
                             <!-- Waveform Icon -->

@@ -99,6 +99,18 @@ Quality control reporting and EDL generation.
 5. Monitor progress
 6. Verify completion
 
+### Verify Only Mode
+Veriflow 1.1.0 introduces a dedicated **Verify Only** mode for checking the integrity of previously offloaded media using MHL files.
+
+**How to use:**
+1.  Go to the **Secure Copy** page.
+2.  Switch the mode toggle at the top from **OFFLOAD** to **VERIFY**.
+3.  Click **Open Folder** to select the directory containing your media and the `.mhl` file.
+    - Veriflow supports folder drag-and-drop.
+4.  Click **Verify**.
+
+Veriflow will parse the existing MHL file and re-calculate xxHash64 checksums for all referenced files, reporting any discrepancies or missing files.
+
 ### MEDIA
 **Purpose**: Browse and manage media files.
 
@@ -113,6 +125,12 @@ Quality control reporting and EDL generation.
 2. Select media files
 3. View metadata
 4. Load to Player or other modules
+
+**Editing Metadata**:
+1. Select a media file.
+2. Click the **Edit Metadata** button at the bottom of the metadata panel.
+3. Modify the available fields (Scene, Take, Tape, etc.) in the popup window.
+4. Click **Save** to write changes back to the file's BWF/iXML headers (WAV/BWF only).
 
 ### PLAYER
 **Purpose**: Professional playback with frame-accurate control.
