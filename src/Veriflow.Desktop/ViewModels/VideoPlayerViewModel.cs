@@ -679,13 +679,57 @@ namespace Veriflow.Desktop.ViewModels
                 return;
             }
 
-            // Ignore arrow keys when Ctrl is pressed (for Previous/Next navigation)
+            // Handle Ctrl+Arrow for Previous/Next navigation
             if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
-                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Ctrl detected, letting InputBindings handle it");
-                return; // Let InputBindings handle Ctrl+Arrow
+                if (e.Key == Key.Left)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Ctrl+Left detected, calling NavigatePrevious");
+                    if (NavigatePreviousCommand.CanExecute(null))
+                    {
+                        _ = NavigatePreviousCommand.ExecuteAsync(null);
+                    }
+                    e.Handled = true;
+                    return;
+                }
+                else if (e.Key == Key.Right)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Ctrl+Right detected, calling NavigateNext");
+                    if (NavigateNextCommand.CanExecute(null))
+                    {
+                        _ = NavigateNextCommand.ExecuteAsync(null);
+                    }
+                    e.Handled = true;
+                    return;
+                }
             }
 
+            // Handle Shift+Arrow for Rewind/Forward
+            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                if (e.Key == Key.Left)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Shift+Left detected, calling Rewind");
+                    if (RewindCommand.CanExecute(null))
+                    {
+                        RewindCommand.Execute(null);
+                    }
+                    e.Handled = true;
+                    return;
+                }
+                else if (e.Key == Key.Right)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Shift+Right detected, calling Forward");
+                    if (ForwardCommand.CanExecute(null))
+                    {
+                        ForwardCommand.Execute(null);
+                    }
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            // Handle plain arrow keys for jog
             if (e.Key == Key.Right)
             {
                 System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyDown: Starting jog RIGHT");
@@ -705,11 +749,12 @@ namespace Veriflow.Desktop.ViewModels
         {
             System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyUp: Key={e.Key}, Modifiers={e.KeyboardDevice.Modifiers}");
             
-            // Ignore arrow keys when Ctrl is pressed (for Previous/Next navigation)
-            if ((e.KeyboardDevice.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            // Don't stop jog if Ctrl or Shift is pressed (handled in KeyDown)
+            if ((e.KeyboardDevice.Modifiers & (ModifierKeys.Control | ModifierKeys.Shift)) != ModifierKeys.None)
             {
-                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyUp: Ctrl detected, letting InputBindings handle it");
-                return; // Let InputBindings handle Ctrl+Arrow
+                System.Diagnostics.Debug.WriteLine($"[VIDEO] KeyUp: Modifier detected, ignoring");
+                e.Handled = true;
+                return;
             }
 
             if (e.Key == Key.Right || e.Key == Key.Left)
