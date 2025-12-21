@@ -313,13 +313,8 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(HasMedia))]
         private void ClearList()
         {
-             if (CurrentReportType == ReportType.Audio)
-                AudioReportItems.Clear();
-            else
-                VideoReportItems.Clear();
-            
-            // Auto-clear Infos when list is cleared (Requested behavior)
-            ClearInfos();
+            var command = new Commands.Reports.ClearListCommand(this, CurrentReportType == ReportType.Video);
+            ExecuteCommandCallback?.Invoke(command);
         }
 
         [RelayCommand(CanExecute = nameof(CanRemoveFile))]
@@ -438,24 +433,8 @@ namespace Veriflow.Desktop.ViewModels
         [RelayCommand(CanExecute = nameof(HasInfos))]
         private void ClearInfos()
         {
-            Header = new ReportHeader();
-            // Retain default values logic
-             if (CurrentReportType == ReportType.Audio) 
-             {
-                 Header.ProductionCompany = "SoundLog Pro Production";
-                 _audioHeader = Header;
-             }
-            else 
-            {
-                Header.ProductionCompany = "Veriflow Video";
-                _videoHeader = Header;
-            }
-            
-            SubscribeToHeader(); 
-            OnPropertyChanged(nameof(HasInfos));
-            OnPropertyChanged(nameof(HasAnyData));
-             ClearInfosCommand.NotifyCanExecuteChanged();
-            ClearAllCommand.NotifyCanExecuteChanged();
+            var command = new Commands.Reports.ClearInfosCommand(this);
+            ExecuteCommandCallback?.Invoke(command);
         }
 
         [RelayCommand(CanExecute = nameof(HasAnyData))]

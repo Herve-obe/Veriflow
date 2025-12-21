@@ -19,6 +19,16 @@ namespace Veriflow.Desktop.ViewModels
         private bool _enableAutoSave;
 
         [ObservableProperty]
+        private int _autoSaveIntervalMinutes = 5;
+        
+        partial void OnAutoSaveIntervalMinutesChanged(int value)
+        {
+            // Validate range (1-60 minutes)
+            if (value < 1) AutoSaveIntervalMinutes = 1;
+            if (value > 60) AutoSaveIntervalMinutes = 60;
+        }
+
+        [ObservableProperty]
         private bool _showConfirmationDialogs;
 
         [ObservableProperty]
@@ -37,6 +47,7 @@ namespace Veriflow.Desktop.ViewModels
         {
             var settings = _settingsService.GetSettings();
             EnableAutoSave = settings.EnableAutoSave;
+            AutoSaveIntervalMinutes = settings.AutoSaveIntervalMinutes;
             ShowConfirmationDialogs = settings.ShowConfirmationDialogs;
             DefaultSessionFolder = settings.DefaultSessionFolder;
         }
@@ -61,6 +72,7 @@ namespace Veriflow.Desktop.ViewModels
         {
             var settings = _settingsService.GetSettings();
             settings.EnableAutoSave = EnableAutoSave;
+            settings.AutoSaveIntervalMinutes = AutoSaveIntervalMinutes;
             settings.ShowConfirmationDialogs = ShowConfirmationDialogs;
             settings.DefaultSessionFolder = DefaultSessionFolder;
 

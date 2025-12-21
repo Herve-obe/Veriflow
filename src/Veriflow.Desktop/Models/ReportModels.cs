@@ -49,6 +49,38 @@ namespace Veriflow.Desktop.Models
         [ObservableProperty] private string _take = "";
         
         [ObservableProperty] private string _globalNotes = "";
+        
+        /// <summary>
+        /// Creates a deep copy of this ReportHeader
+        /// </summary>
+        public ReportHeader Clone()
+        {
+            return new ReportHeader
+            {
+                ProjectName = this.ProjectName,
+                ReportDate = this.ReportDate,
+                CalendarDate = this.CalendarDate,
+                ProductionCompany = this.ProductionCompany,
+                OperatorName = this.OperatorName,
+                Director = this.Director,
+                Dop = this.Dop,
+                SoundMixer = this.SoundMixer,
+                BoomOperator = this.BoomOperator,
+                Location = this.Location,
+                TimecodeRate = this.TimecodeRate,
+                BitDepth = this.BitDepth,
+                SampleRate = this.SampleRate,
+                FilesType = this.FilesType,
+                DataManager = this.DataManager,
+                CameraId = this.CameraId,
+                ReelName = this.ReelName,
+                LensInfo = this.LensInfo,
+                Episode = this.Episode,
+                Scene = this.Scene,
+                Take = this.Take,
+                GlobalNotes = this.GlobalNotes
+            };
+        }
     }
 
     public partial class ReportItem : ObservableObject

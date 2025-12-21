@@ -48,9 +48,26 @@
                                    Foreground="{DynamicResource Brush.Accent}"
                                    Margin="0,0,0,10"/>
                         
-                        <CheckBox Content="Enable auto-save (every 5 minutes)" 
+                        <CheckBox Content="Enable auto-save" 
                                   IsChecked="{Binding EnableAutoSave}" 
                                   Margin="0,5"/>
+                        
+                        <!-- Auto-Save Interval -->
+                        <StackPanel Orientation="Horizontal" 
+                                    Margin="20,5,0,5"
+                                    IsEnabled="{Binding EnableAutoSave}">
+                            <TextBlock Text="Interval:" 
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0"
+                                       Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                            <TextBox Text="{Binding AutoSaveIntervalMinutes, UpdateSourceTrigger=PropertyChanged}" 
+                                     Width="50"
+                                     Margin="0,0,5,0"
+                                     HorizontalContentAlignment="Center"/>
+                            <TextBlock Text="minutes" 
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                        </StackPanel>
                         
                         <CheckBox Content="Show confirmation dialogs" 
                                   IsChecked="{Binding ShowConfirmationDialogs}" 

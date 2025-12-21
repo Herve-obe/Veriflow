@@ -10,6 +10,7 @@ namespace Veriflow.Desktop.Models
     {
         // General Settings
         public bool EnableAutoSave { get; set; } = false;
+        public int AutoSaveIntervalMinutes { get; set; } = 5;
         public bool ShowConfirmationDialogs { get; set; } = true;
 
         // Session Settings
@@ -37,6 +38,7 @@ namespace Veriflow.Desktop.Models
             return new AppSettings
             {
                 EnableAutoSave = this.EnableAutoSave,
+                AutoSaveIntervalMinutes = this.AutoSaveIntervalMinutes,
                 ShowConfirmationDialogs = this.ShowConfirmationDialogs,
                 DefaultSessionFolder = this.DefaultSessionFolder,
                 WindowWidth = this.WindowWidth,

@@ -335,6 +335,9 @@ namespace Veriflow.Desktop.ViewModels
             
             // Subscribe to recent files changes
             Services.RecentFilesService.Instance.RecentFilesChanged += OnRecentFilesChanged;
+            
+            // Subscribe to auto-save events
+            _sessionViewModel.OnAutoSaveCompleted += OnAutoSaveCompleted;
         }
 
         private void NavigateTo(PageType page)
@@ -693,15 +696,34 @@ namespace Veriflow.Desktop.ViewModels
             NavigateTo(PageType.Player);
         }
 
+        // ========================================================================
+        // AUTO-SAVE NOTIFICATION
+        // ========================================================================
+
+        private void OnAutoSaveCompleted(object? sender, EventArgs e)
+        {
+            // Show discreet notification
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // For now, just debug output
+                // In future, could show status bar message or toast notification
+                System.Diagnostics.Debug.WriteLine($"Session auto-saved at {DateTime.Now:HH:mm:ss}");
+            });
+        }
+
         public void Dispose()
         {
             // Unsubscribe from recent files
             Services.RecentFilesService.Instance.RecentFilesChanged -= OnRecentFilesChanged;
             
+            // Unsubscribe from auto-save
+            _sessionViewModel.OnAutoSaveCompleted -= OnAutoSaveCompleted;
+            
             // Dispose ViewModels with IDisposable (those with timers and media resources)
             _audioViewModel?.Dispose();
             _videoPlayerViewModel?.Dispose();
             _playerViewModel?.Dispose();
+            (_sessionViewModel as IDisposable)?.Dispose();
             
             // Note: Other ViewModels (MediaViewModel, SecureCopyViewModel, etc.) 
             // don't implement IDisposable as they don't have timers or unmanaged resources
@@ -823,7 +845,7 @@ namespace Veriflow.Desktop.ViewModels
             }
         }
 
-        private void Paste()
+        private async void Paste()
         {
             try
             {
@@ -834,8 +856,7 @@ namespace Veriflow.Desktop.ViewModels
                 switch (CurrentPageType)
                 {
                     case PageType.Reports:
-                        // TODO: Paste report items from clipboard
-                        MessageBox.Show("Paste to Reports not yet implemented.", "Paste", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await PasteReportsFromClipboard(clipboardText);
                         break;
                     case PageType.Media:
                         // Parse file paths and load
@@ -871,10 +892,174 @@ namespace Veriflow.Desktop.ViewModels
                 return;
             }
 
-            // Copy report file paths
-            var filePaths = string.Join(Environment.NewLine, reportItems.Select(r => r.OriginalMedia.FullName));
-            Clipboard.SetText(filePaths);
-            MessageBox.Show($"Copied {reportItems.Count} report file path(s) to clipboard.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Serialize to JSON
+            var clipboardData = new Models.ReportItemClipboardData
+            {
+                ReportType = CurrentAppMode == AppMode.Audio ? "Audio" : "Video",
+                Items = reportItems.Select(item => new Models.ReportItemData
+                {
+                    FilePath = item.OriginalMedia.FullName,
+                    ClipName = item.ClipName,
+                    Filename = item.Filename,
+                    Status = item.Status,
+                    StartTimeCode = item.StartTimeCode,
+                    Duration = item.Duration,
+                    Fps = item.Fps,
+                    Codec = item.Codec,
+                    Resolution = item.Resolution,
+                    Scene = item.Scene,
+                    Take = item.Take,
+                    IsCircled = item.IsCircled,
+                    ItemNotes = item.ItemNotes,
+                    Iso = item.Iso,
+                    WhiteBalance = item.WhiteBalance,
+                    Tracks = item.Tracks,
+                    SampleRate = item.SampleRate,
+                    BitDepth = item.BitDepth,
+                    Clips = item.Clips.Select(clip => new Models.ClipLogItemData
+                    {
+                        InPoint = clip.InPoint,
+                        OutPoint = clip.OutPoint,
+                        Duration = clip.Duration,
+                        Notes = clip.Notes
+                    }).ToList()
+                }).ToList()
+            };
+
+            var json = System.Text.Json.JsonSerializer.Serialize(clipboardData, new System.Text.Json.JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Clipboard.SetText(json);
+            Clipboard.SetText(json);
+            MessageBox.Show($"Copied {reportItems.Count} report item(s) to clipboard.", "Copy", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private async Task PasteReportsFromClipboard(string clipboardText)
+        {
+            try
+            {
+                // Try to deserialize as JSON
+                ReportItemClipboardData? clipboardData = null;
+                try
+                {
+                    clipboardData = System.Text.Json.JsonSerializer.Deserialize<ReportItemClipboardData>(clipboardText);
+                }
+                catch (System.Text.Json.JsonException)
+                {
+                    // Not JSON, try as file paths (fallback)
+                    var paths = clipboardText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (paths.Length > 0 && File.Exists(paths[0]))
+                    {
+                         // Simple file list paste support?
+                         // For now just notify user
+                         MessageBox.Show("Clipboard contains file paths but not valid report data.\nImport files in Media page first.", 
+                             "Paste", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                         MessageBox.Show("Clipboard does not contain valid report data.", 
+                             "Paste", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    return;
+                }
+                
+                if (clipboardData == null || clipboardData.Items == null || clipboardData.Items.Count == 0)
+                {
+                    MessageBox.Show("No valid report items found in clipboard.", "Paste", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Validate version
+                if (clipboardData.Version != "1.0")
+                {
+                    MessageBox.Show($"Unsupported clipboard data version: {clipboardData.Version}", "Paste", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var successCount = 0;
+                var failedFiles = new List<string>();
+
+                foreach (var itemData in clipboardData.Items)
+                {
+                    // Check if file exists
+                    if (!File.Exists(itemData.FilePath))
+                    {
+                        failedFiles.Add(itemData.FilePath);
+                        continue;
+                    }
+
+                    // Load MediaItemViewModel
+                    var fileInfo = new FileInfo(itemData.FilePath);
+                    var mediaItem = new MediaItemViewModel(fileInfo);
+                    await mediaItem.LoadMetadata();
+
+                    // Create ReportItem
+                    var reportItem = new ReportItem(mediaItem);
+                    
+                    // Restore properties from clipboard
+                    reportItem.ClipName = itemData.ClipName;
+                    reportItem.Scene = itemData.Scene;
+                    reportItem.Take = itemData.Take;
+                    reportItem.IsCircled = itemData.IsCircled;
+                    reportItem.ItemNotes = itemData.ItemNotes;
+                    
+                    if (CurrentAppMode == AppMode.Video)
+                    {
+                        reportItem.Iso = itemData.Iso;
+                        reportItem.WhiteBalance = itemData.WhiteBalance;
+                        
+                        // Restore clips
+                        foreach (var clipData in itemData.Clips)
+                        {
+                            var clip = new ClipLogItem
+                            {
+                                InPoint = clipData.InPoint,
+                                OutPoint = clipData.OutPoint,
+                                Duration = clipData.Duration,
+                                Notes = clipData.Notes
+                            };
+                            reportItem.Clips.Add(clip);
+                        }
+                    }
+                    else
+                    {
+                        reportItem.Tracks = itemData.Tracks;
+                        reportItem.SampleRate = itemData.SampleRate;
+                        reportItem.BitDepth = itemData.BitDepth;
+                    }
+
+                    // Add to report using ViewModel command or direct add
+                    // Use direct add for bulk operation to avoid multiple commands/undos or just add directly
+                    if (CurrentAppMode == AppMode.Audio)
+                    {
+                        _reportsViewModel.AudioReportItems.Add(reportItem);
+                    }
+                    else
+                    {
+                        _reportsViewModel.VideoReportItems.Add(reportItem);
+                    }
+
+                    successCount++;
+                }
+
+                // Show result
+                var message = $"Pasted {successCount} report item(s).";
+                if (failedFiles.Count > 0)
+                {
+                    message += $"\n\n{failedFiles.Count} file(s) not found:\n" + string.Join("\n", failedFiles.Take(5));
+                    if (failedFiles.Count > 5)
+                        message += $"\n... and {failedFiles.Count - 5} more";
+                }
+
+                MessageBox.Show(message, "Paste Result", MessageBoxButton.OK, 
+                    failedFiles.Count > 0 ? MessageBoxImage.Warning : MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error pasting reports: {ex.Message}", "Paste Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CopyMediaToClipboard()

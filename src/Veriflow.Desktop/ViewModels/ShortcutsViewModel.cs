@@ -34,6 +34,14 @@ namespace Veriflow.Desktop.ViewModels
             Shortcuts.Add(new ShortcutInfo("Session", "Ctrl+S", "Save Session"));
             Shortcuts.Add(new ShortcutInfo("Session", "Ctrl+Shift+S", "Save Session As"));
 
+            // Edit
+            Shortcuts.Add(new ShortcutInfo("Edit", "Ctrl+Z", "Undo"));
+            Shortcuts.Add(new ShortcutInfo("Edit", "Ctrl+Y", "Redo"));
+            Shortcuts.Add(new ShortcutInfo("Edit", "Ctrl+X", "Cut"));
+            Shortcuts.Add(new ShortcutInfo("Edit", "Ctrl+C", "Copy"));
+            Shortcuts.Add(new ShortcutInfo("Edit", "Ctrl+V", "Paste"));
+            Shortcuts.Add(new ShortcutInfo("Edit", "Delete", "Delete selected item"));
+
             // Player - Playback
             Shortcuts.Add(new ShortcutInfo("Player", "Space", "Play/Pause"));
             Shortcuts.Add(new ShortcutInfo("Player", "Enter", "Stop (return to start)"));
