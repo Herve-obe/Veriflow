@@ -23,8 +23,10 @@
     <sys:Double x:Key="Font.Size.Micro">10.0</sys:Double>
     <sys:Double x:Key="Font.Size.Mini">11.0</sys:Double>
     <sys:Double x:Key="Font.Size.Small">12.0</sys:Double>
+    <sys:Double x:Key="Font.Size.Tiny">13.0</sys:Double>
     <sys:Double x:Key="Font.Size.Body">14.0</sys:Double>
     <sys:Double x:Key="Font.Size.Standard">14.0</sys:Double>
+    <sys:Double x:Key="Font.Size.Medium">16.0</sys:Double>
     <sys:Double x:Key="Font.Size.SubHeader">18.0</sys:Double>
     <sys:Double x:Key="Font.Size.Header">24.0</sys:Double>
     <sys:Double x:Key="Font.Size.Large">32.0</sys:Double>
@@ -83,13 +85,17 @@
     <!-- EXTENDED PALETTE (for hardcoded values found in views) -->
     <SolidColorBrush x:Key="Brush.Panel.Darker" Color="#1A1A1A"/>
     <SolidColorBrush x:Key="Brush.Panel.Lighter" Color="#2A2A2A"/>
-    <SolidColorBrush x:Key="Brush.Panel.Header" Color="#222222"/>
     <SolidColorBrush x:Key="Brush.Panel.Hover" Color="#383838"/>
     <SolidColorBrush x:Key="Brush.Panel.Selected" Color="#505050"/>
+    <SolidColorBrush x:Key="Brush.Panel.Card" Color="#1A1A1A"/>
+    <SolidColorBrush x:Key="Brush.Panel.Input" Color="#222222"/>
     <SolidColorBrush x:Key="Brush.Border.Light" Color="#555555"/>
     <SolidColorBrush x:Key="Brush.Border.Lighter" Color="#666666"/>
+    <SolidColorBrush x:Key="Brush.Border.Subtle" Color="#333333"/>
     <SolidColorBrush x:Key="Brush.Text.Tertiary" Color="#666666"/>
     <SolidColorBrush x:Key="Brush.Text.Disabled" Color="#555555"/>
+    <SolidColorBrush x:Key="Brush.Text.Muted" Color="#666666"/>
+    <SolidColorBrush x:Key="Brush.Text.VeryMuted" Color="#555555"/>
     <SolidColorBrush x:Key="Brush.Input.Dark" Color="#151515"/>
     <SolidColorBrush x:Key="Brush.Overlay.Dark" Color="#AA000000"/>
     <SolidColorBrush x:Key="Brush.Overlay.Medium" Color="#44FFFFFF"/>

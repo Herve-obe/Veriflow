@@ -152,17 +152,17 @@
                             </Grid.RowDefinitions>
 
                             <!-- PENDING CLIP DISPLAY -->
-                            <Border Grid.Row="0" Margin="0,0,0,10" Background="#222" BorderBrush="#444" BorderThickness="1" Padding="5" CornerRadius="3"
+                            <Border Grid.Row="0" Margin="0,0,0,10" Background="{StaticResource Brush.Panel.Input}" BorderBrush="#444" BorderThickness="1" Padding="5" CornerRadius="3"
                                     Visibility="{Binding IsLoggingPending, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel>
-                                    <TextBlock Text="CURRENT CLIP" Foreground="{DynamicResource Brush.Accent}" FontWeight="Bold" FontSize="10" Margin="0,0,0,5"/>
+                                    <TextBlock Text="CURRENT CLIP" Foreground="{DynamicResource Brush.Accent}" FontWeight="Bold" FontSize="{StaticResource Font.Size.Micro}" Margin="0,0,0,5"/>
                                     <Grid Margin="0,0,0,2">
-                                        <TextBlock Text="IN:" Foreground="#888" FontSize="11"/>
-                                        <TextBlock Text="{Binding CurrentMarkInDisplay}" Foreground="White" FontFamily="Consolas" HorizontalAlignment="Right" FontSize="11"/>
+                                        <TextBlock Text="IN:" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Mini}"/>
+                                        <TextBlock Text="{Binding CurrentMarkInDisplay}" Foreground="White" FontFamily="Consolas" HorizontalAlignment="Right" FontSize="{StaticResource Font.Size.Mini}"/>
                                     </Grid>
                                     <Grid>
-                                        <TextBlock Text="OUT:" Foreground="#888" FontSize="11"/>
-                                        <TextBlock Text="{Binding CurrentMarkOutDisplay}" Foreground="White" FontFamily="Consolas" HorizontalAlignment="Right" FontSize="11"/>
+                                        <TextBlock Text="OUT:" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Mini}"/>
+                                        <TextBlock Text="{Binding CurrentMarkOutDisplay}" Foreground="White" FontFamily="Consolas" HorizontalAlignment="Right" FontSize="{StaticResource Font.Size.Mini}"/>
                                     </Grid>
                                 </StackPanel>
                             </Border>
@@ -223,12 +223,12 @@
                                                     
                                                     <!-- Timecodes -->
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding InPoint}" Foreground="#888" FontSize="10"/>
-                                                        <TextBlock Text=" - " Foreground="#888" FontSize="10"/>
-                                                        <TextBlock Text="{Binding OutPoint}" Foreground="#888" FontSize="10"/>
-                                                        <TextBlock Text=" (" Foreground="#888" FontSize="10"/>
-                                                        <TextBlock Text="{Binding Duration}" Foreground="#888" FontSize="10"/>
-                                                        <TextBlock Text=")" Foreground="#888" FontSize="10"/>
+                                                        <TextBlock Text="{Binding InPoint}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}"/>
+                                                        <TextBlock Text=" - " Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}"/>
+                                                        <TextBlock Text="{Binding OutPoint}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}"/>
+                                                        <TextBlock Text=" (" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}"/>
+                                                        <TextBlock Text="{Binding Duration}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}"/>
+                                                        <TextBlock Text=")" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}"/>
                                                     </StackPanel>
                                                     
                                                     <!-- Edit mode buttons -->
@@ -244,15 +244,15 @@
                                                             </Style>
                                                         </StackPanel.Style>
                                                         
-                                                        <Button Content="✓ Save" Height="20" Padding="5,0" FontSize="10" Margin="0,0,5,0"
+                                                        <Button Content="✓ Save" Height="20" Padding="5,0" FontSize="{StaticResource Font.Size.Micro}" Margin="0,0,5,0"
                                                                 Command="{Binding DataContext.SaveClipEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 Style="{StaticResource ContextualActionButtonStyle}" Background="{StaticResource Brush.Success}" BorderBrush="{StaticResource Brush.Success}"/>
                                                         
-                                                        <Button Content="✗ Cancel" Height="20" Padding="5,0" FontSize="10" Margin="0,0,5,0"
+                                                        <Button Content="✗ Cancel" Height="20" Padding="5,0" FontSize="{StaticResource Font.Size.Micro}" Margin="0,0,5,0"
                                                                 Command="{Binding DataContext.CancelClipEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 Style="{StaticResource ContextualActionButtonStyle}" Background="{StaticResource Brush.Error.Button}" BorderBrush="{StaticResource Brush.Error.Button}"/>
                                                         
-                                                        <Button Content="🗑 Delete" Height="20" Padding="5,0" FontSize="10"
+                                                        <Button Content="🗑 Delete" Height="20" Padding="5,0" FontSize="{StaticResource Font.Size.Micro}"
                                                                 Command="{Binding DataContext.DeleteClipCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                                 CommandParameter="{Binding}"
                                                                 Style="{StaticResource ContextualActionButtonStyle}" Background="#555" BorderBrush="#555"/>

@@ -20,7 +20,7 @@
         <!-- Header -->
         <TextBlock Grid.Row="0" 
                    Text="SETTINGS" 
-                   FontSize="24" 
+                   FontSize="{StaticResource Font.Size.Header}" 
                    FontWeight="Bold" 
                    Foreground="{DynamicResource Brush.Accent}"
                    Margin="0,0,0,20"/>
@@ -38,7 +38,7 @@
                     <StackPanel>
                         <TextBlock Text="GENERAL" 
                                    FontWeight="SemiBold" 
-                                   FontSize="14" 
+                                   FontSize="{StaticResource Font.Size.Body}" 
                                    Foreground="{DynamicResource Brush.Accent}"
                                    Margin="0,0,0,10"/>
                         
@@ -61,7 +61,7 @@
                     <StackPanel>
                         <TextBlock Text="SESSIONS" 
                                    FontWeight="SemiBold" 
-                                   FontSize="14" 
+                                   FontSize="{StaticResource Font.Size.Body}" 
                                    Foreground="{DynamicResource Brush.Accent}"
                                    Margin="0,0,0,10"/>
                         

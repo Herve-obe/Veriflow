@@ -25,9 +25,9 @@
                 <TextBlock Text="Video Preview" 
                            VerticalAlignment="Center" 
                            Margin="15,0" 
-                           Foreground="#AAAAAA" 
+                           Foreground="{StaticResource Brush.Text.Secondary}" 
                            FontWeight="SemiBold"
-                           FontSize="12"/>
+                           FontSize="{StaticResource Font.Size.Small}"/>
                 
                 <!-- Close Button -->
                 <Button Content="✕" 
@@ -35,10 +35,10 @@
                         Width="35" 
                         Height="35" 
                         Background="Transparent" 
-                        Foreground="#888888" 
+                        Foreground="{StaticResource Brush.Text.Secondary}" 
                         BorderThickness="0"
                         Click="CloseButton_Click"
-                        FontSize="16">
+                        FontSize="{StaticResource Font.Size.Medium}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border Background="{TemplateBinding Background}">

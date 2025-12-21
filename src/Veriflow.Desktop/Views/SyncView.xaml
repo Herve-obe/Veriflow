@@ -46,7 +46,7 @@
                 </Grid.RowDefinitions>
                 
                 <!-- HEADER: Unified Grey -->
-                <TextBlock Text="VIDEO POOL" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,10" HorizontalAlignment="Left"/>
+                <TextBlock Text="VIDEO POOL" Foreground="{StaticResource Brush.Text.Primary}" FontWeight="Bold" Margin="0,0,0,10" HorizontalAlignment="Left"/>
                 
                 <!-- Actions Grid -->
                 <Grid Grid.Row="1" Margin="0,0,0,10">
@@ -129,10 +129,10 @@
                                         </Grid.ColumnDefinitions>
                                         
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Filename}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Filename}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="{StaticResource Font.Size.Small}" TextTrimming="CharacterEllipsis"/>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding StartTimecode}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="10" FontFamily="Consolas" Margin="0,0,8,0"/>
-                                                <TextBlock Text="{Binding Duration}" Foreground="{StaticResource Brush.Text.Tertiary}" FontSize="10"/>
+                                                <TextBlock Text="{Binding StartTimecode}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}" FontFamily="Consolas" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding Duration}" Foreground="{StaticResource Brush.Text.Tertiary}" FontSize="{StaticResource Font.Size.Micro}"/>
                                             </StackPanel>
                                         </StackPanel>
 
@@ -184,7 +184,7 @@
                 </Grid.RowDefinitions>
                 
                 <!-- HEADER: Unified Grey -->
-                <TextBlock Text="AUDIO POOL" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,10" HorizontalAlignment="Left"/>
+                <TextBlock Text="AUDIO POOL" Foreground="{StaticResource Brush.Text.Primary}" FontWeight="Bold" Margin="0,0,0,10" HorizontalAlignment="Left"/>
 
                 <!-- Actions Grid -->
                 <Grid Grid.Row="1" Margin="0,0,0,10">
@@ -265,10 +265,10 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Filename}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="12" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Filename}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="{StaticResource Font.Size.Small}" TextTrimming="CharacterEllipsis"/>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding StartTimecode}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="10" FontFamily="Consolas" Margin="0,0,8,0"/>
-                                                <TextBlock Text="{Binding Duration}" Foreground="{StaticResource Brush.Text.Tertiary}" FontSize="10"/>
+                                                <TextBlock Text="{Binding StartTimecode}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}" FontFamily="Consolas" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding Duration}" Foreground="{StaticResource Brush.Text.Tertiary}" FontSize="{StaticResource Font.Size.Micro}"/>
                                             </StackPanel>
                                         </StackPanel>
                                         
@@ -320,7 +320,7 @@
                 </Grid.RowDefinitions>
                 
                 <!-- HEADER: Unified Grey -->
-                <TextBlock Text="MATCHED PAIRS" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,10" VerticalAlignment="Top"/>
+                <TextBlock Text="MATCHED PAIRS" Foreground="{StaticResource Brush.Text.Primary}" FontWeight="Bold" Margin="0,0,0,10" VerticalAlignment="Top"/>
                 
                 <!-- SYNC METHOD BUTTONS -->
                 <Grid Grid.Row="1" Margin="0,0,0,10">
@@ -491,7 +491,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="100" Foreground="#888888" HeaderStyle="{StaticResource CenteredHeaderStyle}">
+                        <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="100" Foreground="{StaticResource Brush.Text.Secondary}" HeaderStyle="{StaticResource CenteredHeaderStyle}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -568,7 +568,7 @@
                          <RowDefinition Height="Auto"/>
                          <RowDefinition Height="Auto"/>
                      </Grid.RowDefinitions>
-                     <TextBlock Text="EXPORT DESTINATION" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
+                     <TextBlock Text="EXPORT DESTINATION" Foreground="{StaticResource Brush.Text.Primary}" FontWeight="Bold" Margin="0,0,0,5"/>
                      <Grid Grid.Row="1">
                          <Grid.ColumnDefinitions>
                              <ColumnDefinition Width="*"/>

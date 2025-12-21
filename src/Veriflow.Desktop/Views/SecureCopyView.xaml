@@ -69,7 +69,7 @@
                             <Button DockPanel.Dock="Right" 
                                     Command="{Binding ResetAllCommand}"
                                     Content="RESET ALL" 
-                                    FontSize="10" 
+                                    FontSize="{StaticResource Font.Size.Micro}" 
                                     FontWeight="Bold"
                                     Background="Transparent" 
                                     BorderThickness="0" 
@@ -99,7 +99,7 @@
                                 
                                 <!-- Clear Button Source -->
                                 <Button Command="{Binding ClearSourceCommand}"
-                                        Content="✕" FontSize="10" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
+                                        Content="✕" FontSize="{StaticResource Font.Size.Micro}" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
                                         Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
                                         <Button.Style>
                                             <Style TargetType="Button">
@@ -171,7 +171,7 @@
 
                                     <!-- Clear Button Dest 1 -->
                                     <Button Command="{Binding ClearDest1Command}"
-                                            Content="✕" FontSize="10" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
+                                            Content="✕" FontSize="{StaticResource Font.Size.Micro}" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
                                             Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
                                             <Button.Style>
                                                 <Style TargetType="Button">
@@ -232,7 +232,7 @@
 
                                     <!-- Clear Button Dest 2 -->
                                     <Button Command="{Binding ClearDest2Command}"
-                                            Content="✕" FontSize="10" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
+                                            Content="✕" FontSize="{StaticResource Font.Size.Micro}" Foreground="{StaticResource Brush.Text.Secondary}" Background="Transparent" BorderThickness="0"
                                             Cursor="Hand" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,0,5,0">
                                             <Button.Style>
                                                 <Style TargetType="Button">

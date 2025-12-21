@@ -64,9 +64,9 @@
 
             <!-- Header -->
             <Grid Grid.Row="0" Background="{StaticResource Brush.Panel.Header}">
-                <TextBlock x:Name="TitleText" Text="{Binding Title}" VerticalAlignment="Center" Margin="15,0" Foreground="#AAAAAA" FontWeight="SemiBold"/>
+                <TextBlock x:Name="TitleText" Text="{Binding Title}" VerticalAlignment="Center" Margin="15,0" Foreground="{StaticResource Brush.Text.Secondary}" FontWeight="SemiBold"/>
                 <Button Content="✕" HorizontalAlignment="Right" Width="35" Height="35" 
-                        Background="Transparent" Foreground="#888888" BorderThickness="0"
+                        Background="Transparent" Foreground="{StaticResource Brush.Text.Secondary}" BorderThickness="0"
                         Click="Close_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
@@ -143,7 +143,7 @@
 
                 <!-- Text -->
                 <TextBlock Grid.Column="1" x:Name="MessageBlock" Text="{Binding Message}" 
-                           TextWrapping="Wrap" Foreground="White" FontSize="14" VerticalAlignment="Center" MaxWidth="400"/>
+                           TextWrapping="Wrap" Foreground="White" FontSize="{StaticResource Font.Size.Body}" VerticalAlignment="Center" MaxWidth="400"/>
             </Grid>
 
             <!-- Footer -->

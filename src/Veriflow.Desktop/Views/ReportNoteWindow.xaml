@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <!-- Title -->
-        <TextBlock Text="EDIT REPORT NOTE" FontSize="16" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <TextBlock Text="EDIT REPORT NOTE" FontSize="{StaticResource Font.Size.Medium}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
         <!-- Scene / Take -->
         <Grid Grid.Row="1" Margin="0,0,0,15">

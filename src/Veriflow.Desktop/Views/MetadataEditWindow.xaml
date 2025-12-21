@@ -42,7 +42,7 @@
 
         <!-- Header -->
         <TextBlock Grid.Row="0" Text="Batch Metadata Editor" FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
-        <TextBlock Grid.Row="1" Text="Leave fields empty to keep original values." FontSize="12" Foreground="#AAAAAA" Margin="0,0,0,20"/>
+        <TextBlock Grid.Row="1" Text="Leave fields empty to keep original values." FontSize="12" Foreground="{StaticResource Brush.Text.Secondary}" Margin="0,0,0,20"/>
 
         <!-- Form -->
         <StackPanel Grid.Row="2">

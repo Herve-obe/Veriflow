@@ -485,7 +485,7 @@
                             </StackPanel.Style>
                             <Button Content="📷 REPORT" 
                                     Command="{Binding SwitchToReportViewCommand}"
-                                    Width="100" Height="26" FontSize="11" Margin="0,0,5,0">
+                                    Width="100" Height="26" FontSize="{StaticResource Font.Size.Mini}" Margin="0,0,5,0">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource ViewModeToggleStyle}">
                                         <Style.Triggers>
@@ -498,7 +498,7 @@
                             </Button>
                             <Button Content="🎬 EDL" 
                                     Command="{Binding SwitchToEDLViewCommand}"
-                                    Width="80" Height="26" FontSize="11">
+                                    Width="80" Height="26" FontSize="{StaticResource Font.Size.Mini}">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource ViewModeToggleStyle}">
                                         <Style.Triggers>
@@ -513,11 +513,11 @@
                         
                         <Button Content="ADD FILE(S)" Command="{Binding AddFilesCommand}" 
                                 Style="{StaticResource ContextualActionButtonStyle}" 
-                                Width="120" Height="26" FontSize="11" 
+                                Width="120" Height="26" FontSize="{StaticResource Font.Size.Mini}" 
                                 Margin="0,0,10,0"/>
                         <Button Content="CLEAR LIST" Command="{Binding ClearListCommand}" 
                                 Style="{StaticResource ContextualActionButtonStyle}" 
-                                Width="100" Height="26" FontSize="11"/>
+                                Width="100" Height="26" FontSize="{StaticResource Font.Size.Mini}"/>
                     </StackPanel>
                 </Grid>
                 
@@ -573,7 +573,7 @@
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Margin="6,0,0,0">
                                                 <TextBlock Text="{Binding Scene}" Foreground="#DDD"/>
-                                                <TextBlock Text=" / " Foreground="#888" Margin="4,0"/>
+                                                <TextBlock Text=" / " Foreground="{StaticResource Brush.Text.Secondary}" Margin="4,0"/>
                                                 <TextBlock Text="{Binding Take}" Foreground="#DDD"/>
                                             </StackPanel>
                                         </DataTemplate>
@@ -582,7 +582,7 @@
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBox Text="{Binding Scene, UpdateSourceTrigger=LostFocus}" Width="40" Background="#222" Foreground="White" BorderThickness="0" ToolTip="Scene"/>
-                                                <TextBlock Text="/" Foreground="#888" Margin="4,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="/" Foreground="{StaticResource Brush.Text.Secondary}" Margin="4,0" VerticalAlignment="Center"/>
                                                 <TextBox Text="{Binding Take, UpdateSourceTrigger=LostFocus}" Width="30" Background="#222" Foreground="White" BorderThickness="0" ToolTip="Take"/>
                                             </StackPanel>
                                         </DataTemplate>
@@ -602,7 +602,7 @@
                                 <DataGridTemplateColumn Header="DURATION" Width="110" SortMemberPath="Duration" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Duration}" FontFamily="Consolas" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Duration}" FontFamily="Consolas" Foreground="{StaticResource Brush.Text.Secondary}" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -622,7 +622,7 @@
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal" Margin="6,0,0,0">
                                                 <TextBlock Text="{Binding Iso}" Foreground="#DDD"/>
-                                                <TextBlock Text=" / " Foreground="#888" Margin="4,0"/>
+                                                <TextBlock Text=" / " Foreground="{StaticResource Brush.Text.Secondary}" Margin="4,0"/>
                                                 <TextBlock Text="{Binding WhiteBalance}" Foreground="#DDD"/>
                                             </StackPanel>
                                         </DataTemplate>
@@ -631,7 +631,7 @@
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBox Text="{Binding Iso, UpdateSourceTrigger=LostFocus}" Width="40" Background="#222" Foreground="White" BorderThickness="0" ToolTip="ISO"/>
-                                                <TextBlock Text="/" Foreground="#888" Margin="4,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="/" Foreground="{StaticResource Brush.Text.Secondary}" Margin="4,0" VerticalAlignment="Center"/>
                                                 <TextBox Text="{Binding WhiteBalance, UpdateSourceTrigger=LostFocus}" Width="40" Background="#222" Foreground="White" BorderThickness="0" ToolTip="WB"/>
                                             </StackPanel>
                                         </DataTemplate>
@@ -643,8 +643,8 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="6,0,0,0">
-                                                <TextBlock Text="{Binding Codec}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="11"/>
-                                                <TextBlock Text="{Binding Resolution}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="10"/>
+                                                <TextBlock Text="{Binding Codec}" Foreground="{StaticResource Brush.Text.Bright}" FontSize="{StaticResource Font.Size.Mini}"/>
+                                                <TextBlock Text="{Binding Resolution}" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}"/>
                                             </StackPanel>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
@@ -759,7 +759,7 @@
                                 <DataGridTemplateColumn Header="DURATION" Width="80" SortMemberPath="Duration" IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Duration}" FontFamily="Consolas" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Duration}" FontFamily="Consolas" Foreground="{StaticResource Brush.Text.Secondary}" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -835,7 +835,7 @@
                         
                         <!-- Empty State Hint -->
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                   Foreground="#555" FontSize="18" FontWeight="Bold"
+                                   Foreground="{StaticResource Brush.Text.VeryMuted}" FontSize="{StaticResource Font.Size.SubHeader}" FontWeight="Bold"
                                    IsHitTestVisible="False">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -882,12 +882,12 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <!-- Rush Container -->
-                                        <Border Background="#1A1A1A" BorderBrush="#333" BorderThickness="1" CornerRadius="4" Margin="0,0,0,10" Padding="10">
+                                        <Border Background="{StaticResource Brush.Panel.Card}" BorderBrush="{StaticResource Brush.Border.Subtle}" BorderThickness="1" CornerRadius="4" Margin="0,0,0,10" Padding="10">
                                             <StackPanel>
                                                 <!-- Rush Header -->
                                                 <Grid Margin="0,0,0,10">
-                                                    <TextBlock Text="{Binding Filename}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource Brush.Accent}"/>
-                                                    <TextBlock HorizontalAlignment="Right" Foreground="#888" FontSize="11">
+                                                    <TextBlock Text="{Binding Filename}" FontWeight="Bold" FontSize="{StaticResource Font.Size.Body}" Foreground="{DynamicResource Brush.Accent}"/>
+                                                    <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Mini}">
                                                         <Run Text="{Binding Clips.Count, Mode=OneWay}"/>
                                                         <Run Text=" clips"/>
                                                     </TextBlock>
@@ -907,17 +907,17 @@
                                                                     
                                                                     <!-- Timecode Info -->
                                                                     <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,15,0">
-                                                                        <TextBlock Text="IN:" Foreground="#888" FontSize="10" Margin="0,0,5,0"/>
-                                                                        <TextBlock Text="{Binding InPoint}" Foreground="White" FontFamily="Consolas" FontSize="10" Margin="0,0,10,0"/>
-                                                                        <TextBlock Text="OUT:" Foreground="#888" FontSize="10" Margin="0,0,5,0"/>
-                                                                        <TextBlock Text="{Binding OutPoint}" Foreground="White" FontFamily="Consolas" FontSize="10"/>
+                                                                        <TextBlock Text="IN:" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}" Margin="0,0,5,0"/>
+                                                                        <TextBlock Text="{Binding InPoint}" Foreground="White" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Micro}" Margin="0,0,10,0"/>
+                                                                        <TextBlock Text="OUT:" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="{StaticResource Font.Size.Micro}" Margin="0,0,5,0"/>
+                                                                        <TextBlock Text="{Binding OutPoint}" Foreground="White" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Micro}"/>
                                                                     </StackPanel>
                                                                     
                                                                     <!-- Notes -->
-                                                                    <TextBlock Grid.Column="1" Text="{Binding Notes}" Foreground="#CCC" FontSize="11" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="1" Text="{Binding Notes}" Foreground="#CCC" FontSize="{StaticResource Font.Size.Mini}" VerticalAlignment="Center"/>
                                                                     
                                                                     <!-- Duration -->
-                                                                    <TextBlock Grid.Column="2" Text="{Binding Duration}" Foreground="{DynamicResource Brush.Accent}" FontFamily="Consolas" FontSize="10" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="2" Text="{Binding Duration}" Foreground="{DynamicResource Brush.Accent}" FontFamily="Consolas" FontSize="{StaticResource Font.Size.Micro}" VerticalAlignment="Center"/>
                                                                 </Grid>
                                                             </Border>
                                                         </DataTemplate>
