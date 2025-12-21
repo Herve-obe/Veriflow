@@ -63,6 +63,11 @@ namespace Veriflow.Desktop.ViewModels
         [ObservableProperty] private bool _isVideoCalendarOpen;
         [ObservableProperty] private bool _isAudioCalendarOpen;
 
+        /// <summary>
+        /// Callback to execute commands with undo/redo support
+        /// </summary>
+        public System.Action<Commands.IUndoableCommand>? ExecuteCommandCallback { get; set; }
+
         private readonly IReportPrintingService _printingService;
         private readonly PdfReportService _pdfService;
 

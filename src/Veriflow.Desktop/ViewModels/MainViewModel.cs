@@ -314,6 +314,17 @@ namespace Veriflow.Desktop.ViewModels
                      Application.Current.Dispatcher.Invoke(() => _videoPlayerViewModel.RefreshReportLink());
                 }
             };
+
+            // CommandHistory event subscription
+            _commandHistory.StateChanged += (s, e) =>
+            {
+                // Refresh Undo/Redo command states
+                (UndoCommand as RelayCommand)?.NotifyCanExecuteChanged();
+                (RedoCommand as RelayCommand)?.NotifyCanExecuteChanged();
+            };
+
+            // Expose CommandHistory to ReportsViewModel
+            _reportsViewModel.ExecuteCommandCallback = (cmd) => _commandHistory.ExecuteCommand(cmd);
         }
 
         private void NavigateTo(PageType page)
