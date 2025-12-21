@@ -352,9 +352,13 @@ namespace Veriflow.Desktop.ViewModels
 
                 FilePath = path;
                 FileName = System.IO.Path.GetFileName(path);
+                IsVideoLoaded = true;
 
-                // Load metadata first to check for ProRes RAW
+                // Load metadata
                 await LoadMetadataWithFFprobe(path);
+
+                // Track in recent files
+                Services.RecentFilesService.Instance.AddRecentFile(path);
 
                 // ProRes RAW Detection - Prevent playback
                 if (CurrentVideoMetadata.IsProResRAW)

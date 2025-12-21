@@ -248,6 +248,9 @@ namespace Veriflow.Desktop.ViewModels
                 PlaybackMaximum = _inputStream.GetLength().TotalSeconds;
 
                 await LoadMetadataWithFFprobe(path);
+
+                // Track in recent files
+                Services.RecentFilesService.Instance.AddRecentFile(path);
             
                 // Update sibling files for navigation
                 UpdateSiblingFiles(path);
