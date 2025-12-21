@@ -471,53 +471,96 @@ namespace Veriflow.Desktop.ViewModels
 
         private async Task AutoSyncByWaveform()
         {
-            // Get list of videos already matched by other methods
+            // 1. Identify videos to process (Smart Sync: ignore already synced)
             var alreadyMatchedVideos = Matches
                 .Where(m => m.Status == "Synced" && m.SyncMethod != SyncMethod.Waveform)
                 .Select(m => m.Video)
                 .ToHashSet();
 
-            // Filter to only unmatched videos
             var videosToProcess = VideoPool.Where(v => !alreadyMatchedVideos.Contains(v)).ToList();
 
             if (videosToProcess.Count == 0)
             {
                 IsBusy = false;
-                return; // All videos already matched
+                return;
             }
 
-            int processed = 0;
-            int total = videosToProcess.Count;
+            int totalOps = videosToProcess.Count + AudioPool.Count;
+            int currentOp = 0;
+            
+            // Dictionnaries to cache extracted WAV paths
+            // Key: FullPath, Value: TempWavPath
+            var videoWavCache = new System.Collections.Concurrent.ConcurrentDictionary<string, string>();
+            var audioWavCache = new System.Collections.Concurrent.ConcurrentDictionary<string, string>();
 
-            foreach (var vid in videosToProcess)
+            try
             {
-                processed++;
-                BusyMessage = $"Analyzing waveform {processed}/{total}: {vid.Filename}";
-                ProgressValue = (double)processed / total * 100;
-
-                // Try to find best audio match using waveform correlation
-                SyncPair? bestPair = null;
-
-                foreach (var aud in AudioPool)
+                // 2. Prepare Audio Files (Caching Phase)
+                // Extract audio from ALL candidates first. This avoids O(N*M) extractions.
+                
+                // Prepare Videos
+                foreach (var vid in videosToProcess)
                 {
+                    currentOp++;
+                    BusyMessage = $"Preparing Video Audio ({currentOp}/{totalOps}): {vid.Filename}";
+                    ProgressValue = (double)currentOp / totalOps * 50; // First 50% is prep
+
                     try
                     {
-                        Debug.WriteLine($"[Sync] Starting waveform analysis: {vid.Filename} + {aud.Filename}");
-                        
-                        var progress = new Progress<double>(p => 
-                        {
-                            // Sub-progress for this specific pair
-                            double overallProgress = ((processed - 1) + p) / total * 100;
-                            ProgressValue = overallProgress;
-                        });
+                        string wav = await _waveformService.PrepareAudioAsync(vid.FullPath, true, 10); // 10s analysis
+                        videoWavCache.TryAdd(vid.FullPath, wav);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error preparing video {vid.Filename}: {ex.Message}");
+                    }
+                }
 
-                        // Use 10s for speed (like DaVinci Resolve)
-                        double? offset = await _waveformService.FindOffsetAsync(vid.FullPath, aud.FullPath, 10, progress);
+                // Prepare Audios
+                foreach (var aud in AudioPool)
+                {
+                    currentOp++;
+                    BusyMessage = $"Preparing Audio ({currentOp}/{totalOps}): {aud.Filename}";
+                    ProgressValue = (double)currentOp / totalOps * 50;
+
+                    try
+                    {
+                        string wav = await _waveformService.PrepareAudioAsync(aud.FullPath, false, 10);
+                        audioWavCache.TryAdd(aud.FullPath, wav);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error preparing audio {aud.Filename}: {ex.Message}");
+                    }
+                }
+
+                // 3. Parallel Correlation Phase
+                // Compare every video against every audio using the cached WAVs
+                
+                BusyMessage = "Analyzing Waveforms (Parallel Processing)...";
+                double totalComparisons = videosToProcess.Count;
+                int processedComparisons = 0;
+
+                // Configure parallelism (leave some cores free for UI)
+                var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1) };
+
+                await Parallel.ForEachAsync(videosToProcess, parallelOptions, async (vid, ct) =>
+                {
+                    if (!videoWavCache.TryGetValue(vid.FullPath, out string? vidWav)) return; // Skip if prep failed
+
+                    SyncPair? bestPair = null;
+                    double bestCorr = double.MaxValue; // Not used yet, taking first match
+
+                    foreach (var aud in AudioPool)
+                    {
+                        if (!audioWavCache.TryGetValue(aud.FullPath, out string? audWav)) continue;
+
+                        // Perform FAST correlation on memory mapped files / small WAVs
+                        double? offset = await _waveformService.CalculateOffsetAsync(vidWav, audWav);
 
                         if (offset.HasValue)
                         {
-                            Debug.WriteLine($"[Sync] Waveform match found: offset={offset.Value:F3}s");
-                            // Create pair
+                            // Match Found!
                             var pair = new SyncPair
                             {
                                 Video = vid,
@@ -526,33 +569,50 @@ namespace Veriflow.Desktop.ViewModels
                                 SyncMethod = SyncMethod.Waveform,
                                 OffsetSeconds = offset.Value
                             };
-
+                            
+                            // Format Display
                             pair.OffsetDisplay = FormatTimecode(TimeSpan.FromSeconds(Math.Abs(offset.Value)), vid.Fps);
                             if (offset.Value > 0) pair.OffsetDisplay = "+ " + pair.OffsetDisplay;
                             else pair.OffsetDisplay = "- " + pair.OffsetDisplay;
 
-                            // For now, take first successful match
-                            // In future, could compare correlation scores
                             bestPair = pair;
-                            break; // Found a match, stop searching
+                            break; // Stop after first match (Optimize later for best fit if needed)
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"[Sync] Waveform sync error for {vid.Filename} + {aud.Filename}: {ex.Message}");
-                    }
-                }
 
-                if (bestPair != null)
-                {
-                    Application.Current.Dispatcher.Invoke(() => Matches.Add(bestPair));
-                }
-                else
-                {
-                    // No match found
-                    Application.Current.Dispatcher.Invoke(() => Matches.Add(new SyncPair { Video = vid, Status = "No Match" }));
-                }
+                    // UI Update must be on Dispatcher
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (bestPair != null)
+                            Matches.Add(bestPair);
+                        else
+                            Matches.Add(new SyncPair { Video = vid, Status = "No Match" });
+                    });
+
+                    System.Threading.Interlocked.Increment(ref processedComparisons);
+                    double progress = 50 + ((double)processedComparisons / totalComparisons * 50); // Second 50%
+                    Application.Current.Dispatcher.Invoke(() => ProgressValue = progress);
+                });
+
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Sync Error: {ex.Message}", "Error");
+            }
+            finally
+            {
+                // 4. Cleanup Temp Files
+                BusyMessage = "Cleaning up...";
+                foreach (var path in videoWavCache.Values) DeleteFileSafe(path);
+                foreach (var path in audioWavCache.Values) DeleteFileSafe(path);
+                
+                IsBusy = false;
+            }
+        }
+
+        private void DeleteFileSafe(string path)
+        {
+            try { if (System.IO.File.Exists(path)) System.IO.File.Delete(path); } catch { }
         }
         
         private async Task RunExport(SyncPair match, string outPath, string ffmpegPath)

@@ -137,6 +137,30 @@
                         </Grid>
                     </Expander>
 
+                    <!-- 3. UCS INFO -->
+                    <Expander Header="UCS INFO" IsExpanded="False" Style="{StaticResource ProExpanderStyle}" Focusable="False">
+                        <Grid Margin="5,0,5,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Category:" Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                            <TextBlock Grid.Column="1" Text="{Binding CurrentMetadata.UCSCategory}" Foreground="White"/>
+
+                            <TextBlock Grid.Row="1" Text="SubCategory:" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMetadata.UCSSubCategory}" Foreground="White" Margin="0,2,0,0"/>
+
+                            <TextBlock Grid.Row="2" Text="CatID:" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,2,0,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentMetadata.UCSCatID}" Foreground="White" FontFamily="Consolas" Margin="0,2,0,0"/>
+                        </Grid>
+                    </Expander>
+
                     <!-- 4. TRACK INFO -->
                     <Expander Header="TRACK INFO" IsExpanded="True" Style="{StaticResource ProExpanderStyle}" Focusable="False">
                         <DataGrid ItemsSource="{Binding CurrentMetadata.Tracks}" 

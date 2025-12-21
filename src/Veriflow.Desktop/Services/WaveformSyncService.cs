@@ -39,134 +39,40 @@ namespace Veriflow.Desktop.Services
         }
 
         /// <summary>
-        /// Finds the time offset between video and audio files using waveform correlation.
-        /// Optimized for speed like DaVinci Resolve.
+        /// Prepares an audio or video file for analysis by extracting/normalizing it to a temp WAV file.
+        /// Public to allow caching by the ViewModel.
         /// </summary>
-        /// <param name="videoPath">Path to video file</param>
-        /// <param name="audioPath">Path to audio file</param>
-        /// <param name="maxDurationSeconds">Maximum duration to analyze (default: 10s for speed)</param>
-        /// <param name="progress">Optional progress callback (0.0 to 1.0)</param>
-        /// <returns>Offset in seconds (positive = audio ahead, negative = audio behind)</returns>
-        public async Task<double?> FindOffsetAsync(string videoPath, string audioPath, int maxDurationSeconds = 10, IProgress<double>? progress = null)
+        public async Task<string> PrepareAudioAsync(string sourcePath, bool isVideo, int maxDuration = 10)
         {
-            try
-            {
-                Log($"=== Starting analysis ===");
-                Log($"Video: {Path.GetFileName(videoPath)}");
-                Log($"Audio: {Path.GetFileName(audioPath)}");
-                Log($"Max duration: {maxDurationSeconds}s");
-                
-                progress?.Report(0.1);
-
-                // Extract audio from video (optimized - low quality for speed)
-                Log("Step 1/4: Extracting audio from video...");
-                string videoAudioPath = await ExtractAudioFromVideoAsync(videoPath, maxDurationSeconds);
-                Log($"✓ Video audio extracted: {Path.GetFileName(videoAudioPath)}");
-                progress?.Report(0.3);
-
-                // Extract audio (normalize to same format)
-                Log("Step 2/4: Normalizing audio...");
-                string normalizedAudioPath = await NormalizeAudioAsync(audioPath, maxDurationSeconds);
-                Log($"✓ Audio normalized: {Path.GetFileName(normalizedAudioPath)}");
-                progress?.Report(0.5);
-
-                // Perform cross-correlation (optimized)
-                Log("Step 3/4: Performing FFT correlation...");
-                double? offset = await PerformCrossCorrelationAsync(videoAudioPath, normalizedAudioPath);
-                Log($"✓ FFT correlation complete");
-                progress?.Report(0.9);
-
-                // Cleanup temp files
-                Log("Step 4/4: Cleaning up...");
-                CleanupTempFile(videoAudioPath);
-                CleanupTempFile(normalizedAudioPath);
-                Log("✓ Cleanup complete");
-
-                progress?.Report(1.0);
-                
-                if (offset.HasValue)
-                {
-                    Log($"✓✓✓ SUCCESS: Offset = {offset.Value:F3}s");
-                }
-                else
-                {
-                    Log($"✗✗✗ FAILED: No correlation found");
-                }
-                
-                return offset;
-            }
-            catch (Exception ex)
-            {
-                Log($"✗✗✗ ERROR: {ex.Message}");
-                Log($"Stack trace: {ex.StackTrace}");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Extracts audio from video file to WAV format (mono, 16kHz, 16-bit for speed)
-        /// </summary>
-        private async Task<string> ExtractAudioFromVideoAsync(string videoPath, int maxDuration)
-        {
-            string outputPath = Path.Combine(_tempDir, $"video_audio_{Guid.NewGuid()}.wav");
-            
-            // FFmpeg: Extract audio, convert to mono 16kHz 16-bit PCM (lower quality = faster)
-            // -ac 1 = mono, -ar 16000 = 16kHz (vs 48kHz), -t = duration limit
-            string args = $"-i \"{videoPath}\" -vn -acodec pcm_s16le -ar 16000 -ac 1 -t {maxDuration} -y \"{outputPath}\"";
-
-            Log($"Extracting video audio: {Path.GetFileName(videoPath)}");
-            Log($"FFmpeg args: {args}");
-            
-            await RunFFmpegAsync(args);
-            
-            Log($"✓ Video audio extracted: {Path.GetFileName(outputPath)}");
-            
-            return outputPath;
-        }
-
-        /// <summary>
-        /// Normalizes audio file to WAV format (mono, 16kHz, 16-bit for speed)
-        /// </summary>
-        private async Task<string> NormalizeAudioAsync(string audioPath, int maxDuration)
-        {
-            string outputPath = Path.Combine(_tempDir, $"normalized_audio_{Guid.NewGuid()}.wav");
+            string outputPath = Path.Combine(_tempDir, $"prep_{Guid.NewGuid()}.wav");
             
             // FFmpeg: Convert to mono 16kHz 16-bit PCM (lower quality = faster)
-            string args = $"-i \"{audioPath}\" -acodec pcm_s16le -ar 16000 -ac 1 -t {maxDuration} -y \"{outputPath}\"";
+            // -ac 1 = mono, -ar 16000 = 16kHz
+            string inputArg = isVideo ? "-vn" : ""; // If video, disable video stream
+            string args = $"-i \"{sourcePath}\" {inputArg} -acodec pcm_s16le -ar 16000 -ac 1 -t {maxDuration} -y \"{outputPath}\"";
 
-            Log($"Normalizing audio: {Path.GetFileName(audioPath)}");
-            Log($"FFmpeg args: {args}");
+            // Log($"Preparing audio: {Path.GetFileName(sourcePath)}");
             
             await RunFFmpegAsync(args);
-            
-            Log($"✓ Audio normalized: {Path.GetFileName(outputPath)}");
-            
             return outputPath;
         }
 
         /// <summary>
-        /// Performs FFT-based cross-correlation between two WAV files to find offset.
-        /// This is the proper way - much faster than naive sliding window.
+        /// Calculates offset between two PREPARED wav files using FFT correlation.
+        /// Optimized for parallel execution.
         /// </summary>
-        private Task<double?> PerformCrossCorrelationAsync(string wavFile1, string wavFile2)
+        public async Task<double?> CalculateOffsetAsync(string wav1Path, string wav2Path)
         {
-            return Task.Run<double?>(() =>
+             return await Task.Run<double?>(() =>
             {
                 try
                 {
-                    Log("Reading WAV samples...");
-                    
                     // Read WAV files
-                    var samples1 = ReadWavSamples(wavFile1);
-                    var samples2 = ReadWavSamples(wavFile2);
+                    var samples1 = ReadWavSamples(wav1Path);
+                    var samples2 = ReadWavSamples(wav2Path);
 
                     if (samples1 == null || samples2 == null || samples1.Length == 0 || samples2.Length == 0)
-                    {
-                        Log("✗ Failed to read samples");
                         return null;
-                    }
-
-                    Log($"✓ Samples read: {samples1.Length} vs {samples2.Length}");
 
                     // Ensure both signals have the same length (pad with zeros if needed)
                     int maxLength = Math.Max(samples1.Length, samples2.Length);
@@ -174,8 +80,6 @@ namespace Veriflow.Desktop.Services
                     // Use power of 2 for FFT efficiency
                     int fftSize = (int)Math.Pow(2, Math.Ceiling(Math.Log(maxLength * 2) / Math.Log(2)));
                     
-                    Log($"FFT size: {fftSize}");
-
                     // Convert to complex arrays and pad
                     var complex1 = new System.Numerics.Complex[fftSize];
                     var complex2 = new System.Numerics.Complex[fftSize];
@@ -186,71 +90,85 @@ namespace Veriflow.Desktop.Services
                     for (int i = 0; i < samples2.Length; i++)
                         complex2[i] = new System.Numerics.Complex(samples2[i], 0);
 
-                    Log("Performing forward FFT...");
-
                     // Perform FFT on both signals
                     Fourier.Forward(complex1, FourierOptions.Matlab);
                     Fourier.Forward(complex2, FourierOptions.Matlab);
 
-                    // Cross-correlation in frequency domain: 
-                    // corr = IFFT(FFT(signal1) * conj(FFT(signal2)))
+                    // Cross-correlation in frequency domain
                     var crossPower = new System.Numerics.Complex[fftSize];
                     for (int i = 0; i < fftSize; i++)
                     {
                         crossPower[i] = complex1[i] * System.Numerics.Complex.Conjugate(complex2[i]);
                     }
 
-                    Log("Performing inverse FFT...");
-
-                    // Inverse FFT to get cross-correlation
+                    // Inverse FFT
                     Fourier.Inverse(crossPower, FourierOptions.Matlab);
 
-                    Log("Finding correlation peak...");
-
-                    // Find the peak in the cross-correlation
+                    // Find peak
                     double maxCorr = double.MinValue;
                     int maxLag = 0;
-
-                    // Only search reasonable range (not the entire FFT size)
                     int searchRange = Math.Min(fftSize / 2, maxLength);
                     
                     for (int i = 0; i < searchRange; i++)
                     {
-                        double magnitude = crossPower[i].Magnitude;
-                        if (magnitude > maxCorr)
+                        if (crossPower[i].Magnitude > maxCorr)
                         {
-                            maxCorr = magnitude;
+                            maxCorr = crossPower[i].Magnitude;
                             maxLag = i;
                         }
                     }
 
-                    // Also check negative lags (second half of FFT)
                     for (int i = fftSize - searchRange; i < fftSize; i++)
                     {
-                        double magnitude = crossPower[i].Magnitude;
-                        if (magnitude > maxCorr)
+                        if (crossPower[i].Magnitude > maxCorr)
                         {
-                            maxCorr = magnitude;
-                            maxLag = i - fftSize; // Negative lag
+                            maxCorr = crossPower[i].Magnitude;
+                            maxLag = i - fftSize; 
                         }
                     }
 
-                    // Convert lag to seconds
-                    double sampleRate = 16000; // 16kHz
-                    double offsetSeconds = (double)maxLag / sampleRate;
-
-                    Log($"✓ Correlation complete: maxCorr={maxCorr:F2}, maxLag={maxLag}, offset={offsetSeconds:F3}s");
+                    double offsetSeconds = (double)maxLag / 16000.0; // 16kHz
                     
-                    return (double?)offsetSeconds;
+                    // Threshold check (optional, but good for filtering noise)
+                    if (maxCorr < 0.1) return null; // Very weak correlation
+
+                    return offsetSeconds;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    Log($"✗ Correlation error: {ex.Message}");
-                    Log($"Stack: {ex.StackTrace}");
                     return null;
                 }
             });
         }
+
+        // Kept for backward compatibility if needed, using the new optimized methods
+        public async Task<double?> FindOffsetAsync(string videoPath, string audioPath, int maxDurationSeconds = 10, IProgress<double>? progress = null)
+        {
+            string? videoWav = null;
+            string? audioWav = null;
+            try
+            {
+                progress?.Report(0.1);
+                videoWav = await PrepareAudioAsync(videoPath, true, maxDurationSeconds);
+                progress?.Report(0.4);
+                audioWav = await PrepareAudioAsync(audioPath, false, maxDurationSeconds);
+                progress?.Report(0.7);
+                var result = await CalculateOffsetAsync(videoWav, audioWav);
+                progress?.Report(1.0);
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                if (videoWav != null) CleanupTempFile(videoWav);
+                if (audioWav != null) CleanupTempFile(audioWav);
+            }
+        }
+
+
 
         /// <summary>
         /// Reads WAV file samples (16-bit PCM) and normalizes to -1.0 to 1.0

@@ -155,13 +155,22 @@ Veriflow will parse the existing MHL file and re-calculate xxHash64 checksums fo
 - J/K/L: Shuttle control
 
 ### SYNC
-**Purpose**: Synchronize multiple media files.
+**Purpose**: Synchronize multiple audio and video files.
 
 **Features**:
-- Multi-file timeline
-- Sync point markers
-- Offset adjustment
-- Export synchronized files
+- **Smart Sync**: Automatically aligns media using one of two methods.
+- **Redundancy Protection**: If you run a second sync pass (e.g., Waveform after Timecode), **Veriflow only processes the remaining unmatched files**. It intelligently ignores files that are already synchronized.
+- **Multi-Source**: Import video and audio files from different folders.
+- **Batch Export**: Export all synchronized clips as new master files.
+
+**How to Sync**:
+1.  **Import Media**: Drag & Drop video and audio files into their respective pools.
+2.  **Select Method**:
+    *   Click **Sync by Timecode** (Recommended first step): Instantly matches files with matching embedded timecode.
+    *   Click **Sync by Waveform**: Analyzes audio content to match remaining unsynced files. This uses parallel processing for maximum speed.
+3.  **Export**: Select a destination folder and export the synchronized clips.
+
+> **Note**: For optimal performance, synchronize by Timecode first to match the majority of clips, then run Waveform Sync to catch the remaining files that may have drifted or lack timecode.
 
 ### TRANSCODE
 **Purpose**: Convert media files to different formats.
@@ -189,7 +198,15 @@ Veriflow will parse the existing MHL file and re-calculate xxHash64 checksums fo
 - Video quality reports
 - EDL generation
 - Logged clips export
+- Video quality reports
+- EDL generation
+- Logged clips export
 - Technical metadata
+
+**Daily Dailies Workflow**:
+1.  **Review**: Load daily rushes into the Reports > Config list.
+2.  **Verify**: Toggle "Verification" mode to check checksums if needed.
+3.  **Export Session**: Use the **"Export Session EDL/ALE"** button to generate a master file containing all logged clips from the day, ready for editorial import.
 
 ---
 
@@ -219,7 +236,9 @@ Veriflow will parse the existing MHL file and re-calculate xxHash64 checksums fo
 - **Space**: Play/Pause
 - **Enter**: Stop
 - **Left/Right**: Frame step
+- **Left/Right**: Frame step
 - **J/K/L**: Shuttle
+- **Metadata Panel**: Displays detailed technical info including **UCS (Universal Category System)** data for audio files.
 
 ---
 
@@ -253,12 +272,12 @@ A session saves your current workspace state including:
 ### Application won't start
 - Verify .NET 8.0 Runtime is installed
 - Check crash log on Desktop: `Veriflow_CrashLog.txt`
-- Reinstall application
+- Reinstall application (All dependencies are included)
 
 ### Media won't play
 - Verify file format is supported
 - Check codec compatibility
-- Update FFmpeg/LibVLC components
+- Note: FFmpeg and LibVLC are embedded, no external installation required
 
 ### Performance issues
 - Close unused applications
@@ -276,6 +295,8 @@ Location: `%APPDATA%\Veriflow\Logs`
 ### Supported Formats
 **Video**: MP4, MOV, MXF, AVI, MKV, etc.
 **Audio**: WAV, MP3, AAC, FLAC, etc.
+
+> **Note**: Apple ProRes RAW is detected but requires external transcoding via specialized software before import.
 
 ### Dependencies
 - FFmpeg (LGPL v2.1)
