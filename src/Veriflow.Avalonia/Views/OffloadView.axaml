@@ -3,13 +3,40 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Veriflow.Avalonia.ViewModels"
+             xmlns:views="using:Veriflow.Avalonia.Views"
              mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
              x:Class="Veriflow.Avalonia.Views.OffloadView"
              x:DataType="vm:OffloadViewModel"
              Background="{StaticResource Brush.Background.Panel}">
     
-    <Grid RowDefinitions="Auto,*" Margin="20">
+    <Grid ColumnDefinitions="280,*">
         
+        <!-- LEFT COLUMN: File Explorer -->
+        <Border Grid.Column="0"
+                Background="{StaticResource Brush.Background.Deep}"
+                BorderBrush="{StaticResource Brush.Border}"
+                BorderThickness="0,0,1,0"
+                Padding="12">
+            
+            <Grid RowDefinitions="Auto,*">
+                <!-- Header -->
+                <TextBlock Grid.Row="0"
+                          Text="EXPLORER"
+                          FontSize="11"
+                          FontWeight="SemiBold"
+                          Foreground="{StaticResource Brush.Text.Secondary}"
+                          Margin="0,0,0,12"/>
+                
+                <!-- File Explorer -->
+                <views:FileExplorerView Grid.Row="1"
+                                       x:Name="FileExplorer"/>
+            </Grid>
+            
+        </Border>
+        
+        <!-- RIGHT COLUMN: Offload Content -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*" Margin="20">
+    
         <!-- Header -->
         <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,20">
             <TextBlock Classes="Title" Text="OFFLOAD"/>
