@@ -30,6 +30,13 @@ public partial class DirectoryNode : ObservableObject
     public bool HasPlaceholder => Children.Count == 1 && Children[0].Name == "...";
 
     /// <summary>
+    /// Default constructor for object initializer.
+    /// </summary>
+    public DirectoryNode()
+    {
+    }
+
+    /// <summary>
     /// Creates a directory node with a placeholder child for lazy loading.
     /// </summary>
     public DirectoryNode(string name, string fullPath)
