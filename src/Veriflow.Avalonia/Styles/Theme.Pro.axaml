@@ -37,6 +37,8 @@
             <Color x:Key="Color.Error">#F48771</Color>
             
             <!-- Brushes -->
+            <SolidColorBrush x:Key="Brush.Background.Primary" Color="{StaticResource Color.Background.Deep}"/>
+            <SolidColorBrush x:Key="Brush.Background.Secondary" Color="{StaticResource Color.Background.Panel}"/>
             <SolidColorBrush x:Key="Brush.Background.Deep" Color="{StaticResource Color.Background.Deep}"/>
             <SolidColorBrush x:Key="Brush.Background.Panel" Color="{StaticResource Color.Background.Panel}"/>
             <SolidColorBrush x:Key="Brush.Background.Elevated" Color="{StaticResource Color.Background.Elevated}"/>
