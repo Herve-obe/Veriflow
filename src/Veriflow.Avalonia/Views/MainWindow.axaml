@@ -19,31 +19,69 @@
     </Window.DataContext>
 
     <Grid RowDefinitions="40,*,60">
-        
-        <!-- Custom Title Bar with Chromeless Style -->
+        <!-- Chromeless Title Bar (Google/VS Code Style) -->
         <Grid Grid.Row="0" Classes="ChromelessTitleBar">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="46"/>
-                <ColumnDefinition Width="46"/>
-                <ColumnDefinition Width="46"/>
+                <ColumnDefinition Width="Auto"/>  <!-- Icon -->
+                <ColumnDefinition Width="Auto"/>  <!-- Menu -->
+                <ColumnDefinition Width="*"/>     <!-- Center Title -->
+                <ColumnDefinition Width="46"/>    <!-- Minimize -->
+                <ColumnDefinition Width="46"/>    <!-- Maximize -->
+                <ColumnDefinition Width="46"/>    <!-- Close -->
             </Grid.ColumnDefinitions>
             
-            <TextBlock Grid.Column="0"
-                       Classes="TitleBarText"
-                       Text="Veriflow [BETA] - v1.0 (Avalonia)"/>
+            <!-- App Icon -->
+            <Image Grid.Column="0"
+                   Classes="AppIcon"
+                   Source="/Assets/veriflow.ico"/>
+            
+            <!-- Menu Bar -->
+            <Menu Grid.Column="1" Classes="TitleBarMenu">
+                <MenuItem Header="File">
+                    <MenuItem Header="New"/>
+                    <MenuItem Header="Open..."/>
+                    <Separator/>
+                    <MenuItem Header="Save"/>
+                    <MenuItem Header="Save As..."/>
+                    <Separator/>
+                    <MenuItem Header="Exit"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Undo"/>
+                    <MenuItem Header="Redo"/>
+                    <Separator/>
+                    <MenuItem Header="Cut"/>
+                    <MenuItem Header="Copy"/>
+                    <MenuItem Header="Paste"/>
+                </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="Offload"/>
+                    <MenuItem Header="Transcode"/>
+                    <MenuItem Header="Sync"/>
+                    <MenuItem Header="Media"/>
+                    <MenuItem Header="Reports"/>
+                </MenuItem>
+                <MenuItem Header="Help">
+                    <MenuItem Header="Documentation"/>
+                    <MenuItem Header="About"/>
+                </MenuItem>
+            </Menu>
+            
+            <!-- Centered Title -->
+            <TextBlock Grid.Column="2"
+                       Classes="CenteredTitle"
+                       Text="VERIFLOW - Antigravity - Migration Complete"/>
             
             <!-- Minimize Button -->
-            <Button Grid.Column="1"
+            <Button Grid.Column="3"
                     Classes="WindowControlButton"
                     Click="MinimizeButton_Click"
                     ToolTip.Tip="Minimize">
-                <TextBlock Text="—" 
-                          Classes="WindowControlIcon Minimize"/>
+                <TextBlock Text="—" Classes="WindowControlIcon Minimize"/>
             </Button>
             
             <!-- Maximize/Restore Button -->
-            <Button Grid.Column="2"
+            <Button Grid.Column="4"
                     x:Name="MaximizeButton"
                     Classes="WindowControlButton"
                     Click="MaximizeButton_Click"
@@ -54,12 +92,11 @@
             </Button>
             
             <!-- Close Button -->
-            <Button Grid.Column="3"
+            <Button Grid.Column="5"
                     Classes="WindowControlButton CloseButton"
                     Click="CloseButton_Click"
                     ToolTip.Tip="Close">
-                <TextBlock Text="✕" 
-                          Classes="WindowControlIcon Close"/>
+                <TextBlock Text="✕" Classes="WindowControlIcon Close"/>
             </Button>
         </Grid>
         
