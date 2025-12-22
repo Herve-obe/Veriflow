@@ -54,6 +54,24 @@ public partial class MainWindow : Window
         WindowStateService.Save(state);
     }
 
+    private void MinimizeButton_Click(object? sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState.Minimized;
+    }
+
+    private void MaximizeButton_Click(object? sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState == WindowState.Maximized 
+            ? WindowState.Normal 
+            : WindowState.Maximized;
+        
+        // Update button symbol
+        if (this.FindControl<Button>("MaximizeButton") is Button btn)
+        {
+            btn.Content = WindowState == WindowState.Maximized ? "❐" : "□";
+        }
+    }
+
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
         Close();
