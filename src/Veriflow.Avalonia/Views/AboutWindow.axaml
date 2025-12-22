@@ -1,0 +1,86 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+        x:Class="Veriflow.Avalonia.Views.AboutWindow"
+        Title="About Veriflow Pro"
+        Width="500" Height="400"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="{StaticResource Brush.Background.Panel}">
+    
+    <Grid RowDefinitions="*,Auto" Margin="40">
+        
+        <!-- Content -->
+        <StackPanel Grid.Row="0" 
+                    VerticalAlignment="Center"
+                    Spacing="20">
+            
+            <!-- App Name -->
+            <TextBlock Text="VERIFLOW PRO"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="{StaticResource Brush.Accent.Video}"/>
+            
+            <!-- Version -->
+            <TextBlock Text="Version 2.0"
+                       FontSize="18"
+                       HorizontalAlignment="Center"
+                       Foreground="{StaticResource Brush.Text.Secondary}"/>
+            
+            <!-- Description -->
+            <TextBlock Text="Professional Audio/Video Workflow Application"
+                       FontSize="14"
+                       HorizontalAlignment="Center"
+                       Foreground="{StaticResource Brush.Text.Tertiary}"/>
+            
+            <!-- Platform -->
+            <TextBlock Text="Cross-Platform Edition (Avalonia)"
+                       FontSize="12"
+                       HorizontalAlignment="Center"
+                       Foreground="{StaticResource Brush.Text.Tertiary}"/>
+            
+            <!-- Copyright -->
+            <TextBlock Text="© 2025 Veriflow Pro"
+                       FontSize="12"
+                       HorizontalAlignment="Center"
+                       Margin="0,20,0,0"
+                       Foreground="{StaticResource Brush.Text.Tertiary}"/>
+            
+            <!-- Features -->
+            <StackPanel Spacing="8" Margin="0,20,0,0">
+                <TextBlock Text="Features:"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource Brush.Text.Primary}"/>
+                <TextBlock Text="• Secure File Offloading"
+                           FontSize="12"
+                           Foreground="{StaticResource Brush.Text.Secondary}"/>
+                <TextBlock Text="• Media Playback (LibVLC)"
+                           FontSize="12"
+                           Foreground="{StaticResource Brush.Text.Secondary}"/>
+                <TextBlock Text="• Professional Transcoding"
+                           FontSize="12"
+                           Foreground="{StaticResource Brush.Text.Secondary}"/>
+                <TextBlock Text="• Audio/Video Sync"
+                           FontSize="12"
+                           Foreground="{StaticResource Brush.Text.Secondary}"/>
+                <TextBlock Text="• Camera & Sound Reports"
+                           FontSize="12"
+                           Foreground="{StaticResource Brush.Text.Secondary}"/>
+            </StackPanel>
+            
+        </StackPanel>
+        
+        <!-- Footer -->
+        <Button Grid.Row="1"
+                Content="CLOSE"
+                Classes="Primary"
+                HorizontalAlignment="Center"
+                Width="120"
+                Click="CloseButton_Click"/>
+        
+    </Grid>
+    
+</Window>

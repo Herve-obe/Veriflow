@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+        x:Class="Veriflow.Avalonia.Views.HelpWindow"
+        Title="Veriflow Pro - User Guide"
+        Width="900" Height="700"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource Brush.Background.Panel}">
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="20">
+        
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,20">
+            <TextBlock Classes="Title" Text="USER GUIDE"/>
+            <TextBlock Classes="Subtitle" Text="Veriflow Pro Documentation"/>
+        </StackPanel>
+        
+        <!-- Content -->
+        <Border Grid.Row="1"
+                Background="{StaticResource Brush.Background.Deep}"
+                BorderBrush="{StaticResource Brush.Border}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="20">
+            <ScrollViewer>
+                <md:MarkdownScrollViewer x:Name="MarkdownViewer"
+                                        Markdown="{Binding MarkdownContent}"
+                                        Background="Transparent"/>
+            </ScrollViewer>
+        </Border>
+        
+        <!-- Footer -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,16,0,0">
+            <Button Content="CLOSE" 
+                    Classes="Primary"
+                    Click="CloseButton_Click"
+                    Width="120"/>
+        </StackPanel>
+        
+    </Grid>
+    
+</Window>
