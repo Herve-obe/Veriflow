@@ -416,12 +416,16 @@
         <Setter Property="Foreground" Value="White"/>
     </Style>
     
-    <!-- Close Button Special Hover (Must be AFTER generic hover) -->
-    <Style Selector="Button.WindowControlButton.CloseButton:pointerover">
+    <!-- Close Button Specific Styles (Higher Specificity) -->
+    <Style Selector="Button.CloseButton">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    
+    <Style Selector="Button.CloseButton:pointerover">
         <Setter Property="Background" Value="#E81123"/>
     </Style>
     
-    <Style Selector="Button.WindowControlButton.CloseButton:pointerover TextBlock">
+    <Style Selector="Button.CloseButton:pointerover TextBlock">
         <Setter Property="Foreground" Value="White"/>
     </Style>
     
