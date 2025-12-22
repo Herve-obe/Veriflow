@@ -149,6 +149,10 @@
             
         </Grid>
         
+        </Grid>
+        <!-- End RIGHT COLUMN Grid -->
+        
     </Grid>
+    <!-- End Main 2-Column Grid -->
     
 </UserControl>
