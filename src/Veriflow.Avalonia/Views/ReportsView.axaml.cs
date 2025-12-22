@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace Veriflow.Avalonia.Views
+namespace Veriflow.Avalonia.Views;
+
+public partial class ReportsView : UserControl
 {
-    public partial class ReportsView : UserControl
+    public ReportsView()
     {
-        public ReportsView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

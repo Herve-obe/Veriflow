@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace Veriflow.Avalonia.Views
+namespace Veriflow.Avalonia.Views;
+
+public partial class SyncView : UserControl
 {
-    public partial class SyncView : UserControl
+    public SyncView()
     {
-        public SyncView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace Veriflow.Avalonia.Views
+namespace Veriflow.Avalonia.Views;
+
+public partial class TranscodeView : UserControl
 {
-    public partial class TranscodeView : UserControl
+    public TranscodeView()
     {
-        public TranscodeView()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
