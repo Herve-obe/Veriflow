@@ -26,7 +26,7 @@
                 Margin="0,0,0,16">
             <Grid>
                 <!-- Video Player Area (LibVLC Ready) -->
-                <vlc:VideoView x:Name="VideoPlayer"/>
+                <vlc:VideoView x:Name="VideoPlayer" MediaPlayer="{Binding MediaPlayerInstance}"/>
                 
                 <!-- Placeholder when no media loaded -->
                 <StackPanel VerticalAlignment="Center" 

@@ -11,6 +11,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Veriflow.Avalonia.Services;
 using Veriflow.Avalonia.Models;
+using LibVLCSharp.Shared;
 
 namespace Veriflow.Avalonia.ViewModels
 {
@@ -24,10 +25,17 @@ namespace Veriflow.Avalonia.ViewModels
         
         public bool ShowVolumeControls => false; // Audio Player uses external mixer console
 
+        // LibVLC for video playback
+        private LibVLC? _libVLC;
+        private MediaPlayer? _mediaPlayer;
+
+        [ObservableProperty]
+        private MediaPlayer? _mediaPlayerInstance;
+
         private readonly DispatcherTimer _playbackTimer;
         private double _fps = 25.0; // Default Frame Rate
         private System.Diagnostics.Stopwatch _stopwatch = new();
-        private TimeSpan _lastMediaTime;
+        // private TimeSpan _lastMediaTime; // Unused - commented out
 
         [ObservableProperty]
         private string _filePath = "No file loaded";
@@ -76,9 +84,21 @@ namespace Veriflow.Avalonia.ViewModels
                 Interval = TimeSpan.FromMilliseconds(16) // 60fps
             };
             _playbackTimer.Tick += OnTimerTick;
+            
+            // Initialize LibVLC for video playback
+            try
+            {
+                _libVLC = new LibVLC();
+                _mediaPlayer = new MediaPlayer(_libVLC);
+                MediaPlayerInstance = _mediaPlayer;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LibVLC initialization error: {ex.Message}");
+            }
         }
 
-        private bool _isTimerUpdating;
+        // private bool _isTimerUpdating; // Unused - commented out
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayCommand))]
