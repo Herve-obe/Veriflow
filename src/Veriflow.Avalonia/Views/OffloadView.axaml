@@ -79,8 +79,11 @@
                             <RadioButton.Template>
                                 <ControlTemplate>
                                      <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
-                                         <TextBlock Text="Offload" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                    FontWeight="SemiBold" Foreground="{TemplateBinding Foreground}"/>
+                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                                             <PathIcon Width="14" Height="14" Foreground="{TemplateBinding Foreground}"
+                                                      Data="F0 M4,2 L18,2 L22,6 L22,20 C22,21.1 21.1,22 20,22 L4,22 C2.9,22 2,21.1 2,20 L2,4 C2,2.9 2.9,2 4,2 Z M7,11 V5 H9 V11 Z M11,11 V5 H13 V11 Z M15,11 V5 H17 V11 Z"/>
+                                             <TextBlock Text="Offload" FontWeight="SemiBold" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                         </StackPanel>
                                      </Border>
                                 </ControlTemplate>
                             </RadioButton.Template>
@@ -94,8 +97,11 @@
                              <RadioButton.Template>
                                 <ControlTemplate>
                                      <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
-                                         <TextBlock Text="Verify" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                    FontWeight="SemiBold" Foreground="{TemplateBinding Foreground}"/>
+                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                                             <PathIcon Width="14" Height="14" Foreground="{TemplateBinding Foreground}"
+                                                      Data="M12,1L3,5v6c0,5.55,3.84,10.74,9,12c5.16-1.26,9-6.45,9-12V5L12,1L12,1z M10,17l-4-4l1.41-1.41L10,14.17l6.59-6.59L18,9L10,17z"/>
+                                             <TextBlock Text="Verify" FontWeight="SemiBold" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center"/>
+                                         </StackPanel>
                                      </Border>
                                 </ControlTemplate>
                             </RadioButton.Template>

@@ -44,6 +44,9 @@ public partial class DirectoryNode : ObservableObject
     /// </summary>
     public bool HasPlaceholder => Children.Count == 1 && Children[0].Name == "...";
 
+    public bool IsDrive => NodeType != DirectoryNodeType.Folder;
+    public bool IsFolder => NodeType == DirectoryNodeType.Folder;
+
     /// <summary>
     /// Default constructor for object initializer.
     /// </summary>

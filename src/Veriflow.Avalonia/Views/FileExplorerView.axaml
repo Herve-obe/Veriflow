@@ -44,46 +44,54 @@
                            Spacing="6"
                            PointerPressed="TreeItem_PointerPressed">
                     
-                    <!-- Fixed Drive Icon (HDD/SSD) -->
-                    <PathIcon Width="16" 
-                             Height="16"
-                             Foreground="#4A9EFF"
-                             Data="M6,2h12c1.1,0,2,0.9,2,2v12c0,1.1-0.9,2-2,2H6c-1.1,0-2-0.9-2-2V4C4,2.9,4.9,2,6,2z M6,4v12h12V4H6z M8,6h8v2H8V6z M8,10h8v2H8V10z M8,14h5v2H8V14z"
+                    <!-- Fixed Drive Icon (HDD/SSD) - Updated Style -->
+                    <PathIcon Width="16" Height="16"
+                             Foreground="{DynamicResource Brush.Accent}"
+                             Data="M6,2H18C19.1,2 20,2.9 20,4V20C20,21.1 19.1,22 18,22H6C4.9,22 4,21.1 4,20V4C4,2.9 4.9,2 6,2M6,4V14H18V4H6M12,17A2,2 0 0,0 10,19A2,2 0 0,0 12,21A2,2 0 0,0 14,19A2,2 0 0,0 12,17Z"
                              IsVisible="{Binding NodeType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:DirectoryNodeType.FixedDrive}}"/>
                     
-                    <!-- Removable Drive Icon (USB/SD) -->
-                    <PathIcon Width="16" 
-                             Height="16"
-                             Foreground="#FF9500"
-                             Data="M20,8h-3V4H3C1.9,4,1,4.9,1,6v12c0,1.1,0.9,2,2,2h15c1.1,0,2-0.9,2-2V10C20,8.9,19.1,8,20,8z M18,18H3V6h12v4h3V18z"
+                    <!-- Removable Drive Icon (USB/SD) - Updated Style to match HDD as requested -->
+                    <PathIcon Width="16" Height="16"
+                             Foreground="{DynamicResource Brush.Accent}"
+                             Data="M6,2H18C19.1,2 20,2.9 20,4V20C20,21.1 19.1,22 18,22H6C4.9,22 4,21.1 4,20V4C4,2.9 4.9,2 6,2M6,4V14H18V4H6M12,17A2,2 0 0,0 10,19A2,2 0 0,0 12,21A2,2 0 0,0 14,19A2,2 0 0,0 12,17Z"
                              IsVisible="{Binding NodeType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:DirectoryNodeType.RemovableDrive}}"/>
                     
-                    <!-- Network Drive Icon -->
-                    <PathIcon Width="16" 
-                             Height="16"
-                             Foreground="#34C759"
-                             Data="M15.5,14h-0.79l-0.28-0.27C15.41,12.59,16,11.11,16,9.5C16,5.91,13.09,3,9.5,3S3,5.91,3,9.5S5.91,16,9.5,16c1.61,0,3.09-0.59,4.23-1.57l0.27,0.28v0.79l5,4.99L20.49,19L15.5,14z M9.5,14C7.01,14,5,11.99,5,9.5S7.01,5,9.5,5S14,7.01,14,9.5S11.99,14,9.5,14z"
+                    <!-- Network Drive Icon - Updated Style -->
+                    <PathIcon Width="16" Height="16"
+                             Foreground="{DynamicResource Brush.Accent}"
+                             Data="M6,2H18C19.1,2 20,2.9 20,4V20C20,21.1 19.1,22 18,22H6C4.9,22 4,21.1 4,20V4C4,2.9 4.9,2 6,2M6,4V14H18V4H6M12,17A2,2 0 0,0 10,19A2,2 0 0,0 12,21A2,2 0 0,0 14,19A2,2 0 0,0 12,17Z"
                              IsVisible="{Binding NodeType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:DirectoryNodeType.NetworkDrive}}"/>
                     
-                    <!-- CD/DVD Icon -->
-                    <PathIcon Width="16" 
-                             Height="16"
-                             Foreground="#AF52DE"
+                    <!-- CD/DVD Icon (Kept distinct or updated? User said 'supports de stockage'. CD is one too. I'll keep distinct or use generic? Let's keep CD distinct but use Accent color for consistency?) -->
+                    <!-- I will just update Foreground to Accent and keep icon for differentiation unless user insists on ALL. 
+                         User said "remplace l'icone des supports de stockage". Usually means HDD/SSD/USB. CD is Optical. 
+                         I'll stick to updating Fixed/Removable/Network. -->
+                    <PathIcon Width="16" Height="16"
+                             Foreground="{DynamicResource Brush.Accent}"
                              Data="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,4c4.41,0,8,3.59,8,8s-3.59,8-8,8s-8-3.59-8-8S7.59,4,12,4z M12,10c-1.1,0-2,0.9-2,2s0.9,2,2,2s2-0.9,2-2S13.1,10,12,10z"
                              IsVisible="{Binding NodeType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:DirectoryNodeType.CDRom}}"/>
                     
-                    <!-- Folder Icon (Default) -->
-                    <PathIcon Width="16" 
-                             Height="16"
+                    <!-- Folder Icon (Default - Folder Color #DCB67A) -->
+                    <PathIcon Width="16" Height="16"
                              Foreground="#DCB67A"
                              Data="M10,4H4C2.89,4,2,4.89,2,6v12c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V8c0-1.1-0.9-2-2-2h-8L10,4z"
                              IsVisible="{Binding NodeType, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:DirectoryNodeType.Folder}}"/>
                     
-                    <!-- Directory Name -->
+                    <!-- Directory Name (Drive: Bold) -->
                     <TextBlock Text="{Binding Name}"
-                              Foreground="#CCCCCC"
-                              FontSize="12"
-                              VerticalAlignment="Center"/>
+                               Foreground="#CCCCCC"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding IsDrive}"/>
+                               
+                    <!-- Directory Name (Folder: SemiBold) -->
+                    <TextBlock Text="{Binding Name}"
+                               Foreground="#CCCCCC"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               IsVisible="{Binding IsFolder}"/>
                 </StackPanel>
             </TreeDataTemplate>
         </TreeView.ItemTemplate>
