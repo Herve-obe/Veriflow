@@ -407,7 +407,7 @@
         <Setter Property="Cursor" Value="Hand"/>
     </Style>
     
-    <!-- Window Control Button Hover -->
+    <!-- Window Control Button Hover (Generic) -->
     <Style Selector="Button.WindowControlButton:pointerover">
         <Setter Property="Background" Value="#2A2D2E"/>
     </Style>
@@ -416,9 +416,13 @@
         <Setter Property="Foreground" Value="White"/>
     </Style>
     
-    <!-- Close Button Special Hover -->
+    <!-- Close Button Special Hover (Must be AFTER generic hover) -->
     <Style Selector="Button.WindowControlButton.CloseButton:pointerover">
         <Setter Property="Background" Value="#E81123"/>
+    </Style>
+    
+    <Style Selector="Button.WindowControlButton.CloseButton:pointerover TextBlock">
+        <Setter Property="Foreground" Value="White"/>
     </Style>
     
     <!-- Window Control Icon Base -->
