@@ -294,6 +294,86 @@
     </Style>
     
     <!-- ============================================ -->
+    <!-- NAVIGATION BUTTONS -->
+    <!-- ============================================ -->
+    
+    <!-- Navigation Button Base -->
+    <Style Selector="RadioButton.NavButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+                    <StackPanel Orientation="Vertical" 
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Spacing="6">
+                        <!-- Icon -->
+                        <TextBlock x:Name="PART_Icon"
+                                  FontFamily="Segoe MDL2 Assets"
+                                  FontSize="20"
+                                  HorizontalAlignment="Center"
+                                  Foreground="{TemplateBinding Foreground}"/>
+                        <!-- Label -->
+                        <TextBlock Text="{TemplateBinding Content}"
+                                  FontSize="{TemplateBinding FontSize}"
+                                  FontWeight="{TemplateBinding FontWeight}"
+                                  HorizontalAlignment="Center"
+                                  Foreground="{TemplateBinding Foreground}"/>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <!-- Hover State -->
+    <Style Selector="RadioButton.NavButton:pointerover">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Hover}"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}"/>
+    </Style>
+    
+    <!-- Checked State -->
+    <Style Selector="RadioButton.NavButton:checked">
+        <Setter Property="Background" Value="{StaticResource Brush.Accent}"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <!-- Specific Icons for Each Page -->
+    <Style Selector="RadioButton.NavButton.Offload /template/ TextBlock#PART_Icon">
+        <Setter Property="Text" Value="&#xE8B7;"/> <!-- Folder/Copy icon -->
+    </Style>
+    
+    <Style Selector="RadioButton.NavButton.Media /template/ TextBlock#PART_Icon">
+        <Setter Property="Text" Value="&#xE8B9;"/> <!-- Library icon -->
+    </Style>
+    
+    <Style Selector="RadioButton.NavButton.Player /template/ TextBlock#PART_Icon">
+        <Setter Property="Text" Value="&#xE768;"/> <!-- Play icon -->
+    </Style>
+    
+    <Style Selector="RadioButton.NavButton.Sync /template/ TextBlock#PART_Icon">
+        <Setter Property="Text" Value="&#xE895;"/> <!-- Sync icon -->
+    </Style>
+    
+    <Style Selector="RadioButton.NavButton.Transcode /template/ TextBlock#PART_Icon">
+        <Setter Property="Text" Value="&#xE8AB;"/> <!-- Convert icon -->
+    </Style>
+    
+    <Style Selector="RadioButton.NavButton.Reports /template/ TextBlock#PART_Icon">
+        <Setter Property="Text" Value="&#xE8A5;"/> <!-- Document icon -->
+    </Style>
+    
+    <!-- ============================================ -->
     <!-- CHROMELESS TITLE BAR SYSTEM -->
     <!-- Google/VS Code Style -->
     <!-- ============================================ -->
