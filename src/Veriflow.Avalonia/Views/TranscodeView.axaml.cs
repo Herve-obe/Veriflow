@@ -15,10 +15,8 @@ public partial class TranscodeView : UserControl
 
     private void OnDataContextChanged(object? sender, System.EventArgs e)
     {
-        if (DataContext is TranscodeViewModel viewModel)
-        {
-            viewModel.RequestFilePicker += OnRequestFilePicker;
-        }
+        // TranscodeViewModel doesn't have RequestFilePicker yet
+        // Will be added when needed
     }
 
     private async void OnRequestFilePicker()
@@ -31,10 +29,7 @@ public partial class TranscodeView : UserControl
         var files = await FilePickerService.PickMultipleFilesAsync(topLevel.StorageProvider);
         if (files.Any())
         {
-            foreach (var file in files)
-            {
-                viewModel.AddFileToQueue(file);
-            }
+            viewModel.AddFiles(files);
         }
     }
 }
