@@ -115,42 +115,42 @@
                 <!-- F1 - Offload (Secure Copy) -->
                 <RadioButton Classes="NavButton Offload"
                              GroupName="Navigation"
-                             Content="Offload"
+                             Content="OFFLOAD"
                              IsChecked="{Binding IsOffloadPage}"
                              Command="{Binding NavigateToOffloadCommand}"/>
                 
                 <!-- F2 - Media -->
                 <RadioButton Classes="NavButton Media"
                              GroupName="Navigation"
-                             Content="Media"
+                             Content="MEDIA"
                              IsChecked="{Binding IsMediaPage}"
                              Command="{Binding NavigateToMediaCommand}"/>
                 
                 <!-- F3 - Player -->
                 <RadioButton Classes="NavButton Player"
                              GroupName="Navigation"
-                             Content="Player"
+                             Content="PLAYER"
                              IsChecked="{Binding IsPlayerPage}"
                              Command="{Binding NavigateToPlayerCommand}"/>
                 
                 <!-- F4 - Sync -->
                 <RadioButton Classes="NavButton Sync"
                              GroupName="Navigation"
-                             Content="Sync"
+                             Content="SYNC"
                              IsChecked="{Binding IsSyncPage}"
                              Command="{Binding NavigateToSyncCommand}"/>
                 
                 <!-- F5 - Transcode -->
                 <RadioButton Classes="NavButton Transcode"
                              GroupName="Navigation"
-                             Content="Transcode"
+                             Content="TRANSCODE"
                              IsChecked="{Binding IsTranscodePage}"
                              Command="{Binding NavigateToTranscodeCommand}"/>
                 
                 <!-- F6 - Reports -->
                 <RadioButton Classes="NavButton Reports"
                              GroupName="Navigation"
-                             Content="Reports"
+                             Content="REPORT"
                              IsChecked="{Binding IsReportsPage}"
                              Command="{Binding NavigateToReportsCommand}"/>
                 
