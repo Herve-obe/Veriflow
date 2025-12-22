@@ -20,8 +20,8 @@
 
     <Grid RowDefinitions="40,*,60">
         
-        <!-- Custom Title Bar -->
-        <Grid Grid.Row="0" Background="{StaticResource Brush.Background.Secondary}">
+        <!-- Custom Title Bar with Chromeless Style -->
+        <Grid Grid.Row="0" Classes="ChromelessTitleBar">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="46"/>
@@ -30,85 +30,36 @@
             </Grid.ColumnDefinitions>
             
             <TextBlock Grid.Column="0"
-                       Text="Veriflow [BETA] - v1.0 (Avalonia)"
-                       Foreground="{StaticResource Brush.Text.Primary}"
-                       FontSize="12"
-                       VerticalAlignment="Center"
-                       Margin="12,0"/>
+                       Classes="TitleBarText"
+                       Text="Veriflow [BETA] - v1.0 (Avalonia)"/>
             
             <!-- Minimize Button -->
             <Button Grid.Column="1"
-                    Width="46"
-                    Height="40"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Padding="0"
+                    Classes="WindowControlButton"
                     Click="MinimizeButton_Click"
                     ToolTip.Tip="Minimize">
                 <TextBlock Text="—" 
-                          FontSize="12"
-                          Foreground="{StaticResource Brush.Text.Secondary}"
-                          VerticalAlignment="Center"
-                          HorizontalAlignment="Center"
-                          Margin="0,-4,0,0"/>
-                <Button.Styles>
-                    <Style Selector="Button:pointerover">
-                        <Setter Property="Background" Value="#1AFFFFFF"/>
-                    </Style>
-                    <Style Selector="Button:pointerover TextBlock">
-                        <Setter Property="Foreground" Value="White"/>
-                    </Style>
-                </Button.Styles>
+                          Classes="WindowControlIcon Minimize"/>
             </Button>
             
             <!-- Maximize/Restore Button -->
             <Button Grid.Column="2"
                     x:Name="MaximizeButton"
-                    Width="46"
-                    Height="40"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Padding="0"
+                    Classes="WindowControlButton"
                     Click="MaximizeButton_Click"
                     ToolTip.Tip="Maximize">
                 <TextBlock x:Name="MaximizeIcon"
                           Text="🗖"
-                          FontSize="11"
-                          Foreground="{StaticResource Brush.Text.Secondary}"
-                          VerticalAlignment="Center"
-                          HorizontalAlignment="Center"/>
-                <Button.Styles>
-                    <Style Selector="Button:pointerover">
-                        <Setter Property="Background" Value="#1AFFFFFF"/>
-                    </Style>
-                    <Style Selector="Button:pointerover TextBlock">
-                        <Setter Property="Foreground" Value="White"/>
-                    </Style>
-                </Button.Styles>
+                          Classes="WindowControlIcon Maximize"/>
             </Button>
             
             <!-- Close Button -->
             <Button Grid.Column="3"
-                    Width="46"
-                    Height="40"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Padding="0"
+                    Classes="WindowControlButton CloseButton"
                     Click="CloseButton_Click"
                     ToolTip.Tip="Close">
                 <TextBlock Text="✕" 
-                          FontSize="12"
-                          Foreground="{StaticResource Brush.Text.Secondary}"
-                          VerticalAlignment="Center"
-                          HorizontalAlignment="Center"/>
-                <Button.Styles>
-                    <Style Selector="Button:pointerover">
-                        <Setter Property="Background" Value="#E81123"/>
-                    </Style>
-                    <Style Selector="Button:pointerover TextBlock">
-                        <Setter Property="Foreground" Value="White"/>
-                    </Style>
-                </Button.Styles>
+                          Classes="WindowControlIcon Close"/>
             </Button>
         </Grid>
         

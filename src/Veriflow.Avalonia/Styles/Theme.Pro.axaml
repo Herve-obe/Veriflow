@@ -291,4 +291,69 @@
         <Setter Property="Height" Value="6"/>
     </Style>
     
+    <!-- ============================================ -->
+    <!-- CHROMELESS TITLE BAR STYLE -->
+    <!-- ============================================ -->
+    
+    <!-- Window Control Button Base Style -->
+    <Style Selector="Button.WindowControlButton">
+        <Setter Property="Width" Value="46"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <!-- Window Control Button Hover -->
+    <Style Selector="Button.WindowControlButton:pointerover">
+        <Setter Property="Background" Value="#1AFFFFFF"/>
+    </Style>
+    
+    <Style Selector="Button.WindowControlButton:pointerover TextBlock">
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <!-- Close Button Special Hover -->
+    <Style Selector="Button.WindowControlButton.CloseButton:pointerover">
+        <Setter Property="Background" Value="#E81123"/>
+    </Style>
+    
+    <!-- Title Bar Container Style -->
+    <Style Selector="Grid.ChromelessTitleBar">
+        <Setter Property="Background" Value="{StaticResource Brush.Background.Secondary}"/>
+        <Setter Property="Height" Value="40"/>
+    </Style>
+    
+    <!-- Title Text Style -->
+    <Style Selector="TextBlock.TitleBarText">
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Primary}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="12,0"/>
+    </Style>
+    
+    <!-- Window Control Icon Style -->
+    <Style Selector="TextBlock.WindowControlIcon">
+        <Setter Property="Foreground" Value="{StaticResource Brush.Text.Secondary}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
+    <!-- Minimize Icon -->
+    <Style Selector="TextBlock.WindowControlIcon.Minimize">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Margin" Value="0,-4,0,0"/>
+    </Style>
+    
+    <!-- Maximize Icon -->
+    <Style Selector="TextBlock.WindowControlIcon.Maximize">
+        <Setter Property="FontSize" Value="11"/>
+    </Style>
+    
+    <!-- Close Icon -->
+    <Style Selector="TextBlock.WindowControlIcon.Close">
+        <Setter Property="FontSize" Value="12"/>
+    </Style>
+    
 </Styles>
