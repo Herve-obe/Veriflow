@@ -81,6 +81,15 @@ public partial class MainWindow : Window
         Close();
     }
 
+    private void TitleBar_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
+        // Enable window dragging when clicking on the title bar
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            BeginMoveDrag(e);
+        }
+    }
+
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {
         if (DataContext is not MainViewModel vm) return;

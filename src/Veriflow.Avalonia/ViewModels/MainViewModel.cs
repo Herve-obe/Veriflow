@@ -536,6 +536,10 @@ namespace Veriflow.Avalonia.ViewModels
         {
             CurrentAppMode = mode;
             UpdateTheme();
+            
+            // Notify mode toggle properties
+            OnPropertyChanged(nameof(IsVideoMode));
+            OnPropertyChanged(nameof(IsAudioMode));
         }
 
         private void ToggleAudioVideoMode()
