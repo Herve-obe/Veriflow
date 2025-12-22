@@ -1,4 +1,3 @@
-```csharp
 using Avalonia.Controls;
 using Avalonia.Input;
 using Veriflow.Avalonia.ViewModels;
@@ -43,6 +42,81 @@ public partial class OffloadView : UserControl
                 case "dest2":
                     viewModel.Destination2Path = folder;
                     break;
+            }
+        }
+    }
+
+    // Drag & Drop Handlers for Source TextBox
+    private void SourceTextBox_DragOver(object? sender, DragEventArgs e)
+    {
+        if (e.Data.Contains(DataFormats.Text))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+    }
+
+    private void SourceTextBox_Drop(object? sender, DragEventArgs e)
+    {
+        if (e.Data.Contains(DataFormats.Text) && DataContext is OffloadViewModel vm)
+        {
+            var path = e.Data.GetText();
+            if (!string.IsNullOrEmpty(path))
+            {
+                vm.SourcePath = path;
+            }
+        }
+    }
+
+    // Drag & Drop Handlers for Destination 1 TextBox
+    private void Dest1TextBox_DragOver(object? sender, DragEventArgs e)
+    {
+        if (e.Data.Contains(DataFormats.Text))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+    }
+
+    private void Dest1TextBox_Drop(object? sender, DragEventArgs e)
+    {
+        if (e.Data.Contains(DataFormats.Text) && DataContext is OffloadViewModel vm)
+        {
+            var path = e.Data.GetText();
+            if (!string.IsNullOrEmpty(path))
+            {
+                vm.Destination1Path = path;
+            }
+        }
+    }
+
+    // Drag & Drop Handlers for Destination 2 TextBox
+    private void Dest2TextBox_DragOver(object? sender, DragEventArgs e)
+    {
+        if (e.Data.Contains(DataFormats.Text))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+    }
+
+    private void Dest2TextBox_Drop(object? sender, DragEventArgs e)
+    {
+        if (e.Data.Contains(DataFormats.Text) && DataContext is OffloadViewModel vm)
+        {
+            var path = e.Data.GetText();
+            if (!string.IsNullOrEmpty(path))
+            {
+                vm.Destination2Path = path;
             }
         }
     }
