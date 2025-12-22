@@ -15,14 +15,14 @@
         
         <!-- COLUMN 0: File Explorer (UNCHANGED) -->
         <Border Grid.Column="0"
-                Background="#252526"
-                BorderBrush="#333333"
+                Background="{DynamicResource Brush.Background.Elevated}"
+                BorderBrush="{DynamicResource Color.Border}"
                 BorderThickness="0,0,1,0">
             <StackPanel>
                 <TextBlock Text="EXPLORER"
                           FontSize="11"
                           FontWeight="SemiBold"
-                          Foreground="#666666"
+                          Foreground="{DynamicResource Brush.Text.Tertiary}"
                           Margin="16,12,16,8"/>
                 
                 <views:FileExplorerView x:Name="FileExplorer"/>
@@ -32,87 +32,144 @@
         <!-- COLUMN 1: Assignment Buttons -->
         <StackPanel Grid.Column="1"
                    VerticalAlignment="Center"
-                   Margin="10,0"
+                   Margin="15,0"
                    Spacing="16">
             
             <Button Command="{Binding SetSourceFromExplorerCommand}"
                     ToolTip.Tip="Définir comme Source"
-                    Width="40" Height="40" Padding="0"
-                    Background="#2D2D30" BorderBrush="#3F3F46" BorderThickness="1"
+                    Width="140" Height="40" Padding="10,0"
+                    Background="{DynamicResource Brush.Background.Hover}" 
+                    BorderBrush="{DynamicResource Color.Border}" BorderThickness="1"
                     CornerRadius="4" Cursor="Hand">
-                <PathIcon Width="18" Height="18" Foreground="#CCCCCC"
-                         Data="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+                     <PathIcon Width="16" Height="16" Foreground="{DynamicResource Brush.Text.Secondary}"
+                              Data="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                     <TextBlock Text="Source" VerticalAlignment="Center" FontSize="11" 
+                               Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                </StackPanel>
             </Button>
 
             <Button Command="{Binding SetDestFromExplorerCommand}"
                     ToolTip.Tip="Définir comme Destination 1"
-                    Width="40" Height="40" Padding="0"
-                    Background="#2D2D30" BorderBrush="#3F3F46" BorderThickness="1"
+                    Width="140" Height="40" Padding="10,0"
+                    Background="{DynamicResource Brush.Background.Hover}" 
+                    BorderBrush="{DynamicResource Color.Border}" BorderThickness="1"
                     CornerRadius="4" Cursor="Hand">
-                <PathIcon Width="18" Height="18" Foreground="#CCCCCC"
-                         Data="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+                     <PathIcon Width="16" Height="16" Foreground="{DynamicResource Brush.Text.Secondary}"
+                              Data="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                     <TextBlock Text="Destination 1" VerticalAlignment="Center" FontSize="11" 
+                               Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                </StackPanel>
+            </Button>
+            
+            <!-- NEW: Destination 2 Button (Assuming command exists or duplicating command for now as placeholder) -->
+             <Button Command="{Binding SetDestFromExplorerCommand}"
+                    ToolTip.Tip="Définir comme Destination 2"
+                    Width="140" Height="40" Padding="10,0"
+                    Background="{DynamicResource Brush.Background.Hover}" 
+                    BorderBrush="{DynamicResource Color.Border}" BorderThickness="1"
+                    CornerRadius="4" Cursor="Hand">
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+                     <PathIcon Width="16" Height="16" Foreground="{DynamicResource Brush.Text.Secondary}"
+                              Data="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+                     <TextBlock Text="Destination 2" VerticalAlignment="Center" FontSize="11" 
+                               Foreground="{DynamicResource Brush.Text.Secondary}"/>
+                </StackPanel>
             </Button>
         </StackPanel>
 
-        <!-- COLUMN 2: Offload Form (WPF Legacy Dense Style) -->
+        <!-- COLUMN 2: Offload Form (Professional DaVinci Style) -->
         <Grid Grid.Column="2" 
               RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*,30"
-              Margin="20,15,20,0">
+              Margin="20,0,20,0"
+              VerticalAlignment="Center">
             
             <!-- ROW 0: Header -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,15">
-                <PathIcon Width="24" Height="24" Foreground="#1a4cb1" VerticalAlignment="Center"
-                         Data="M12,1L3,5v6c0,5.55,3.84,10.74,9,12c5.16-1.26,9-6.45,9-12V5L12,1L12,1z"/>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,25">
+                <!-- Corrected Shield Icon (Success variant) -->
+                <PathIcon Width="24" Height="24" Foreground="{DynamicResource Brush.Accent}" VerticalAlignment="Center"
+                         Data="M12,1L3,5v6c0,5.55,3.84,10.74,9,12c5.16-1.26,9-6.45,9-12V5L12,1L12,1z M10,17l-4-4l1.41-1.41L10,14.17l6.59-6.59L18,9L10,17z"/>
                 <TextBlock Text="OFFLOAD" FontSize="24" FontWeight="Bold" 
-                          Foreground="#FFFFFF" VerticalAlignment="Center"/>
+                          Foreground="{DynamicResource Brush.Text.Primary}" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <!-- ROW 1: Mode Selector -->
+            <!-- ROW 1: Mode Selector (Toggle Style - No Circles) -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" 
-                       Spacing="0" Margin="0,0,0,15">
-                <RadioButton Content="Offload" IsChecked="{Binding IsOffloadMode}"
-                            Width="120" Height="32" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Background="#1a4cb1" Foreground="#FFFFFF" FontWeight="SemiBold"
-                            BorderThickness="0" CornerRadius="4,0,0,4"/>
-                <RadioButton Content="Verify" IsChecked="{Binding IsVerifyMode}"
-                            Width="120" Height="32" Padding="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Background="#333333" Foreground="#999999" FontWeight="SemiBold"
-                            BorderThickness="0" CornerRadius="0,4,4,0"/>
+                       Spacing="0" Margin="0,0,0,25">
+                <RadioButton IsChecked="{Binding IsOffloadMode}" GroupName="Mode"
+                            Width="120" Height="32"
+                            Background="{DynamicResource Brush.Accent}" 
+                            Foreground="{DynamicResource Brush.Text.Primary}"
+                            BorderThickness="0" CornerRadius="4,0,0,4">
+                    <RadioButton.Template>
+                        <ControlTemplate>
+                             <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                                 <TextBlock Text="Offload" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            FontWeight="SemiBold" Foreground="{TemplateBinding Foreground}"/>
+                             </Border>
+                        </ControlTemplate>
+                    </RadioButton.Template>
+                </RadioButton>
+
+                <RadioButton IsChecked="{Binding IsVerifyMode}" GroupName="Mode"
+                            Width="120" Height="32"
+                            Background="{DynamicResource Brush.Background.Hover}" 
+                            Foreground="{DynamicResource Brush.Text.Tertiary}"
+                            BorderThickness="0" CornerRadius="0,4,4,0">
+                     <RadioButton.Template>
+                        <ControlTemplate>
+                             <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                                 <TextBlock Text="Verify" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            FontWeight="SemiBold" Foreground="{TemplateBinding Foreground}"/>
+                             </Border>
+                        </ControlTemplate>
+                    </RadioButton.Template>
+                </RadioButton>
             </StackPanel>
 
             <!-- ROW 2: Source Header -->
-            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,0,0,10">
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
-                    <PathIcon Width="16" Height="16" Foreground="#3A6EA5" VerticalAlignment="Center"
-                             Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"/>
-                    <TextBlock Text="MEDIA SOURCE" FontSize="11" FontWeight="Bold" 
-                              Foreground="#DDDDDD" VerticalAlignment="Center"/>
+                    <!-- SD Card Icon -->
+                    <PathIcon Width="18" Height="18" Foreground="{DynamicResource Brush.Accent}" VerticalAlignment="Center"
+                             Data="M18,8L13,3H4A2,2 0 0,0 2,5V20A2,2 0 0,0 4,22H20A2,2 0 0,0 22,20V8L18,8M13,9.5V5L17.5,9.5H13Z"/>
+                    <!-- Increased Font Size -->
+                    <TextBlock Text="MEDIA SOURCE" FontSize="14" FontWeight="Bold" 
+                              Foreground="{DynamicResource Brush.Text.Secondary}" VerticalAlignment="Center"/>
                 </StackPanel>
-                <Button Grid.Column="1" Content="Reset All" FontSize="10"
-                       Height="22" Padding="8,0" Background="#2D2D30" Foreground="#999999"
-                       BorderBrush="#3F3F46" BorderThickness="1" CornerRadius="3"
+                
+                <!-- Reset All Button aligned with header but sized like Open button -->
+                 <Button Grid.Column="1" Content="Reset All" FontSize="11"
+                       Height="30" Width="70" Padding="0" 
+                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                       Background="{DynamicResource Brush.Background.Hover}" 
+                       Foreground="{DynamicResource Brush.Text.Tertiary}"
+                       BorderBrush="{DynamicResource Color.Border}" BorderThickness="1" CornerRadius="3"
                        Command="{Binding ResetAllCommand}"/>
             </Grid>
 
             <!-- ROW 3: Source Input -->
-            <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="0,0,0,15">
+            <Grid Grid.Row="3" ColumnDefinitions="Auto,Auto" Margin="0,0,0,15">
+                <!-- Width reduced (approx 1/3 less than full stretch, fixed at 500) -->
                 <TextBox Grid.Column="0" Text="{Binding SourcePath}"
-                        Watermark="Drag folder or click Open..."
-                        Height="30" Padding="8,0" FontSize="12"
-                        Background="#111111" Foreground="#CCCCCC"
-                        BorderBrush="#333333" BorderThickness="1"
+                        Watermark="Drag folder here..."
+                        Width="500" Height="30" Padding="8,0" FontSize="12"
+                        VerticalContentAlignment="Center"
+                        Background="{DynamicResource Brush.Background.Deep}" 
+                        Foreground="{DynamicResource Brush.Text.Secondary}"
+                        BorderBrush="{DynamicResource Color.Border}" BorderThickness="1"
                         IsReadOnly="True"
                         DragDrop.AllowDrop="True"
                         DragDrop.DragOver="SourceTextBox_DragOver"
                         DragDrop.Drop="SourceTextBox_Drop"/>
                 <Button Grid.Column="1" Width="70" Height="30" Margin="8,0,0,0"
-                       Background="#1a4cb1" Foreground="#FFFFFF" FontWeight="SemiBold"
+                       Background="{DynamicResource Brush.Accent}" 
+                       Foreground="{DynamicResource Brush.Text.Primary}" FontWeight="SemiBold"
                        BorderThickness="0" CornerRadius="3"
                        Command="{Binding PickSourceCommand}">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <PathIcon Width="14" Height="14" Foreground="#FFFFFF"
+                        <PathIcon Width="14" Height="14" Foreground="{DynamicResource Brush.Text.Primary}"
                                  Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"/>
                         <TextBlock Text="Open" VerticalAlignment="Center"/>
                     </StackPanel>
@@ -120,33 +177,38 @@
             </Grid>
 
             <!-- ROW 4: Destination Header -->
-            <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
-                <PathIcon Width="16" Height="16" Foreground="#3A6EA5" VerticalAlignment="Center"
-                         Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z"/>
-                <TextBlock Text="DESTINATION" FontSize="11" FontWeight="Bold" 
-                          Foreground="#DDDDDD" VerticalAlignment="Center"/>
+            <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+                <!-- Hard Drive Icon -->
+                <PathIcon Width="18" Height="18" Foreground="{DynamicResource Brush.Accent}" VerticalAlignment="Center"
+                         Data="M6,2H18C19.1,2 20,2.9 20,4V20C20,21.1 19.1,22 18,22H6C4.9,22 4,21.1 4,20V4C4,2.9 4.9,2 6,2M6,4V14H18V4H6M12,17A2,2 0 0,0 10,19A2,2 0 0,0 12,21A2,2 0 0,0 14,19A2,2 0 0,0 12,17Z"/>
+                 <!-- Increased Font Size -->
+                <TextBlock Text="DESTINATION" FontSize="14" FontWeight="Bold" 
+                          Foreground="{DynamicResource Brush.Text.Secondary}" VerticalAlignment="Center"/>
             </StackPanel>
 
             <!-- ROW 5: Main Destination (A) -->
             <StackPanel Grid.Row="5" Spacing="6" Margin="0,0,0,10">
                 <TextBlock Text="MAIN DESTINATION (A)" FontSize="10" 
-                          Foreground="#888888" Margin="2,0,0,0"/>
-                <Grid ColumnDefinitions="*,Auto">
+                          Foreground="{DynamicResource Brush.Text.Tertiary}" Margin="2,0,0,0"/>
+                <Grid ColumnDefinitions="Auto,Auto">
                     <TextBox Grid.Column="0" Text="{Binding Destination1Path}"
-                            Watermark="Drag folder or click Open..."
-                            Height="30" Padding="8,0" FontSize="12"
-                            Background="#111111" Foreground="#CCCCCC"
-                            BorderBrush="#333333" BorderThickness="1"
+                            Watermark="Select destination..."
+                            Width="500" Height="30" Padding="8,0" FontSize="12"
+                            VerticalContentAlignment="Center"
+                            Background="{DynamicResource Brush.Background.Deep}" 
+                            Foreground="{DynamicResource Brush.Text.Secondary}"
+                            BorderBrush="{DynamicResource Color.Border}" BorderThickness="1"
                             IsReadOnly="True"
                             DragDrop.AllowDrop="True"
                             DragDrop.DragOver="Dest1TextBox_DragOver"
                             DragDrop.Drop="Dest1TextBox_Drop"/>
                     <Button Grid.Column="1" Width="70" Height="30" Margin="8,0,0,0"
-                           Background="#1a4cb1" Foreground="#FFFFFF" FontWeight="SemiBold"
+                           Background="{DynamicResource Brush.Accent}" 
+                           Foreground="{DynamicResource Brush.Text.Primary}" FontWeight="SemiBold"
                            BorderThickness="0" CornerRadius="3"
                            Command="{Binding PickDest1Command}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <PathIcon Width="14" Height="14" Foreground="#FFFFFF"
+                            <PathIcon Width="14" Height="14" Foreground="{DynamicResource Brush.Text.Primary}"
                                      Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"/>
                             <TextBlock Text="Open" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -157,23 +219,26 @@
             <!-- ROW 6: Secondary Destination (B) -->
             <StackPanel Grid.Row="6" Spacing="6" Margin="0,0,0,10">
                 <TextBlock Text="SECONDARY DESTINATION (B)" FontSize="10" 
-                          Foreground="#888888" Margin="2,0,0,0"/>
-                <Grid ColumnDefinitions="*,Auto">
+                          Foreground="{DynamicResource Brush.Text.Tertiary}" Margin="2,0,0,0"/>
+                <Grid ColumnDefinitions="Auto,Auto">
                     <TextBox Grid.Column="0" Text="{Binding Destination2Path}"
-                            Watermark="Drag folder or click Open..."
-                            Height="30" Padding="8,0" FontSize="12"
-                            Background="#111111" Foreground="#CCCCCC"
-                            BorderBrush="#333333" BorderThickness="1"
+                            Watermark="Optional secondary destination..."
+                            Width="500" Height="30" Padding="8,0" FontSize="12"
+                            VerticalContentAlignment="Center"
+                            Background="{DynamicResource Brush.Background.Deep}" 
+                            Foreground="{DynamicResource Brush.Text.Secondary}"
+                            BorderBrush="{DynamicResource Color.Border}" BorderThickness="1"
                             IsReadOnly="True"
                             DragDrop.AllowDrop="True"
                             DragDrop.DragOver="Dest2TextBox_DragOver"
                             DragDrop.Drop="Dest2TextBox_Drop"/>
                     <Button Grid.Column="1" Width="70" Height="30" Margin="8,0,0,0"
-                           Background="#1a4cb1" Foreground="#FFFFFF" FontWeight="SemiBold"
+                           Background="{DynamicResource Brush.Accent}" 
+                           Foreground="{DynamicResource Brush.Text.Primary}" FontWeight="SemiBold"
                            BorderThickness="0" CornerRadius="3"
                            Command="{Binding PickDest2Command}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <PathIcon Width="14" Height="14" Foreground="#FFFFFF"
+                            <PathIcon Width="14" Height="14" Foreground="{DynamicResource Brush.Text.Primary}"
                                      Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"/>
                             <TextBlock Text="Open" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -182,17 +247,20 @@
             </StackPanel>
 
             <!-- ROW 7: Spacer (takes remaining space) -->
+            <Border Grid.Row="7" Height="30"/>
             
-            <!-- ROW 8: Status Bar (WPF Style) -->
-            <Grid Grid.Row="7" ColumnDefinitions="Auto,*,Auto,Auto" 
-                  Background="#151515" Height="30" Margin="-20,0,-20,0" Padding="15,0">
-                <TextBlock Grid.Column="0" Text="{Binding CurrentHashDisplay}" 
-                          FontSize="11" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="{Binding TimeRemainingDisplay}" 
-                          FontSize="11" Foreground="#888888" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                <TextBlock Grid.Column="3" Text="{Binding CurrentSpeedDisplay}" 
-                          FontSize="11" FontWeight="Bold" Foreground="#FFFFFF" VerticalAlignment="Center"/>
-            </Grid>
+            <!-- ROW 8: Status Bar (DaVinci Style: Darker, clean) -->
+            <Border Grid.Row="8" Background="#121212" Height="30" Margin="-20,0,-20,0" Padding="15,0"
+                    BorderBrush="{DynamicResource Color.Border}" BorderThickness="0,1,0,0">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                    <TextBlock Grid.Column="0" Text="{Binding CurrentHashDisplay}" 
+                              FontSize="11" Foreground="{DynamicResource Brush.Text.Tertiary}" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="{Binding TimeRemainingDisplay}" 
+                              FontSize="11" Foreground="{DynamicResource Brush.Text.Tertiary}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <TextBlock Grid.Column="3" Text="{Binding CurrentSpeedDisplay}" 
+                              FontSize="11" FontWeight="Bold" Foreground="{DynamicResource Brush.Text.Primary}" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
 
         </Grid>
 
