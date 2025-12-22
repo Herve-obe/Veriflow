@@ -121,15 +121,28 @@ namespace Veriflow.Avalonia.ViewModels
         [RelayCommand]
         private void SetSourceFromExplorer()
         {
-            // TODO: Get selected directory from FileExplorer and set SourcePath
-            // This will be wired up with proper binding
+            if (!string.IsNullOrEmpty(FileExplorer.SelectedDirectory))
+            {
+                SourcePath = FileExplorer.SelectedDirectory;
+            }
         }
 
         [RelayCommand]
         private void SetDestFromExplorer()
         {
-            // TODO: Get selected directory from FileExplorer and set Destination1Path
-            // This will be wired up with proper binding
+            if (!string.IsNullOrEmpty(FileExplorer.SelectedDirectory))
+            {
+                Destination1Path = FileExplorer.SelectedDirectory;
+            }
+        }
+
+        [RelayCommand]
+        private void SetDest2FromExplorer()
+        {
+            if (!string.IsNullOrEmpty(FileExplorer.SelectedDirectory))
+            {
+                Destination2Path = FileExplorer.SelectedDirectory;
+            }
         }
 
         private void Service_LogMessage(object? sender, string message)
