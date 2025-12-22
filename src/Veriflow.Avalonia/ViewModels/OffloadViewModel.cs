@@ -105,6 +105,9 @@ namespace Veriflow.Avalonia.ViewModels
         [NotifyCanExecuteChangedFor(nameof(ResetAllCommand))]
         private string? _destination2Path;
 
+        [ObservableProperty]
+        private FileExplorerViewModel _fileExplorer = new();
+
         // --- CONSTRUCTOR ---
         public OffloadViewModel(OffloadService offloadService, MhlService mhlService)
         {
@@ -112,8 +115,6 @@ namespace Veriflow.Avalonia.ViewModels
             _mhlService = mhlService;
             
             _offloadService.LogMessage += Service_LogMessage;
-
-            InitializeExplorer();
         }
 
         // --- ASSIGNMENT COMMANDS (FileExplorer Integration) ---
