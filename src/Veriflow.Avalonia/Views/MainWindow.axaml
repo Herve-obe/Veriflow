@@ -106,55 +106,92 @@
         
         <!-- Bottom Navigation Bar -->
         <Border Grid.Row="2" 
-                Background="{StaticResource Brush.Background.Secondary}"
+                Background="#1E1E1E"
                 BorderBrush="{StaticResource Brush.Border}"
-                BorderThickness="0,1,0,0">
+                BorderThickness="0,1,0,0"
+                Height="60">
             
-            <UniformGrid Rows="1" Columns="6">
+            <Grid ColumnDefinitions="Auto, *, Auto">
                 
-                <!-- F1 - Offload (Secure Copy) -->
-                <RadioButton Classes="NavButton Offload"
-                             GroupName="Navigation"
-                             Content="OFFLOAD"
-                             IsChecked="{Binding IsOffloadPage}"
-                             Command="{Binding NavigateToOffloadCommand}"/>
+                <!-- Col 0: View Filters (Video/Audio) -->
+                <StackPanel Grid.Column="0" 
+                           Orientation="Horizontal" 
+                           Spacing="8"
+                           Margin="16,0,0,0"
+                           VerticalAlignment="Center">
+                    
+                    <ToggleButton Classes="ViewFilter"
+                                 Content="Video"
+                                 Background="{DynamicResource VideoAccentBrush}"
+                                 IsChecked="{Binding IsVideoMode}"/>
+                    
+                    <ToggleButton Classes="ViewFilter"
+                                 Content="Audio"
+                                 Background="{DynamicResource AudioAccentBrush}"
+                                 IsChecked="{Binding IsAudioMode}"/>
+                    
+                </StackPanel>
                 
-                <!-- F2 - Media -->
-                <RadioButton Classes="NavButton Media"
-                             GroupName="Navigation"
-                             Content="MEDIA"
-                             IsChecked="{Binding IsMediaPage}"
-                             Command="{Binding NavigateToMediaCommand}"/>
+                <!-- Col 1: Navigation Buttons -->
+                <StackPanel Grid.Column="1" 
+                           Orientation="Horizontal" 
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"
+                           Spacing="4">
+                    
+                    <!-- Offload Button -->
+                    <RadioButton Classes="NavButton Offload"
+                                GroupName="Navigation"
+                                Content="OFFLOAD"
+                                IsChecked="{Binding IsOffloadPage}"
+                                Command="{Binding NavigateToOffloadCommand}"/>
+                    
+                    <!-- Media Button -->
+                    <RadioButton Classes="NavButton Media"
+                                GroupName="Navigation"
+                                Content="MEDIA"
+                                IsChecked="{Binding IsMediaPage}"
+                                Command="{Binding NavigateToMediaCommand}"/>
+                    
+                    <!-- Player Button -->
+                    <RadioButton Classes="NavButton Player"
+                                GroupName="Navigation"
+                                Content="PLAYER"
+                                IsChecked="{Binding IsPlayerPage}"
+                                Command="{Binding NavigateToPlayerCommand}"/>
+                    
+                    <!-- Sync Button -->
+                    <RadioButton Classes="NavButton Sync"
+                                GroupName="Navigation"
+                                Content="SYNC"
+                                IsChecked="{Binding IsSyncPage}"
+                                Command="{Binding NavigateToSyncCommand}"/>
+                    
+                    <!-- Transcode Button -->
+                    <RadioButton Classes="NavButton Transcode"
+                                GroupName="Navigation"
+                                Content="TRANSCODE"
+                                IsChecked="{Binding IsTranscodePage}"
+                                Command="{Binding NavigateToTranscodeCommand}"/>
+                    
+                    <!-- Reports Button -->
+                    <RadioButton Classes="NavButton Reports"
+                                GroupName="Navigation"
+                                Content="REPORT"
+                                IsChecked="{Binding IsReportsPage}"
+                                Command="{Binding NavigateToReportsCommand}"/>
+                    
+                </StackPanel>
                 
-                <!-- F3 - Player -->
-                <RadioButton Classes="NavButton Player"
-                             GroupName="Navigation"
-                             Content="PLAYER"
-                             IsChecked="{Binding IsPlayerPage}"
-                             Command="{Binding NavigateToPlayerCommand}"/>
+                <!-- Col 2: Version Info -->
+                <TextBlock Grid.Column="2"
+                          Text="v1.0 PRO"
+                          Foreground="#666666"
+                          FontSize="10"
+                          VerticalAlignment="Center"
+                          Margin="20,0,16,0"/>
                 
-                <!-- F4 - Sync -->
-                <RadioButton Classes="NavButton Sync"
-                             GroupName="Navigation"
-                             Content="SYNC"
-                             IsChecked="{Binding IsSyncPage}"
-                             Command="{Binding NavigateToSyncCommand}"/>
-                
-                <!-- F5 - Transcode -->
-                <RadioButton Classes="NavButton Transcode"
-                             GroupName="Navigation"
-                             Content="TRANSCODE"
-                             IsChecked="{Binding IsTranscodePage}"
-                             Command="{Binding NavigateToTranscodeCommand}"/>
-                
-                <!-- F6 - Reports -->
-                <RadioButton Classes="NavButton Reports"
-                             GroupName="Navigation"
-                             Content="REPORT"
-                             IsChecked="{Binding IsReportsPage}"
-                             Command="{Binding NavigateToReportsCommand}"/>
-                
-            </UniformGrid>
+            </Grid>
         </Border>
         
     </Grid>

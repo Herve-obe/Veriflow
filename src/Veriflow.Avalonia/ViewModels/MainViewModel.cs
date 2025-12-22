@@ -112,6 +112,10 @@ namespace Veriflow.Avalonia.ViewModels
         public bool IsTranscodePage => CurrentPageType == PageType.Transcode;
         public bool IsReportsPage => CurrentPageType == PageType.Reports;
         
+        // Mode check properties for ToggleButton IsChecked bindings
+        public bool IsVideoMode => CurrentAppMode == AppMode.Video;
+        public bool IsAudioMode => CurrentAppMode == AppMode.Audio;
+        
         // CurrentViewModel for ContentControl binding
         public object? CurrentViewModel => CurrentView;
         public ICommand SwitchToAudioCommand { get; }

@@ -52,6 +52,10 @@
             <SolidColorBrush x:Key="Brush.Accent.Audio.Hover" Color="{StaticResource Color.Accent.Audio.Hover}"/>
             <SolidColorBrush x:Key="Brush.Accent.Audio.Pressed" Color="{StaticResource Color.Accent.Audio.Pressed}"/>
             
+            <!-- Official Accent Brushes (Global Keys) -->
+            <SolidColorBrush x:Key="VideoAccentBrush" Color="#1A4CB1"/>
+            <SolidColorBrush x:Key="AudioAccentBrush" Color="#E64B3D"/>
+            
             <SolidColorBrush x:Key="Brush.Text.Primary" Color="{StaticResource Color.Text.Primary}"/>
             <SolidColorBrush x:Key="Brush.Text.Secondary" Color="{StaticResource Color.Text.Secondary}"/>
             <SolidColorBrush x:Key="Brush.Text.Tertiary" Color="{StaticResource Color.Text.Tertiary}"/>
@@ -372,6 +376,42 @@
     
     <Style Selector="RadioButton.NavButton.Reports /template/ TextBlock#PART_Icon">
         <Setter Property="Text" Value="&#xE8A5;"/> <!-- Document icon -->
+    </Style>
+    
+    <!-- ============================================ -->
+    <!-- VIEW FILTER TOGGLE BUTTONS (Video/Audio) -->
+    <!-- ============================================ -->
+    
+    <Style Selector="ToggleButton.ViewFilter">
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Opacity" Value="0.2"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                    <TextBlock Text="{TemplateBinding Content}"
+                              Foreground="{TemplateBinding Foreground}"
+                              FontSize="{TemplateBinding FontSize}"
+                              FontWeight="{TemplateBinding FontWeight}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+    <!-- Checked State: Full Opacity -->
+    <Style Selector="ToggleButton.ViewFilter:checked">
+        <Setter Property="Opacity" Value="1.0"/>
     </Style>
     
     <!-- ============================================ -->
